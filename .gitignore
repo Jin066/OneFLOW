@@ -1,0 +1,4 @@
+build/*
+ThirdPartyLib/*
+debug/*
+release/*

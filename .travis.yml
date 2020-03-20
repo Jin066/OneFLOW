@@ -3,7 +3,7 @@ language: cpp
 branches:
   only:
     - master
-    - ZJZT800
+    - eric
 
 cache:
   directories:

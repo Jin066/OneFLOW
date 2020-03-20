@@ -100,12 +100,12 @@ void INsInvterm::CmpINsinvTerm()
 	Real coef = 1.0 / (1.0 + ratio);
 
 	iinv.rm = (iinv.rl + iinv.rr ) * half;    //初始界面上的值（u、v、w ）
-	iinv.um = (iinv.ul + iinv.ur ) * half;
+	iinv.um = (iinv.ul + iinv.ur ) * half;    //速度
 	iinv.vm = (iinv.vl + iinv.vr ) * half;
 	iinv.wm = (iinv.wl + iinv.wr ) * half;
 	iinv.hm = (iinv.hl + iinv.hr * ratio) * coef;
 	iinv.pm = (iinv.pl + iinv.pr * ratio) * coef;
-	iinv.gama = (iinv.gama1 + iinv.gama2 * ratio) * coef;
+	iinv.gama = (iinv.gama1 + iinv.gama2 * ratio) * coef; 
 
 	
 

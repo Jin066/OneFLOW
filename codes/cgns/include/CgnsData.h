@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -20,54 +20,30 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "FileO.h"
-#include "FileUtil.h"
-#include "Prj.h"
+
+#pragma once
+#include "HXDefine.h"
+#include "HXCgns.h"
 
 BeginNameSpace( ONEFLOW )
 
-FileO::FileO()
-{
-    file = new fstream();
-    sep = " ";
-    nWord = 5;
-    nWidth = 5;
-    nCount = 0;
-}
+#ifdef ENABLE_CGNS
 
-FileO::~FileO()
-{
-    delete file;
-}
+class CgnsZone;
 
-void FileO::OpenPrjFile( const string & fileName, const ios_base::openmode & fileOpenMode )
+class CgnsData
 {
-    this->fileName     = fileName;
-    this->fileOpenMode = fileOpenMode;
-    ONEFLOW::OpenPrjFile( * file, fileName, fileOpenMode );
-}
+public:
+    CgnsData ();
+    ~CgnsData();
+public:
+    CgIntField startId, endId;
+    IntField elemType;
+    int nSection;
+public:
+    void Create( int nSection );
+};
 
-void FileO::CloseFile()
-{
-    ONEFLOW::CloseFile( * file );
-}
-
-void FileO::DumpCoorAscii( RealField & coor )
-{
-    int nCountMax = 10000;
-    int nPoint = coor.size();
-    nWidth = 15;
-    for ( int i = 0; i < nPoint; ++ i )
-    {
-        ( * file ) << setw( nWidth ) << coor[ i ];
-        nCount ++;
-        if ( nCount % nWord == 0 )
-        {
-            if ( nCount >= nCountMax ) nCount = 0;
-            ( * file ) << "\n";
-        }
-    }
-}
-
+#endif
 
 EndNameSpace

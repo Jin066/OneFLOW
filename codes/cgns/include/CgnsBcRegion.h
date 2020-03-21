@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -39,20 +39,22 @@ class CgnsBase;
 class NodeMesh;
 class FaceSolver;
 
-class CgnsBcBoco
+class CgnsBcInterface;
+
+class CgnsBcRegion
 {
 public:
-    CgnsBcBoco( CgnsZone * cgnsZone );
-    ~CgnsBcBoco();
+    CgnsBcRegion( CgnsZone * cgnsZone );
+    ~CgnsBcRegion();
 public:
-    int bcId;
+    int id;
     int nameId;
     string name;
     double bc_double_id;
 
     BCType_t bcType;
     PointSetType_t pointSetType;
-    GridLocation_t gridLocation, modifiedLocation;
+    GridLocation_t gridLocation;
     GridConnectivityType_t gridConnType;  //Overset, Abutting, Abutting1to1
     DataType_t normalDataType;
     CgInt normalListSize;
@@ -62,6 +64,8 @@ public:
     CgInt nElements;
 
     CgIntField connList;
+
+    CgnsBcInterface * bcInterface;
 
     CgnsZone * cgnsZone;
 public:
@@ -73,18 +77,20 @@ public:
     void ProcessVertexBc( IntSet & bcVertex );
     void ProcessFaceBc( IntSet & bcVertex );
 public:
-    void ReadCgnsBcBoco();
-    void ReadCgnsBocoInfo();
-    void ReadCgnsBocoGridLocation();
-    void SetCgnsBcRegionGridLocation( const GridLocation_t & bcGridLocation );
+    void ReadCgnsOrdinaryBcRegion();
+    void ReadCgnsOrdinaryBcRegionInfo();
+    void ReadCgnsOrdinaryBcRegionGridLocation();
     void CreateCgnsBcConn();
     void ReadCgnsBcConn();
     void PrintCgnsBcConn();
     void ExtractIJKRegionFromBcConn( IntField & ijkMin, IntField & ijkMax, CgIntField& bcConn );
     void ExtractIJKRegionFromBcConn( IntField & ijkMin, IntField & ijkMax );
 public:
-    void CopyStrBcRegion( CgnsBcBoco * strBcRegion, CgInt& startId );
-    void ReadCgnsBcConn( CgnsBcBoco * strBcRegion, CgInt & startId );
+    void ProcessCgns1to1BcRegion( int bcId );
+    void ReadCgns1to1BoundaryRegion( int iCgns1to1BoundaryRegion );
+    void CopyStrBcRegion( CgnsBcRegion * strBcRegion, CgInt& startId );
+    void ReadCgnsBcConn( CgnsBcRegion * strBcRegion, CgInt & startId );
+    void ReconstructStrRegion( IntField & ijkMin, IntField & ijkMax );
     CgInt GetActualNumberOfBoundaryElements();
 };
 

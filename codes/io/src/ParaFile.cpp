@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -29,7 +29,6 @@ License
 #include "Prj.h"
 #include <iostream>
 #include <string>
-#include <vector>
 #include <map>
 using namespace std;
 
@@ -52,7 +51,7 @@ bool IsArrayParameter( const string & lineOfName )
     return true;
 }
 
-void ReadOneFLOWScriptFile( FileIO & fileIO )
+void ReadBasicData( FileIO & fileIO )
 {
     //string name, word;
 
@@ -162,71 +161,95 @@ int GetParameterArraySize( const string & word )
     return arraySize;
 }
 
-void ReadOneFLOWScriptFile( const std::string & fileName )
+void ReadHXFile( const std::string & fileName )
 {
     FileIO fileIO;
 
     fileIO.OpenFile( fileName, ios_base::in );
 
-    ONEFLOW::ReadOneFLOWScriptFile( fileIO );
+    ONEFLOW::ReadBasicData( fileIO );
 
     fileIO.CloseFile();
 }
 
 void ReadControlInfo()
 {
+    if ( Parallel::IsServer() )
+    {
+        ONEFLOW::ReadPrjBaseDir();
+    }
+
     HXBcastString( PrjStatus::prjBaseDir, Parallel::serverid );
 
     if ( Parallel::IsServer() )
     {
-        ONEFLOW::ReadPrjScript();
+        ONEFLOW::ReadHXScript();
     }
 
     Parallel::TestSayHelloFromEveryProcess();
     ONEFLOW::BroadcastControlParameterToAllProcessors();
 }
 
-void ReadPrjScript()
+void ReadPrjBaseDir()
 {
-    vector< string > scriptFileNameList;
-    ONEFLOW::ReadScriptFileNameList( scriptFileNameList );
-    ONEFLOW::ReadMultiScriptFiles( scriptFileNameList );
+    if ( PrjStatus::prjBaseDir != "" ) return;
+
+    string baseDir = "./";
+
+    ONEFLOW::StrIO.ClearAll();
+    ONEFLOW::StrIO << baseDir << "/prjFile.txt";
+
+    string prjFile = ONEFLOW::StrIO.str();
+
+    ONEFLOW::ReadHXFile( prjFile );
+
+    string prjName = ONEFLOW::GetDataValue< string >( "prjName" );
+
+    ONEFLOW::StrIO.ClearAll();
+    ONEFLOW::StrIO << "./" << baseDir << "/" << prjName << "/";
+
+    PrjStatus::prjBaseDir = ONEFLOW::StrIO.str();
 }
 
-void ReadScriptFileNameList( vector< string > & scriptFileNameList )
+void ReadHXScript()
 {
-    FileIO ioFile;
+    ONEFLOW::StrIO.ClearAll();
+    ONEFLOW::StrIO << PrjStatus::prjBaseDir << "script/control.txt";
 
-    ioFile.OpenPrjFile( "script/control.txt", ios_base::in );
-
-    //\t is Tab Key
-    string keyWordSeparator = " ()\r\n\t#$,;\"";
-    ioFile.SetDefaultSeparator( keyWordSeparator );
-
-    while ( ! ioFile.ReachTheEndOfFile()  )
-    {
-        bool flag = ioFile.ReadNextNonEmptyLine();
-        if ( ! flag ) break;
-        string scriptFileName = ioFile.ReadNextWord();
-        ONEFLOW::StrIO.ClearAll();
-        ONEFLOW::StrIO << PrjStatus::prjBaseDir << "script/" << scriptFileName;
-        string fullScriptFileName = ONEFLOW::StrIO.str();
-        scriptFileNameList.push_back( fullScriptFileName );
-    }
-
-    ioFile.CloseFile();
+    string fileName = ONEFLOW::StrIO.str();
+    ONEFLOW::ReadHXFile( fileName );
+    ONEFLOW::ReadMultiFile();
 }
 
-void ReadMultiScriptFiles( vector< string > & scriptFileNameList )
+int GetNumberOfParameterFiles()
 {
-    int numberOfParameterFiles = scriptFileNameList.size();
+    return ONEFLOW::GetDataValue< int >( "numberOfParameterFiles" );
+}
+
+void ReadMultiFile()
+{
+    int numberOfParameterFiles = ONEFLOW::GetNumberOfParameterFiles();
 
     for ( int iFile = 0; iFile < numberOfParameterFiles; ++ iFile )
     {
-        string & scriptFileName = scriptFileNameList[ iFile ];
+        string fileName = ONEFLOW::GetParameterFileName( iFile );
 
-        ONEFLOW::ReadOneFLOWScriptFile( scriptFileName );
+        ONEFLOW::StrIO.ClearAll();
+        ONEFLOW::StrIO << PrjStatus::prjBaseDir << fileName;
+
+        fileName = ONEFLOW::StrIO.str();
+
+        ONEFLOW::ReadHXFile( fileName );
     }
+}
+
+std::string GetParameterFileName( int iFile )
+{
+    ONEFLOW::StrIO.ClearAll();
+    ONEFLOW::StrIO << "parameterFileName" << iFile;
+    std::string fileNameString = ONEFLOW::StrIO.str();
+
+    return ONEFLOW::GetDataValue< std::string >( fileNameString );
 }
 
 void BroadcastControlParameterToAllProcessors()

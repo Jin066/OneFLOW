@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -29,7 +29,7 @@ License
 #include "UCom.h"
 #include "Com.h"
 #include "INsCom.h"
-#include "INsIdx.h"
+#include "INsIDX.h"
 #include "HXMath.h"
 #include "Ctrl.h"
 
@@ -100,12 +100,12 @@ void INsInvterm::CmpINsinvTerm()
 	Real coef = 1.0 / (1.0 + ratio);
 
 	iinv.rm = (iinv.rl + iinv.rr ) * half;    //初始界面上的值（u、v、w ）
-	iinv.um = (iinv.ul + iinv.ur ) * half;    //速度
+	iinv.um = (iinv.ul + iinv.ur ) * half;
 	iinv.vm = (iinv.vl + iinv.vr ) * half;
 	iinv.wm = (iinv.wl + iinv.wr ) * half;
 	iinv.hm = (iinv.hl + iinv.hr * ratio) * coef;
 	iinv.pm = (iinv.pl + iinv.pr * ratio) * coef;
-	iinv.gama = (iinv.gama1 + iinv.gama2 * ratio) * coef; 
+	iinv.gama = (iinv.gama1 + iinv.gama2 * ratio) * coef;
 
 	
 

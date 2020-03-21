@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -32,8 +32,6 @@ License
 #include "UnsGrid.h"
 #include "DataBase.h"
 #include "UCom.h"
-#include "UTurbCom.h"
-#include "UNsCom.h"
 
 BeginNameSpace( ONEFLOW )
 
@@ -132,9 +130,6 @@ void UTurbInvFlux::CmpFlux()
     TurbInv & inv = turbInv;
     inv.Init();
     ug.Init();
-    unsf.Init();
-    uturbf.Init();
-
     Alloc();
 
     this->CmpInvFace();

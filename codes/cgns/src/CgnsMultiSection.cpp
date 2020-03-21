@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -20,10 +20,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "CgnsZsection.h"
+#include "CgnsMultiSection.h"
 #include "CgnsSection.h"
 #include "CgnsBase.h"
 #include "CgnsZone.h"
+#include "CgnsData.h"
 #include "StrUtil.h"
 #include "Dimension.h"
 #include "UnitElement.h"
@@ -35,69 +36,48 @@ using namespace std;
 BeginNameSpace( ONEFLOW )
 #ifdef ENABLE_CGNS
 
-CgnsZsection::CgnsZsection( CgnsZone * cgnsZone )
+CgnsMultiSection::CgnsMultiSection( CgnsZone * cgnsZone )
 {
     this->cgnsZone = cgnsZone;
 }
 
-CgnsZsection::~CgnsZsection()
+CgnsMultiSection::~CgnsMultiSection()
 {
 }
 
-void CgnsZsection::AddCgnsSection( CgnsSection * cgnsSection )
+void CgnsMultiSection::Create()
 {
-    this->cgnsSections.push_back( cgnsSection );
-    int secId = cgnsSections.size();
-    cgnsSection->id = secId;
-}
+    this->cgnsSections.resize( this->nSection );
 
-CgnsSection * CgnsZsection::GetCgnsSection( int iSection )
-{
-    return this->cgnsSections[ iSection ];
-}
-
-bool CgnsZsection::ExistSection( const string & sectionName )
-{
     for ( int iSection = 0; iSection < this->nSection; ++ iSection )
     {
-        CgnsSection * cgnsSection = this->GetCgnsSection( iSection );
-        if ( cgnsSection->sectionName == sectionName ) return true;
+        this->cgnsSections[ iSection ] = new CgnsSection( cgnsZone );
+        this->cgnsSections[ iSection ]->id = iSection + 1;
     }
-    return false;
+    int kkk = 1;
 }
 
-void CgnsZsection::CreateCgnsSection()
+void CgnsMultiSection::CreateConnList()
 {
     for ( int iSection = 0; iSection < this->nSection; ++ iSection )
     {
-        CgnsSection * cgnsSection = new CgnsSection( cgnsZone );
-        this->AddCgnsSection( cgnsSection );
+        this->cgnsSections[ iSection ]->CreateConnList();
     }
 }
 
-void CgnsZsection::CreateConnList()
+void CgnsMultiSection::ConvertToInnerDataStandard()
 {
-    for ( int iSection = 0; iSection < this->nSection; ++ iSection )
+    for ( int iSection = 0; iSection < this->cgnsSections.size(); ++ iSection )
     {
-        CgnsSection * cgnsSection = this->GetCgnsSection( iSection );
-        cgnsSection->CreateConnList();
+        this->cgnsSections[ iSection ]->ConvertToInnerDataStandard();
     }
 }
 
-void CgnsZsection::ConvertToInnerDataStandard()
+CgnsSection * CgnsMultiSection::GetSectionByEid( int eId )
 {
     for ( int iSection = 0; iSection < this->nSection; ++ iSection )
     {
-        CgnsSection * cgnsSection = this->GetCgnsSection( iSection );
-        cgnsSection->ConvertToInnerDataStandard();
-    }
-}
-
-CgnsSection * CgnsZsection::GetSectionByEid( int eId )
-{
-    for ( int iSection = 0; iSection < this->nSection; ++ iSection )
-    {
-        CgnsSection * cgnsSection = this->GetCgnsSection( iSection );
+        CgnsSection * cgnsSection = this->cgnsSections[ iSection ];
         if ( cgnsSection->startId <= eId && 
              eId <= cgnsSection->endId )
         {
@@ -107,7 +87,7 @@ CgnsSection * CgnsZsection::GetSectionByEid( int eId )
     return 0;
 }
 
-void CgnsZsection::ReadNumberOfCgnsSections()
+void CgnsMultiSection::ReadNumberOfCgnsSections()
 {
     int fileId = cgnsZone->cgnsBase->fileId;
     int baseId = cgnsZone->cgnsBase->baseId;
@@ -123,7 +103,7 @@ void CgnsZsection::ReadNumberOfCgnsSections()
     cout << "   numberOfCgnsSections = " << this->nSection << "\n";
 }
 
-void CgnsZsection::ReadCgnsSections()
+void CgnsMultiSection::ReadCgnsSections()
 {
     cout << "   Reading Cgns Section Data......\n";
     cout << "\n";
@@ -131,16 +111,31 @@ void CgnsZsection::ReadCgnsSections()
     for ( int iSection = 0; iSection < this->nSection; ++ iSection )
     {
         cout << "-->iSection     = " << iSection << " numberOfCgnsSections = " << this->nSection << "\n";
-        CgnsSection * cgnsSection = this->GetCgnsSection( iSection );
+        CgnsSection * cgnsSection = this->cgnsSections[ iSection ];
         cgnsSection->ReadCgnsSection();
     }
 }
 
-void CgnsZsection::SetElemPosition()
+void CgnsMultiSection::FillCgnsSections( CgnsData * cgnsData )
+{
+    this->nSection = cgnsData->nSection;
+    this->Create();
+
+    for ( int iSection = 0; iSection < this->nSection; ++ iSection )
+    {
+        CgnsSection * cgnsSection = this->cgnsSections[ iSection ];
+        cgnsSection->startId = cgnsData->startId[ iSection ];
+        cgnsSection->endId   = cgnsData->endId[ iSection ];
+        cgnsSection->eType   = cgnsData->elemType[ iSection ];
+        cgnsSection->CreateConnList();
+    }
+}
+
+void CgnsMultiSection::SetElemPosition()
 {
     for ( int iSection = 0; iSection < this->nSection; ++ iSection )
     {
-        CgnsSection * cgnsSection = this->GetCgnsSection( iSection );
+        CgnsSection * cgnsSection = this->cgnsSections[ iSection ];
         cgnsSection->SetElemPosition();
     }
 }

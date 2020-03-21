@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -20,7 +20,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "CompGrid.h"
+#include "CmpGrid.h"
 #include "UnsGrid.h"
 #include "Grid.h"
 #include "GridPara.h"
@@ -45,17 +45,17 @@ using namespace std;
 
 BeginNameSpace( ONEFLOW )
 
-CompGrid::CompGrid()
+CmpGrid::CmpGrid()
 {
     iFaceLink = 0;
 }
 
-CompGrid::~CompGrid()
+CmpGrid::~CmpGrid()
 {
     delete iFaceLink;
 }
 
-void CompGrid::Init( Grids & grids )
+void CmpGrid::Init( Grids & grids )
 {
     this->grids = grids;
     this->grids.SetDeleteFlag( true );
@@ -71,7 +71,7 @@ void CompGrid::Init( Grids & grids )
     }
 }
 
-void CompGrid::BuildInterfaceLink()
+void CmpGrid::BuildInterfaceLink()
 {
     int gridObj = GetDataValue< int >( "gridObj" );
 
@@ -93,9 +93,9 @@ void CompGrid::BuildInterfaceLink()
     }
 }
 
-void CompGrid::Dump()
+void CmpGrid::Dump()
 {
-    cout << __FUNCTION__ << endl;
+    cout << __FUNCTION__<<endl;
     fstream file;
     OpenPrjFile( file, gridFileName, ios_base::out|ios_base::binary|ios_base::trunc );
     int nZone = static_cast<int>(grids.size());
@@ -122,7 +122,7 @@ void CompGrid::Dump()
     ONEFLOW::CloseFile( file );
 }
 
-void CompGrid::Post()
+void CmpGrid::Post()
 {
     logFile << "GenerateOverset\n";
     this->GenerateOverset();
@@ -130,14 +130,14 @@ void CompGrid::Post()
     this->BuildInterfaceLink();
     logFile << "ResetGridScaleAndTranslate\n";
     this->ResetGridScaleAndTranslate();
-    logFile << "CompGrid::Post() Final \n";
+    logFile << "CmpGrid::Post() Final \n";
 }
 
-void CompGrid::GenerateOverset()
+void CmpGrid::GenerateOverset()
 {
 }
 
-void CompGrid::ReconstructLink()
+void CmpGrid::ReconstructLink()
 {
     int nZone = static_cast<int>(grids.size());
     for ( int iZone = 0; iZone < nZone; ++ iZone )
@@ -146,7 +146,7 @@ void CompGrid::ReconstructLink()
     }
 }
 
-void CompGrid::ReconstructLink( int iZone )
+void CmpGrid::ReconstructLink( int iZone )
 {
     UnsGrid * grid = UnsGridCast( grids[ iZone ] );
 
@@ -192,12 +192,12 @@ void CompGrid::ReconstructLink( int iZone )
     }
 }
 
-void CompGrid::ReconstructInterFace()
+void CmpGrid::ReconstructInterFace()
 {
     this->iFaceLink->ReconstructInterFace();
 }
 
-void CompGrid::ResetGridScaleAndTranslate()
+void CmpGrid::ResetGridScaleAndTranslate()
 {
     int nZone = static_cast<int>(grids.size());
     for ( int iZone = 0; iZone < nZone; ++ iZone )
@@ -207,7 +207,7 @@ void CompGrid::ResetGridScaleAndTranslate()
     }
 }
 
-void CompGrid::GenerateLink()
+void CmpGrid::GenerateLink()
 {
     this->iFaceLink = new IFaceLink( grids );
 
@@ -222,7 +222,7 @@ void CompGrid::GenerateLink()
     this->MatchInterfaceTopology();
 }
 
-void CompGrid::ModifyBcType()
+void CmpGrid::ModifyBcType()
 {
     int ignoreNoBc = ONEFLOW::GetIgnoreNoBc();
 
@@ -237,7 +237,7 @@ void CompGrid::ModifyBcType()
     }
 }
 
-void CompGrid::GenerateLgMapping()
+void CmpGrid::GenerateLgMapping()
 {
     int nZone = static_cast<int>(grids.size());
     for ( int iZone = 0; iZone < nZone; ++ iZone )
@@ -247,7 +247,7 @@ void CompGrid::GenerateLgMapping()
     }
 }
 
-void CompGrid::ReGenerateLgMapping()
+void CmpGrid::ReGenerateLgMapping()
 {
     this->iFaceLink->InitNewLgMapping();
 
@@ -262,12 +262,12 @@ void CompGrid::ReGenerateLgMapping()
     this->UpdateOtherTopologyTerm();
 }
 
-void CompGrid::UpdateLgMapping()
+void CmpGrid::UpdateLgMapping()
 {
     iFaceLink->UpdateLgMapping();
 }
 
-void CompGrid::UpdateOtherTopologyTerm()
+void CmpGrid::UpdateOtherTopologyTerm()
 {
     int nZone = static_cast<int>(grids.size());
     for ( int iZone = 0; iZone < nZone; ++ iZone )
@@ -277,7 +277,7 @@ void CompGrid::UpdateOtherTopologyTerm()
     }
 }
 
-void CompGrid::MatchInterfaceTopology()
+void CmpGrid::MatchInterfaceTopology()
 {
     int nZone = static_cast<int>(grids.size());
     for ( int iZone = 0; iZone < nZone; ++ iZone )
@@ -297,19 +297,20 @@ string GetTargetGridFileName()
     return ONEFLOW::GetDataValue< string >( "targetGridFileName" );
 }
 
-void GenerateMultiZoneCompGrids( Grids & grids )
+void GenerateMultiZoneCmpGrids( Grids & grids )
 {
-    RegionNameMap::DumpRegion();
-
-    CompGrid * compGrid = new CompGrid();
-    compGrid->Init( grids );
+    CmpGrid * cmpGrid = new CmpGrid();
+    cmpGrid->Init( grids );
+    //cmpGrid->grids = grids;
+    //cmpGrid->gridFileName = ONEFLOW::GetTargetGridFileName();
+    //string part_uns_file = GetDataValue< string >( "part_uns_file" );
     logFile << "Post\n";
 
-    compGrid->Post();
+    cmpGrid->Post();
     logFile << "Post 1\n";
-    compGrid->Dump();
+    cmpGrid->Dump();
     logFile << "Dump\n";
-    delete compGrid;
+    delete cmpGrid;
 }
 
 void ResetGridScaleAndTranslate( NodeMesh * nodeMesh )

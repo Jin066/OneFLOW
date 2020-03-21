@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -24,8 +24,6 @@ License
 #pragma once
 #include "HXDefine.h"
 #include "HXCgns.h"
-#include <string>
-#include <map>
 using namespace std;
 
 BeginNameSpace( ONEFLOW )
@@ -34,14 +32,44 @@ BeginNameSpace( ONEFLOW )
 
 class CgnsZone;
 class CgnsBase;
-class CgnsFamilyBc;
-class GridMediator;
+class FaceSolver;
 
-void ReadAllCgnsZones( CgnsBase * myCgnsBase, CgnsBase * cgnsBaseIn );
-void ReadNumberOfCgnsZones( CgnsBase * myCgnsBase, CgnsBase * cgnsBaseIn );
-void ReadCgnsBaseBasicInfo( CgnsBase * myCgnsBase, CgnsBase * cgnsBaseIn );
-void DumpBase( CgnsBase * myCgnsBase, GridMediator * gridMediator );
-void PrepareCgnsZone( CgnsBase * myCgnsBase, GridMediator * gridMediator );
+class FaceSolver;
+class CgnsBcRegion;
+
+class CgnsBcRegionProxy
+{
+public:
+    CgnsBcRegionProxy( CgnsZone * cgnsZone );
+    ~CgnsBcRegionProxy();
+public:
+    int nBcRegion, n1To1, nOrdinaryBcRegion;
+    int n1To1General;
+    int nConn;
+    HXVector< CgnsBcRegion * > cgnsBcRegions;
+    HXVector< CgnsBcRegion * > bcRegion1To1;
+    CgnsZone * cgnsZone;
+public:
+    void ScanBcFace( FaceSolver * face_solver );
+public:
+    void CreateCgnsBcRegion();
+    void ConvertToInnerDataStandard();
+    CgnsBcRegion * GetBcRegion( int ir );
+
+    void ReadCgnsOrdinaryBcRegion();
+    void ReadCgnsGridBoundary();
+    void ReadCgnsInterfaceBcRegion();
+public:
+    void ReadNumberCgnsConnBcInfo();
+    void ReadNumberOfCgnsOrdinaryBcRegions();
+    void ReadNumberOfCgns1To1BcRegions();
+    void ReadNumberOfCgnsConn();
+    void CreateCgnsBcRegion( CgnsBcRegionProxy * bcRegionProxyIn );
+public:
+    void ReconstructStrRegion();
+    void GenerateUnsBcElemConn(CgIntField& bcConn );
+    void SetPeriodicBc();
+};
 
 #endif
 

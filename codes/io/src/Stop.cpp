@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -19,26 +19,23 @@ License
     along with OneFLOW.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
-
-
-#pragma once
-#include "HXDefine.h"
+#include "Stop.h"
+#include <iostream>
+using namespace std;
 
 BeginNameSpace( ONEFLOW )
 
-class CgnsZbase;
-class ZgridMediator;
+void StopProgramFunction( const string & stopInformation, const string & fileName, const int & fileLine, const string & dateName, const string & timeName )
+{
+    cout << endl;
+    cout << "++++++++++++++++++Stop Information  +++++++++++++++++++++++++++++\n";
+    cout <<  stopInformation << endl;
+    cout << " The stop filename is : " << fileName << endl;
+    cout << " at line " << fileLine << endl;
+    cout << " compiled on " << dateName << " at " << timeName << endl;
+    cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+    exit( 0 );
+}
 
-#ifdef ENABLE_CGNS
-
-void ReadNumCgnsBase( CgnsZbase * myCgnsZbase, CgnsZbase * strCgnsMultiBase );
-void ReadCgnsMultiBase( CgnsZbase * myCgnsZbase, CgnsZbase * strCgnsMultiBase );
-void ConvertStrCgns2UnsCgnsGrid( CgnsZbase * myCgnsZbase, CgnsZbase * strCgnsMultiBase );
-void CreateDefaultCgnsZones( CgnsZbase * myCgnsZbase, ZgridMediator * zgridMediator );
-void DumpCgnsMultiBase( CgnsZbase * myCgnsZbase, ZgridMediator * zgridMediator );
-void DumpCgnsGrid( CgnsZbase * myCgnsZbase, ZgridMediator * zgridMediator );
-void PrepareCgnsZone( CgnsZbase * myCgnsZbase, ZgridMediator * zgridMediator );
-
-#endif
 
 EndNameSpace

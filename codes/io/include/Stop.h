@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -19,46 +19,16 @@ License
     along with OneFLOW.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
-#include "SimuCtrl.h"
-#include "FileUtil.h"
-#include <iostream>
+#pragma once
+#include "Configure.h"
+#include <string>
 using namespace std;
 
 BeginNameSpace( ONEFLOW )
 
-bool SimuCtrl::hx_debug = false;
-bool SimuCtrl::run_from_ide = false;
-string SimuCtrl::system_root = "";
-string SimuCtrl::execute_dir = "";
-string SimuCtrl::current_dir = "";
+#define Stop( _Expression ) ( ONEFLOW::StopProgramFunction( _Expression, __FILE__, __LINE__, __DATE__, __TIME__ ) )
 
-SimuCtrl::SimuCtrl()
-{
+void StopProgramFunction( const string & stopInformation, const string & fileName, const int & fileLine, const string & dateName, const string & timeName );
 
-}
-
-SimuCtrl::~SimuCtrl()
-{
-}
-
-void SimuCtrl::Init()
-{
-    SimuCtrl::execute_dir = HX_GetExePath();
-    SimuCtrl::current_dir = HX_GetCurrentDir();
-
-    cout << " SimuCtrl::execute_dir = " << SimuCtrl::execute_dir << "\n";
-    cout << " SimuCtrl::current_dir = " << SimuCtrl::current_dir << "\n";
-
-    string local_root = "/system/";
-    if ( SimuCtrl::run_from_ide )
-    {
-        SimuCtrl::system_root = SimuCtrl::current_dir + local_root;
-    }
-    else
-    {
-        SimuCtrl::system_root = SimuCtrl::execute_dir + local_root;
-    }
-    cout << "SimuCtrl::system_root = " << SimuCtrl::system_root << "\n";
-}
 
 EndNameSpace

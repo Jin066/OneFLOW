@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -31,30 +31,47 @@ BeginNameSpace( ONEFLOW )
 class CgnsBase;
 class CgnsZone;
 
-class CgnsZbase
+class CgnsMultiBase
 {
 public:
-    CgnsZbase ();
-    ~CgnsZbase();
+    CgnsMultiBase ();
+    ~CgnsMultiBase();
 public:
     int fileId, nBases;
- 
+    int nTZones;
+
+    int volBcType;
+
     HXVector< CgnsBase * > baseVector;
+    IntField zid1, zid2;
 public:
     int GetSystemZoneType();
+    void ReadCgnsGrid();
     void ReadCgnsGrid( const string & fileName );
     void OpenCgnsFile( const string & fileName, int cgnsOpenMode );
     void CloseCgnsFile();
     void ReadCgnsMultiBase();
     void ReadNumCgnsBase();
+
+    void ReadCgnsMultiBase( CgnsMultiBase * strCgnsMultiBase );
+    void ReadNumCgnsBase( CgnsMultiBase * strCgnsMultiBase );
+    void ReadGeneralizedCgnsZoneScale();
+    void ReadGeneralizedCgnsZoneScale( CgnsMultiBase * strCgnsMultiBase );
+    void ReadAllCgnsZonesInEachCgnsBase();
+    void ReadAllCgnsZonesInEachCgnsBase( CgnsMultiBase * strCgnsMultiBase );
 public:
-    void AddCgnsBase( CgnsBase * cgnsBase );
+    void Create( int nZones );
+    void InitDefaultCgnsBase();
+    void AllocateCgnsBase();
     void InitCgnsBase();
+    void SetGeneralizedCgnsZoneScale( int nZones );
+    void ComputeNumberOfTotalZones();
+    void AllocateCgnsZonesInEachCgnsBase();
+    void InitAllCgnsZonesInEachCgnsBase();
+    void ConvertStrCgns2UnsCgnsGrid( CgnsMultiBase * strCgnsMultiBase );
 public:
-    int GetNZone();
-    CgnsBase * GetCgnsBase( int iBase );
-    CgnsZone * GetCgnsZone( int globalZoneId );
-    CgnsZone * GetMultiBaseCgnsZone( int iBase, int iZone );
+    CgnsZone * GetZone( int iZone );
+    int FindBaseId( int iZone );
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------*\
     OneFLOW - LargeScale Multiphysics Scientific Simulation Environment
-    Copyright (C) 2017-2020 He Xin and the OneFLOW contributors.
+    Copyright (C) 2017-2019 He Xin and the OneFLOW contributors.
 -------------------------------------------------------------------------------
 License
     This file is part of OneFLOW.
@@ -22,28 +22,48 @@ License
 
 
 #pragma once
-#include "Configure.h"
-
+#include "HXDefine.h"
+#include <vector>
 #include <string>
+#include <fstream>
+#include "HXCgns.h"
 using namespace std;
 
 BeginNameSpace( ONEFLOW )
 
-class MpiTest
+#ifdef ENABLE_CGNS
+
+class CgnsZone;
+class CgnsSection;
+class ElemFeature;
+
+class CgnsZone;
+class CgnsBcRegionProxy;
+class CgnsData;
+
+class CgnsMultiSection
 {
 public:
-    MpiTest();
-    ~MpiTest();
+    CgnsMultiSection( CgnsZone * cgnsZone );
+    ~CgnsMultiSection();
 public:
-    void Init();
-    void Run();
-    void Test();
+    int nSection;
+
+    HXVector< CgnsSection * > cgnsSections;
+    CgnsZone * cgnsZone;
+    CgnsBcRegionProxy * cgnsBcRegionProxy;
 public:
-    void HX_MPI_Init();
-    void HX_MPI_Final();
+    void Create();
+    void CreateConnList();
+    void ConvertToInnerDataStandard();
+    CgnsSection * GetSectionByEid( int eId );
 public:
-    int myrank, nprocs;
+    void ReadNumberOfCgnsSections();
+    void ReadCgnsSections();
+    void FillCgnsSections( CgnsData * cgnsData );
+    void SetElemPosition();
 };
 
+#endif
 
 EndNameSpace

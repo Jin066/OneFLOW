@@ -1,9 +1,6 @@
-"simu.txt";
-"dimension.txt";
-"tolerence.txt";
-"cfd.txt";
-"vismodel.txt";
-"multigrid.txt";
-"inflow.txt";
-"turb.txt";
-"walldist.txt";
+int    numberOfParameterFiles    =  5;
+string parameterFileName0        =  "script/simu.txt";
+string parameterFileName1        =  "script/dimension.txt";
+string parameterFileName2        =  "script/tolerence.txt";
+string parameterFileName3        =  "script/grid.txt";
+string parameterFileName4        =  "script/part.txt";

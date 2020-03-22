@@ -1,4 +1,4 @@
-int gridObj   =  1; //0: generate  1: convert 2 geneinp, 3 partition
+int gridObj   =  3; //0: generate  1: convert 2 geneinp, 3 partition
 string topoType  =  "u"; //  u, s
 int multiBlock    =  0; // 0: single; 1: multi
 

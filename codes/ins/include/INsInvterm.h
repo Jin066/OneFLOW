@@ -61,7 +61,7 @@ public:
     RealField q, q1, q2;
     RealField dq;
     RealField flux, flux1, flux2;
-	RealField  ai1, ai2, bm, buc, bvc, bwc, bc,sp, sp1, sp2, spj, spu,spv,spw, aji,aju,ajv,ajw, Vdv, Vdvu, Vdvv, Vdvw, VdU, VdV, VdW, bpu, bpv, bpw, spp, sppu, sppv, sppw, dist, f1, f2, ajp, app;
+	RealField  bm, buc, bvc, bwc, bc,sp, sp1, sp2, spj, spu,spv,spw, aji,aju,ajv,ajw, Vdv, Vdvu, Vdvv, Vdvw, VdU, VdV, VdW, bpu, bpv, bpw, spp, sppu, sppv, sppw, dist, f1, f2, ajp, app;
 	RealField  pp, pp1,pp2,uu, vv, ww, uuj, vvj, wwj;//单元修正的压力和速度变量、界面修正速度变量
 public:
     Real aeig1, aeig2, aeig3;
@@ -70,7 +70,7 @@ public:
     Real eig11, eig12, eig13;
     Real eig21, eig22, eig23;
 
-	Real vnrel, vnflow, fq0, clr, crl;
+	Real vnrel, vnflow, fq0, clr, crl, ai1, ai2;
     Real cl, cr, cm;
 public:
     Real rl, ul, vl, wl, pl, hl, el;

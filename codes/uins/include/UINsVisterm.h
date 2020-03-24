@@ -46,6 +46,8 @@ public:
     void Alloc();
     void DeAlloc();
 	void CmpSrc();
+	//void Addcoff();
+
 public:
     void PrepareFaceValue();
     void SaveFacePara();

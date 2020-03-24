@@ -114,44 +114,44 @@ void UINsInvterm::CmpInvMassFlux()
     {
         int kkk = 1;
     }
-	iinv.ai1.resize(ug.nFace);
-	iinv.ai2.resize(ug.nFace);
-	iinv.aji.resize(ug.nFace);
-	iinv.fq0.resize(ug.nFace);
-	iinv.bm.resize(ug.nFace);
-	iinv.dist.resize(ug.nFace);
-	iinv.f1.resize(ug.nFace);
-	iinv.f2.resize(ug.nFace);
-	iinv.Vdvj.resize(ug.nFace);
-	iinv.Vdv.resize(ug.nCell);
-	iinv.buc.resize(ug.nCell);
-	iinv.bvc.resize(ug.nCell);
-	iinv.bwc.resize(ug.nCell);
-	iinv.bc.resize(ug.nCell);
-	iinv.sp.resize(ug.nFace);
+	//iinv.ai1.resize(ug.nFace);
+	//iinv.ai2.resize(ug.nFace);
+	//iinv.aji.resize(ug.nFace);
+	//iinv.fq0.resize(ug.nFace);
+	//iinv.bm.resize(ug.nFace);
+	//iinv.dist.resize(ug.nFace);
+	//iinv.f1.resize(ug.nFace);
+	//iinv.f2.resize(ug.nFace);
+	//iinv.Vdvj.resize(ug.nFace);
+	//iinv.Vdv.resize(ug.nCell);
+	//iinv.buc.resize(ug.nCell);
+	//iinv.bvc.resize(ug.nCell);
+	//iinv.bwc.resize(ug.nCell);
+	//iinv.bc.resize(ug.nCell);
+	//iinv.sp.resize(ug.nFace);
 	//iinv.sp1.resize(ug.nFace);
-	iinv.sp2.resize(ug.nFace);
-	iinv.spj.resize(ug.nFace);
-	iinv.spu.resize(ug.nCell);
-	iinv.spv.resize(ug.nCell);
-	iinv.spw.resize(ug.nCell);
-	iinv.bpu.resize(ug.nCell);
-	iinv.bpv.resize(ug.nCell);
-	iinv.bpw.resize(ug.nCell);
-	iinv.ajp.resize(ug.nFace);
-	iinv.app.resize(ug.nCell);
-	iinv.spp.resize(ug.nCell);
-	iinv.pp.resize(ug.nCell);
-	iinv.pp1.resize(ug.nFace);
-	iinv.pp2.resize(ug.nFace);
-	iinv.uu.resize(ug.nCell);
-	iinv.vv.resize(ug.nCell);
-	iinv.ww.resize(ug.nCell);
-	iinv.uuj.resize(ug.nFace);
-	iinv.vvj.resize(ug.nFace);
-	iinv.wwj.resize(ug.nFace);
-	iinv.ai1 = 0;
-	iinv.ai2 = 0;
+	//iinv.sp2.resize(ug.nFace);
+	//iinv.spj.resize(ug.nFace);
+	//iinv.spu.resize(ug.nCell);
+	//iinv.spv.resize(ug.nCell);
+	//iinv.spw.resize(ug.nCell);
+	//iinv.bpu.resize(ug.nCell);
+	//iinv.bpv.resize(ug.nCell);
+	//iinv.bpw.resize(ug.nCell);
+	//iinv.ajp.resize(ug.nFace);
+	//iinv.app.resize(ug.nCell);
+	//iinv.spp.resize(ug.nCell);
+	//iinv.pp.resize(ug.nCell);
+	//iinv.pp1.resize(ug.nFace);
+	//iinv.pp2.resize(ug.nFace);
+	//iinv.uu.resize(ug.nCell);
+	//iinv.vv.resize(ug.nCell);
+	//iinv.ww.resize(ug.nCell);
+	//iinv.uuj.resize(ug.nFace);
+	//iinv.vvj.resize(ug.nFace);
+	//iinv.wwj.resize(ug.nFace);
+	//iinv.ai1 = 0;
+	//iinv.ai2 = 0;
 	iinv.bm = 0;
 	iinv.buc = 0;
 	iinv.bvc = 0;
@@ -284,9 +284,11 @@ void UINsInvterm::CmpCorrectPresscoef()
 			iinv.bpu[ug.cId] -= iinv.flux[IIDX::IIRU];  //源项
 			iinv.bpv[ug.cId] -= iinv.flux[IIDX::IIRV];  
 			iinv.bpw[ug.cId] -= iinv.flux[IIDX::IIRW];
-			iinv.spp[ug.cId] += iinv.aji[fId];  //主参数
+			iinv.sppu[ug.cId] += iinv.aju[fId];  //主参数
+			iinv.sppv[ug.cId] += iinv.ajv[fId];
+			iinv.sppw[ug.cId] += iinv.ajw[fId];
 		}
-		iinv.Vdv[ug.cId] = -gcom.cvol / ((1 + 1)*iinv.sp[ug.cId] + iinv.spj[ug.cId]); //用于求单元修正速度量
+		//iinv.Vdv[ug.cId] = -gcom.cvol / ((1 + 1)*iinv.sp[ug.cId] + iinv.spj[ug.cId]); //用于求单元修正速度量
 	}
 }
 
@@ -307,9 +309,9 @@ void UINsInvterm::UpdateFaceflux()
 			ug.fId = fId;
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
-			iinv.uuj[ug.fId] = 0*iinv.Vdvj[ug.fId] *(iinv.pp1[ug.lc]-iinv.pp2[ug.rc]) *gcom.xfn / iinv.dist[ug.fId];
-			iinv.vvj[ug.fId] = 0*iinv.Vdvj[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.yfn / iinv.dist[ug.fId];
-			iinv.wwj[ug.fId] = 0*iinv.Vdvj[ug.fId] * (iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.zfn / iinv.dist[ug.fId];
+			iinv.uuj[ug.fId] = 0*iinv.Vdvu[ug.fId] *(iinv.pp1[ug.lc]-iinv.pp2[ug.rc]) *gcom.xfn / iinv.dist[ug.fId];
+			iinv.vvj[ug.fId] = 0*iinv.Vdvv[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.yfn / iinv.dist[ug.fId];
+			iinv.wwj[ug.fId] = 0*iinv.Vdvw[ug.fId] * (iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.zfn / iinv.dist[ug.fId];
 
 			(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU]+ iinv.rm * gcom.xfn * iinv.uuj[ug.fId] * gcom.farea;
 			(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + iinv.rm * gcom.xfn * iinv.vvj[ug.fId] * gcom.farea;
@@ -326,9 +328,9 @@ void UINsInvterm::UpdateSpeed()
 	{
 		ug.cId = cId;
 
-		iinv.uu[ug.cId] = iinv.Vdv[ug.cId] * 1; //应该乘压力修正的梯度
-		iinv.vv[ug.cId] = iinv.Vdv[ug.cId] * 1;
-		iinv.ww[ug.cId] = iinv.Vdv[ug.cId] * 1;
+		iinv.uu[ug.cId] = iinv.VdU[ug.cId] * 1; //应该乘压力修正的梯度
+		iinv.vv[ug.cId] = iinv.VdV[ug.cId] * 1;
+		iinv.ww[ug.cId] = iinv.VdW[ug.cId] * 1;
 
 		inscom.prim[IIDX::IIU] = inscom.prim[IIDX::IIU] + iinv.uu[ug.cId];
 		inscom.prim[IIDX::IIV] = inscom.prim[IIDX::IIV] + iinv.vv[ug.cId];

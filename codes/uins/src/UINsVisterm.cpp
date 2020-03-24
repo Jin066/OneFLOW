@@ -155,6 +155,40 @@ void UINsVisterm::CmpNsVisterm()
 
 void UINsVisterm::CmpSrc()
 {
+	for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+		//if ( ug.lc == 0 ) cout << fId << endl;
+
+			iinv.spu[ug.lc] += iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+			iinv.spv[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+			iinv.spw[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+ 
+	}
+
+	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
+	{
+		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		//if ( ug.lc == 0 || ug.rc == 0 ) cout << fId << endl;
+
+		iinv.spu[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+		iinv.spv[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+		iinv.spw[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+		
+		iinv.spu[ug.rc] += iinv.ai2[ug.rc] + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
+		iinv.spv[ug.rc] += iinv.ai2[ug.rc] + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
+		iinv.spw[ug.rc] += iinv.ai2[ug.rc] + iinv.rl * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
+
+		iinv.sp[ug.lc] += iinv.ai2[ug.rc];
+		iinv.sp[ug.rc] += iinv.ai1[ug.lc];
+	
+	}
+
 	for (int cId = 0; cId < ug.nCell; ++cId)
 	{
 		ug.cId = cId;
@@ -170,25 +204,27 @@ void UINsVisterm::CmpSrc()
 			iinv.bvc[ug.cId] += iinv.bm[ug.fId];  
 			iinv.bwc[ug.cId] += iinv.bm[ug.fId];
 			
-			iinv.sp[ug.cId] = iinv.sp[ug.cId] + iinv.ai1[ug.lc];  //以cId单元构造动量方程时的系数（与质量通量相关）
-			iinv.spj[ug.cId] = iinv.spj[ug.cId] + iinv.ai2[ug.rc]; //与cId相邻单元的系数
-			iinv.sp2[ug.cId] = iinv.sp2[ug.rc] + iinv.ai2[ug.rc] + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.cId];
+			//iinv.sp[ug.cId] = iinv.sp[ug.cId] + iinv.ai1[ug.lc];  //以cId单元构造动量方程时的系数（与质量通量相关）
+			//iinv.spj[ug.cId] = iinv.spj[ug.cId] + iinv.ai2[ug.rc]; //与cId相邻单元的系数
+			//iinv.sp2[ug.cId] = iinv.sp2[ug.cId]  + iinv.ai2[ug.rc] +iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.cId];
 		}
-		//iinv.spu[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId]- gcom.cvol * visQ.dqdx1[IIDX::IIP]; //加上时间项和压力梯度项的cId单元系数(计算速度u)
-		//iinv.spv[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdy1[IIDX::IIP];
-		iinv.sp[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdz1[IIDX::IIP];
-		iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
+		                       //iinv.spu[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId]- gcom.cvol * visQ.dqdx1[IIDX::IIP]; //加上时间项和压力梯度项的cId单元系数(计算速度u)
+		                       //iinv.spv[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdy1[IIDX::IIP];
+		
+	    //iinv.sp[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdz1[IIDX::IIP];
+	    iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
+	    iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
 		iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 	}
+	 //this->Addcoff();
 }
 
-//void UINsVisterm::AddVisFlux()
+//void UINsVisterm::Addcoff()
 //{
- //   UnsGrid * grid = Zone::GetUnsGrid();
- //   MRField * res = GetFieldPointer< MRField >( grid, "res" );
+    //UnsGrid * grid = Zone::GetUnsGrid();
+    //MRField * res = GetFieldPointer< MRField >( grid, "res" );
 
- //   ONEFLOW::AddF2CField( res, visflux );
+   // ONEFLOW::AddF2CField( res, visflux );
 //}
 
 void UINsVisterm::PrepareFaceValue()

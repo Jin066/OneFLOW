@@ -68,7 +68,7 @@ public:
     Real meig1, meig2, meig3;
 
     Real eig11, eig12, eig13;
-    Real eig21, eig22, eig23;,
+    Real eig21, eig22, eig23;
 
     Real vnrel, vnflow;
     Real cl, cr, cm;

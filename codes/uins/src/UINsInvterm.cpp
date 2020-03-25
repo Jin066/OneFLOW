@@ -135,9 +135,9 @@ void UINsInvterm::CmpInvMassFlux()
 	//iinv.spu.resize(ug.nCell);
 	//iinv.spv.resize(ug.nCell);
 	//iinv.spw.resize(ug.nCell);
-	//iinv.bpu.resize(ug.nCell);
-	//iinv.bpv.resize(ug.nCell);
-	//iinv.bpw.resize(ug.nCell);
+	iinv.bpu.resize(ug.nCell);
+	iinv.bpv.resize(ug.nCell);
+	iinv.bpw.resize(ug.nCell);
 	//iinv.ajp.resize(ug.nFace);
 	//iinv.app.resize(ug.nCell);
 	//iinv.spp.resize(ug.nCell);

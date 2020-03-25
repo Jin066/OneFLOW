@@ -218,9 +218,14 @@ void UINsVisterm::CmpSrc()
 		                       //iinv.spv[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdy1[IIDX::IIP];
 		
 	    //iinv.sp[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdz1[IIDX::IIP];
-	    iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
-	    iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
+	    
+		//iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
+	    //iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
+		//iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
+
+		iinv.buc += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
+		iinv.bvc += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
+		iinv.bwc += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 	}
 	 //this->Addcoff();
 }

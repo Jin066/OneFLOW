@@ -163,9 +163,13 @@ void UINsVisterm::CmpSrc()
 		ug.rc = (*ug.rcf)[ug.fId];
 		//if ( ug.lc == 0 ) cout << fId << endl;
 
-			iinv.spu[ug.lc] += iinv.ai1+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
-			iinv.spv[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
-			iinv.spw[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+			//iinv.spu[ug.lc] += iinv.ai1+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+			//iinv.spv[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+			//iinv.spw[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+
+			iinv.spu[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1  - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+			iinv.spv[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1  - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+			iinv.spw[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1  - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
  
 	}
 
@@ -177,13 +181,21 @@ void UINsVisterm::CmpSrc()
 
 		//if ( ug.lc == 0 || ug.rc == 0 ) cout << fId << endl;
 
-		iinv.spu[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
-		iinv.spv[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
-		iinv.spw[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+		//iinv.spu[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+		//iinv.spv[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+		//iinv.spw[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+
+		iinv.spu[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1  - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+		iinv.spv[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1  - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+		iinv.spw[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1  - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
 		
-		iinv.spu[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
-		iinv.spv[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
-		iinv.spw[ug.rc] += iinv.ai2 + iinv.rl * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
+		//iinv.spu[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
+		//iinv.spv[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
+		//iinv.spw[ug.rc] += iinv.ai2 + iinv.rl * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
+
+		iinv.spu[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2  - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
+		iinv.spv[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2  - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
+		iinv.spw[ug.rc] += iinv.ai2 + iinv.rl * gcom.cvol2  - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
 
 		iinv.sp[ug.lc] += iinv.ai2;
 		iinv.sp[ug.rc] += iinv.ai1;

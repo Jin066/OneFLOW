@@ -70,7 +70,7 @@ public:
     Real eig11, eig12, eig13;
     Real eig21, eig22, eig23;
 
-	Real vnrel, vnflow, fq0, clr, crl, ai1, ai2, spu, spv, spw;
+	Real vnrel, vnflow, fq0, clr, crl, ai1, ai2, spu1, spv1, spw1, spu2, spv2, spw2;
     Real cl, cr, cm;
 public:
     Real rl, ul, vl, wl, pl, hl, el;

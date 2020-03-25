@@ -152,6 +152,9 @@ void UINsInvterm::CmpInvMassFlux()
 	//iinv.wwj.resize(ug.nFace);
 	//iinv.ai1 = 0;
 	//iinv.ai2 = 0;
+	iinv.spu = 0;
+	iinv.spv = 0;
+	iinv.spw = 0;
 	iinv.bm = 0;
 	iinv.buc = 0;
 	iinv.bvc = 0;

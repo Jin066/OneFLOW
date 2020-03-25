@@ -144,7 +144,8 @@ void UINsVisterm::CmpNsVisterm()
 
 	iinv.ai1 = iinv.ai1 + Fn;
 	iinv.ai2 = iinv.ai2 + Fn;
-	iinv.bm[ug.fId] = Ft;  //界面上归入源项的扩散项
+	//iinv.bm[ug.fId] = Ft;  //界面上归入源项的扩散项
+	iinv.bm = Ft;  //界面上归入源项的扩散项
 
 
 	//iinv.flux[IIDX::IIRU] += (iinv.rm * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * half * (gcom.cvol1 + gcom.cvol2) / dist) * ((Pd1 + Pd2) - (iinv.pr - iinv.pl)) * gcom.farea;

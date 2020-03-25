@@ -307,7 +307,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	for (int cId = 0; cId < ug.nCell; ++cId)
 	{
 		ug.cId = cId;
-		inscom.prim[IIDX::IIP] = inscom.prim[IIDX::IIP]+iinv.pp[ug.cId];
+		inscom.prim[IIDX::IIP] = inscom.prim[IIDX::IIP]+iinv.pp;
 	}
 }
 

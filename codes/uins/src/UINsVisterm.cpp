@@ -202,9 +202,13 @@ void UINsVisterm::CmpSrc()
 			ug.lc = ( *ug.lcf )[ug.fId];
 			ug.rc = ( *ug.rcf )[ug.fId];
 
-			iinv.buc[ug.cId] += iinv.bm[ug.fId];  //计入源项的扩散项
-			iinv.bvc[ug.cId] += iinv.bm[ug.fId];  
-			iinv.bwc[ug.cId] += iinv.bm[ug.fId];
+			//iinv.buc[ug.cId] += iinv.bm[ug.fId];  //计入源项的扩散项
+			//iinv.bvc[ug.cId] += iinv.bm[ug.fId];  
+			//iinv.bwc[ug.cId] += iinv.bm[ug.fId];
+
+			iinv.buc += iinv.bm;  //计入源项的扩散项
+			iinv.bvc += iinv.bm;  
+			iinv.bwc += iinv.bm;
 			
 			//iinv.sp[ug.cId] = iinv.sp[ug.cId] + iinv.ai1[ug.lc];  //以cId单元构造动量方程时的系数（与质量通量相关）
 			//iinv.spj[ug.cId] = iinv.spj[ug.cId] + iinv.ai2[ug.rc]; //与cId相邻单元的系数

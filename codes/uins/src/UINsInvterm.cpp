@@ -334,9 +334,9 @@ void UINsInvterm::UpdateSpeed()
 	{
 		ug.cId = cId;
 
-		iinv.uu[ug.cId] = iinv.VdU[ug.cId] * 1; //应该乘压力修正的梯度
-		iinv.vv[ug.cId] = iinv.VdV[ug.cId] * 1;
-		iinv.ww[ug.cId] = iinv.VdW[ug.cId] * 1;
+		iinv.uu[ug.cId] = iinv.VdU * 1; //应该乘压力修正的梯度
+		iinv.vv[ug.cId] = iinv.VdV * 1;
+		iinv.ww[ug.cId] = iinv.VdW * 1;
 
 		inscom.prim[IIDX::IIU] = inscom.prim[IIDX::IIU] + iinv.uu[ug.cId];
 		inscom.prim[IIDX::IIV] = inscom.prim[IIDX::IIV] + iinv.vv[ug.cId];

@@ -161,16 +161,10 @@ void INsInvterm::CmpINsFaceflux()
 
 	iinv.f1 = de2 * de;  //左单元权重
     iinv.f2 = de1 * de;  //右单元权重
-
-	//Real Va = iinv.f1[ug.fId]*(gcom.cvol1 / iinv.sp[ug.lc]) + iinv.f2[ug.fId] *(gcom.cvol2 / iinv.sp2[ug.lc]);   //（Vj/a）
-	//Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2);
-	//Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2);
-	//Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2);
-
-	iinv.Vau =  (gcom.cvol1 / iinv.spu1) +  (gcom.cvol2 / iinv.spu2);
-	iinv.Vav = (gcom.cvol1 / iinv.spv1) +  (gcom.cvol2 / iinv.spv2);
-	iinv.Vaw = (gcom.cvol1 / iinv.spw1) + (gcom.cvol2 / iinv.spw2);
-
+ 
+	Real Vau = iinv.f1* (gcom.cvol1 / iinv.spu1) + iinv.f2 * (gcom.cvol2 / iinv.spu2);  //（Vj/a）
+	Real Vav = iinv.f1* (gcom.cvol1 / iinv.spv1) + iinv.f2 * (gcom.cvol2 / iinv.spv2);
+	Real Vaw = iinv.f1 * (gcom.cvol1 / iinv.spw1) + iinv.f2 * (gcom.cvol2 / iinv.spw2);
 
     iinv.dist = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]); 
 	Real Pd1 = visQ.dqdx1[IIDX::IIP] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + visQ.dqdy1[IIDX::IIP] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + visQ.dqdz1[IIDX::IIP] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项

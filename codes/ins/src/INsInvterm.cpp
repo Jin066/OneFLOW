@@ -187,9 +187,9 @@ void INsInvterm::CmpINsFaceCorrectPresscoef()
      //iinv.Vdvj[ug.fId] = iinv.f1[ug.fId] * ( gcom.cvol1/((1+1)*iinv.sp[ug.lc]- iinv.spj[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 1)*iinv.sp[ug.rc] - iinv.spj[ug.rc]));  // (Vp/dv)j，用于求面速度修正量
 	 //iinv.aji[ug.fId] = iinv.rm * iinv.Vdvj[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId]; //ajp
 
-	iinv.Vdvu[ug.fId] = iinv.f1 * ( gcom.cvol1/((1+1)*iinv.spu1- iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spu2 - iinv.sp2));  // (Vp/dv)j，用于求面速度修正量
-	iinv.Vdvv[ug.fId] = iinv.f1 * (gcom.cvol1 / ((1 + 1)*iinv.spv1 - iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spv2 - iinv.sp2));
-	iinv.Vdvw[ug.fId] = iinv.f1 * (gcom.cvol1 / ((1 + 1)*iinv.spw1 - iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spw2 - iinv.sp2));
+	iinv.Vdvu = iinv.f1 * ( gcom.cvol1/((1+1)*iinv.spu1- iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spu2 - iinv.sp2));  // (Vp/dv)j，用于求面速度修正量
+	iinv.Vdvv = iinv.f1 * (gcom.cvol1 / ((1 + 1)*iinv.spv1 - iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spv2 - iinv.sp2));
+	iinv.Vdvw = iinv.f1 * (gcom.cvol1 / ((1 + 1)*iinv.spw1 - iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spw2 - iinv.sp2));
 	
 	iinv.aju[ug.fId] = iinv.rm * iinv.Vdvu[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist; //ajp
 	iinv.ajv[ug.fId] = iinv.rm * iinv.Vdvv[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist;

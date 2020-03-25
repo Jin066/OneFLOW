@@ -163,7 +163,6 @@ void UINsInvterm::CmpInvMassFlux()
 	iinv.buc = 0;
 	iinv.bvc = 0;
 	iinv.bwc = 0;
-	iinv.sp = 0;
 	//iinv.sp1 = 0;
 	iinv.sp2 = 0;
 	iinv.spj = 0;

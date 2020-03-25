@@ -195,9 +195,9 @@ void INsInvterm::CmpINsFaceCorrectPresscoef()
 	iinv.ajv = iinv.rm * iinv.Vdvv * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist;
 	iinv.ajw= iinv.rm * iinv.Vdvw * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist;
 
-	iinv.VdU[ug.lc] = -gcom.cvol / ((1 + 1)*iinv.spu1 + iinv.sp1); //用于求单元修正速度量;
-	iinv.VdV[ug.lc] = -gcom.cvol / ((1 + 1)*iinv.spv1+ iinv.sp1);
-	iinv.VdW[ug.lc] = -gcom.cvol / ((1 + 1)*iinv.spw1+ iinv.sp1);
+	iinv.VdU = -gcom.cvol / ((1 + 1)*iinv.spu1 + iinv.sp1); //用于求单元修正速度量;
+	iinv.VdV= -gcom.cvol / ((1 + 1)*iinv.spv1+ iinv.sp1);
+	iinv.VdW= -gcom.cvol / ((1 + 1)*iinv.spw1+ iinv.sp1);
 }
 
 

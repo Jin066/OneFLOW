@@ -159,8 +159,8 @@ void INsInvterm::CmpINsFaceflux()
 	Real de2 = DIST(dx2, dy2, dz2);
 	Real de = 1.0 / (de1 + de2);
 
-	iinv.f1 = de2 * de;  //左单元权重
-    iinv.f2 = de1 * de;  //右单元权重
+	iinv.f1[ug.fId] = de2 * de;  //左单元权重
+    iinv.f2[ug.fId] = de1 * de;  //右单元权重
 
 	//Real Va = iinv.f1[ug.fId]*(gcom.cvol1 / iinv.sp[ug.lc]) + iinv.f2[ug.fId] *(gcom.cvol2 / iinv.sp2[ug.lc]);   //（Vj/a）
 	//Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2);
@@ -180,7 +180,7 @@ void INsInvterm::CmpINsFaceflux()
 	iinv.rm = (iinv.rl + iinv.rr) * half;  //界面密度
 	iinv.um = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (iinv.Vau*gcom.xfn / iinv.dist[ug.fId])*( Pd - (iinv.pr - iinv.pl));  //界面密度
 	iinv.vm = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (iinv.Vav*gcom.yfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));   //界面速度
-	iinv.wm = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (iinv.Vaw*gcom.zfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
+	iinv.wm = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (Vaw*gcom.zfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
 
 	iinv.flux[IIDX::IIRU] = iinv.rm * gcom.xfn * iinv.um * gcom.farea ;
 	iinv.flux[IIDX::IIRV] = iinv.rm * gcom.yfn * iinv.vm * gcom.farea ;

@@ -319,9 +319,9 @@ void UINsInvterm::UpdateFaceflux()
 			ug.fId = fId;
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
-			iinv.uuj = 0*iinv.Vdvu *(iinv.pp1[ug.lc]-iinv.pp2[ug.rc]) *gcom.xfn / iinv.dist;
-			iinv.vvj = 0*iinv.Vdvv *(iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.yfn / iinv.dist;
-			iinv.wwj = 0*iinv.Vdvw * (iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.zfn / iinv.dist;
+			iinv.uuj = 0*iinv.Vdvu *(iinv.pp1-iinv.pp2) *gcom.xfn / iinv.dist;
+			iinv.vvj = 0*iinv.Vdvv *(iinv.pp1 - iinv.pp2) *gcom.yfn / iinv.dist;
+			iinv.wwj = 0*iinv.Vdvw * (iinv.pp1 - iinv.pp2) *gcom.zfn / iinv.dist;
 
 			(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU]+ iinv.rm * gcom.xfn * iinv.uuj * gcom.farea;
 			(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + iinv.rm * gcom.xfn * iinv.vvj * gcom.farea;

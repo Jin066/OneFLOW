@@ -163,9 +163,14 @@ void INsInvterm::CmpINsFaceflux()
     iinv.f2 = de1 * de;  //右单元权重
 
 	//Real Va = iinv.f1[ug.fId]*(gcom.cvol1 / iinv.sp[ug.lc]) + iinv.f2[ug.fId] *(gcom.cvol2 / iinv.sp2[ug.lc]);   //（Vj/a）
-	Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2);
-	Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2);
-	Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2);
+	//Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2);
+	//Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2);
+	//Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2);
+
+	iinv.Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2);
+	iinv.Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2);
+	iinv.Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2);
+
 
     iinv.dist = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]); 
 	Real Pd1 = visQ.dqdx1[IIDX::IIP] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + visQ.dqdy1[IIDX::IIP] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + visQ.dqdz1[IIDX::IIP] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项
@@ -173,9 +178,9 @@ void INsInvterm::CmpINsFaceflux()
 	Real Pd = Pd1 + Pd2;
 
 	iinv.rm = (iinv.rl + iinv.rr) * half;  //界面密度
-	iinv.um = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (Vau*gcom.xfn / iinv.dist[ug.fId])*( Pd - (iinv.pr - iinv.pl));  //界面密度
-	iinv.vm = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (Vav*gcom.yfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));   //界面速度
-	iinv.wm = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (Vaw*gcom.zfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
+	iinv.um = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (iinv.Vau*gcom.xfn / iinv.dist[ug.fId])*( Pd - (iinv.pr - iinv.pl));  //界面密度
+	iinv.vm = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (iinv.Vav*gcom.yfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));   //界面速度
+	iinv.wm = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (iinv.Vaw*gcom.zfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
 
 	iinv.flux[IIDX::IIRU] = iinv.rm * gcom.xfn * iinv.um * gcom.farea ;
 	iinv.flux[IIDX::IIRV] = iinv.rm * gcom.yfn * iinv.vm * gcom.farea ;

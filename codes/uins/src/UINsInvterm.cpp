@@ -187,9 +187,6 @@ void UINsInvterm::CmpInvMassFlux()
 
         this->CmpINsinvTerm();
 
-		iinv.ai1[ug.lc] = iinv.crl;   //界面左侧单元的系数
-	    iinv.ai2[ug.rc] = iinv.clr;   //界面右侧单元的系数
-
         //this->UpdateFaceInvFlux();
     }
 }

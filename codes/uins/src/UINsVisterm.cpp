@@ -186,8 +186,8 @@ void UINsVisterm::CmpSrc()
 		iinv.spw2 += iinv.ai2 + iinv.rl * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
 
 
-		iinv.sp[ug.lc] += iinv.ai2;
-		iinv.sp[ug.rc] += iinv.ai1;
+		iinv.sp1 += iinv.ai2;
+		iinv.sp2 += iinv.ai1;
 	
 	}
 

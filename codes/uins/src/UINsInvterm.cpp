@@ -287,9 +287,9 @@ void UINsInvterm::CmpCorrectPresscoef()
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{
 			int fId = (*ug.c2f)[ug.cId][iFace];
-			iinv.bpu[ug.cId] -= iinv.flux[IIDX::IIRU];  //源项
-			iinv.bpv[ug.cId] -= iinv.flux[IIDX::IIRV];  
-			iinv.bpw[ug.cId] -= iinv.flux[IIDX::IIRW];
+			iinv.bpu -= iinv.flux[IIDX::IIRU];  //源项
+			iinv.bpv -= iinv.flux[IIDX::IIRV];  
+			iinv.bpw -= iinv.flux[IIDX::IIRW];
 			iinv.sppu[ug.cId] += iinv.aju[fId];  //主参数
 			iinv.sppv[ug.cId] += iinv.ajv[fId];
 			iinv.sppw[ug.cId] += iinv.ajw[fId];

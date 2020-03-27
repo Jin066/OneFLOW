@@ -291,12 +291,16 @@ void UINsInvterm::CmpCorrectPresscoef()
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{
 			int fId = (*ug.c2f)[ug.cId][iFace];
-			iinv.bpu -= iinv.flux[IIDX::IIRU];  //源项
-			iinv.bpv -= iinv.flux[IIDX::IIRV];
-			iinv.bpw -= iinv.flux[IIDX::IIRW];
-			iinv.sppu += iinv.aju;  //主参数
-			iinv.sppv += iinv.ajv;
-			iinv.sppw += iinv.ajw;
+			ug.fId = fId;
+			ug.lc = (*ug.lcf)[ug.fId];
+			ug.rc = (*ug.rcf)[ug.fId];
+
+			iinv.bpu[ug.lc] -= iinv.flux[IIDX::IIRU];  //源项
+			iinv.bpv[ug.lc] -= iinv.flux[IIDX::IIRV];
+			iinv.bpw[ug.lc] -= iinv.flux[IIDX::IIRW];
+			iinv.sppu[ug.lc] += iinv.aju[ug.fId];  //主参数
+			iinv.sppv[ug.lc] += iinv.ajv[ug.fId];
+			iinv.sppw[ug.lc] += iinv.ajw[ug.fId];
 		}
 		//iinv.Vdv[ug.cId] = -gcom.cvol / ((1 + 1)*iinv.sp[ug.cId] + iinv.spj[ug.cId]); //用于求单元修正速度量
 	}

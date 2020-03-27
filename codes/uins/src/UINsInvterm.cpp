@@ -314,22 +314,56 @@ void UINsInvterm::CmpPressCorrectEqu()
 
 void UINsInvterm::UpdateFaceflux()
 {
+	iinv.Init();
+	ug.Init();
+	uinsf.Init();
+	Alloc();
+	this->CmpInvFace();  //±ﬂΩÁ¥¶¿Ì
 	for (int fId = 0; fId < ug.nFace; ++fId)
 	{
-			ug.fId = fId;
-			ug.lc = (*ug.lcf)[ug.fId];
-			ug.rc = (*ug.rcf)[ug.fId];
-			iinv.uuj = 0*iinv.Vdvu *(iinv.pp1-iinv.pp2) *gcom.xfn / iinv.dist;
-			iinv.vvj = 0*iinv.Vdvv *(iinv.pp1 - iinv.pp2) *gcom.yfn / iinv.dist;
-			iinv.wwj = 0*iinv.Vdvw * (iinv.pp1 - iinv.pp2) *gcom.zfn / iinv.dist;
+		ug.fId = fId;
 
-			(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU]+ 0 * iinv.rm * gcom.xfn * iinv.uuj * gcom.farea;
-			(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] +0 * iinv.rm * gcom.xfn * iinv.vvj * gcom.farea;
-			(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] +0 * iinv.rm * gcom.xfn * iinv.wwj * gcom.farea;
-			(*iinvflux)[3][ug.fId] = 0;
-			(*iinvflux)[4][ug.fId] = 0;
+		if (fId == 10127)
+		{
+			int kkk = 1;
+		}
+
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		this->PrepareFaceValue();
+
+		this->CmpUpdateINsFaceflux();
 	}
+	//for (int fId = 0; fId < ug.nFace; ++fId)
+	//{
+	//		ug.fId = fId;
+	//		ug.lc = (*ug.lcf)[ug.fId];
+	//		ug.rc = (*ug.rcf)[ug.fId];
+	//		iinv.uuj = 0*iinv.Vdvu *(iinv.pp1-iinv.pp2) *gcom.xfn / iinv.dist;
+	//		iinv.vvj = 0*iinv.Vdvv *(iinv.pp1 - iinv.pp2) *gcom.yfn / iinv.dist;
+	//		iinv.wwj = 0*iinv.Vdvw * (iinv.pp1 - iinv.pp2) *gcom.zfn / iinv.dist;
+
+	//		(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU]+ 0 * iinv.rm * gcom.xfn * iinv.uuj * gcom.farea;
+	//		(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] +0 * iinv.rm * gcom.xfn * iinv.vvj * gcom.farea;
+	//		(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] +0 * iinv.rm * gcom.xfn * iinv.wwj * gcom.farea;
+	//		(*iinvflux)[3][ug.fId] = 0;
+	//		(*iinvflux)[4][ug.fId] = 0;
+//	}
 	this->AddFlux();
+}
+
+void UINsInvterm::UpdateFaceflux()
+{
+	iinv.uuj = 0 * iinv.Vdvu *(iinv.pp1 - iinv.pp2) *gcom.xfn / iinv.dist;
+	iinv.vvj = 0 * iinv.Vdvv *(iinv.pp1 - iinv.pp2) *gcom.yfn / iinv.dist;
+	iinv.wwj = 0 * iinv.Vdvw * (iinv.pp1 - iinv.pp2) *gcom.zfn / iinv.dist;
+
+	(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU] + 0 * iinv.rm * gcom.xfn * iinv.uuj * gcom.farea;
+	(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + 0 * iinv.rm * gcom.xfn * iinv.vvj * gcom.farea;
+	(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] + 0 * iinv.rm * gcom.xfn * iinv.wwj * gcom.farea;
+	(*iinvflux)[3][ug.fId] = 0;
+	(*iinvflux)[4][ug.fId] = 0;
 }
 
 void UINsInvterm::UpdateSpeed()

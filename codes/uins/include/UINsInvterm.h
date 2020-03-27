@@ -47,6 +47,7 @@ public:
 	void CmpCorrectPresscoef();
 	void CmpPressCorrectEqu();
 	void UpdateFaceflux();
+	void CmpUpdateINsFaceflux();
 	void UpdateSpeed();
     void AddFlux();
     void PrepareFaceValue();

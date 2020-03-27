@@ -359,13 +359,13 @@ void UINsInvterm::UpdateFaceflux()
 
 void UINsInvterm::CmpUpdateINsFaceflux()
 {
-	iinv.uuj = 0 * iinv.Vdvu *(iinv.pp1 - iinv.pp2) *gcom.xfn / iinv.dist;
-	iinv.vvj = 0 * iinv.Vdvv *(iinv.pp1 - iinv.pp2) *gcom.yfn / iinv.dist;
-	iinv.wwj = 0 * iinv.Vdvw * (iinv.pp1 - iinv.pp2) *gcom.zfn / iinv.dist;
+	iinv.uuj[ug.fId] = 0 * iinv.Vdvu[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.xfn / iinv.dist[ug.fId];
+	iinv.vvj[ug.fId] = 0 * iinv.Vdvv[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.lc]) *gcom.yfn / iinv.dist[ug.fId];
+	iinv.wwj[ug.fId] = 0 * iinv.Vdvw[ug.fId] * (iinv.pp1[ug.lc] - iinv.pp2[ug.lc]) *gcom.zfn / iinv.dist[ug.fId];
 
-	(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU] + 0 * iinv.rm * gcom.xfn * iinv.uuj * gcom.farea;
-	(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + 0 * iinv.rm * gcom.xfn * iinv.vvj * gcom.farea;
-	(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] + 0 * iinv.rm * gcom.xfn * iinv.wwj * gcom.farea;
+	(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU] + 0 * iinv.rm * gcom.xfn * iinv.uuj[ug.fId] * gcom.farea;
+	(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + 0 * iinv.rm * gcom.xfn * iinv.vvj[ug.fId] * gcom.farea;
+	(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] + 0 * iinv.rm * gcom.xfn * iinv.wwj[ug.fId] * gcom.farea;
 	(*iinvflux)[3][ug.fId] = 0;
 	(*iinvflux)[4][ug.fId] = 0;
 }

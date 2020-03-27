@@ -353,7 +353,7 @@ void UINsInvterm::UpdateFaceflux()
 	this->AddFlux();
 }
 
-void UINsInvterm::UpdateFaceflux()
+void UINsInvterm::CmpUpdateINsFaceflux()
 {
 	iinv.uuj = 0 * iinv.Vdvu *(iinv.pp1 - iinv.pp2) *gcom.xfn / iinv.dist;
 	iinv.vvj = 0 * iinv.Vdvv *(iinv.pp1 - iinv.pp2) *gcom.yfn / iinv.dist;

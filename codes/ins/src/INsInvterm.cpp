@@ -159,22 +159,22 @@ void INsInvterm::CmpINsFaceflux()
 	Real de2 = DIST(dx2, dy2, dz2);
 	Real de = 1.0 / (de1 + de2);
 
-	iinv.f1 = de2 * de;  //左单元权重
-    iinv.f2 = de1 * de;  //右单元权重
+	iinv.f1[ug.fId] = de2 * de;  //左单元权重
+    iinv.f2[ug.fId] = de1 * de;  //右单元权重
  
-	Real Vau = iinv.f1* (gcom.cvol1 / iinv.spu1) + iinv.f2 * (gcom.cvol2 / iinv.spu2);  //（Vj/a）
-	Real Vav = iinv.f1* (gcom.cvol1 / iinv.spv1) + iinv.f2 * (gcom.cvol2 / iinv.spv2);
-	Real Vaw = iinv.f1 * (gcom.cvol1 / iinv.spw1) + iinv.f2 * (gcom.cvol2 / iinv.spw2);
+	Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2[ug.rc]);  //（Vj/a）
+	Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2[ug.lc]);
+	Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2[ug.lc]);
 
-    iinv.dist = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]); 
+    iinv.dist[ug.fId] = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]);
 	Real Pd1 = visQ.dqdx1[IIDX::IIP] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + visQ.dqdy1[IIDX::IIP] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + visQ.dqdz1[IIDX::IIP] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项
 	Real Pd2 = visQ.dqdx2[IIDX::IIP] * ((*ug.xcc)[ug.rc] - (*ug.xfc)[ug.fId]) + visQ.dqdy2[IIDX::IIP] * ((*ug.ycc)[ug.rc] - (*ug.yfc)[ug.fId]) + visQ.dqdz2[IIDX::IIP] * ((*ug.zcc)[ug.rc] - (*ug.zfc)[ug.fId]);
 	Real Pd = Pd1 + Pd2;
 
 	iinv.rm = (iinv.rl + iinv.rr) * half;  //界面密度
-	iinv.um = (iinv.f1 *iinv.ul + iinv.f2 *iinv.ur) + (iinv.Vau*gcom.xfn / iinv.dist)*( Pd - (iinv.pr - iinv.pl));  //界面密度
-	iinv.vm = (iinv.f1 *iinv.vl + iinv.f2 *iinv.vr) + (iinv.Vav*gcom.yfn / iinv.dist)*(Pd - (iinv.pr - iinv.pl));   //界面速度
-	iinv.wm = (iinv.f1*iinv.wl + iinv.f2 *iinv.wr) + (iinv.Vaw*gcom.zfn / iinv.dist)*(Pd - (iinv.pr - iinv.pl));
+	iinv.um = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (iinv.Vau*gcom.xfn / iinv.dist[ug.fId])*( Pd - (iinv.pr - iinv.pl));  //界面密度
+	iinv.vm = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (iinv.Vav*gcom.yfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));   //界面速度
+	iinv.wm = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (iinv.Vaw*gcom.zfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
 
 	iinv.flux[IIDX::IIRU] = iinv.rm * gcom.xfn * iinv.um * gcom.farea ;
 	iinv.flux[IIDX::IIRV] = iinv.rm * gcom.yfn * iinv.vm * gcom.farea ;

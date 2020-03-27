@@ -163,9 +163,9 @@ void UINsVisterm::CmpSrc()
 		ug.rc = (*ug.rcf)[ug.fId];
 		//if ( ug.lc == 0 ) cout << fId << endl;
 
-			iinv.spu1 += iinv.ai1+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
-			iinv.spv1+= iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
-			iinv.spw1 += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+			iinv.spu1[ug.lc]+= iinv.ai1+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+			iinv.spv1[ug.lc]+= iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+			iinv.spw1[ug.lc]+= iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
 	}
 
 	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
@@ -176,20 +176,20 @@ void UINsVisterm::CmpSrc()
 
 		//if ( ug.lc == 0 || ug.rc == 0 ) cout << fId << endl;
 
-		iinv.spu1 += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
-		iinv.spv1 += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
-		iinv.spw1 += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+		iinv.spu1[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
+		iinv.spv1[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
+		iinv.spw1[ug.lc] += iinv.ai1 + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
 
 		
-		iinv.spu2 += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
-		iinv.spv2 += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
-		iinv.spw2 += iinv.ai2 + iinv.rl * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
+		iinv.spu2[ug.rc] += iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
+		iinv.spv2[ug.rc]+= iinv.ai2 + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
+		iinv.spw2[ug.rc]+= iinv.ai2 + iinv.rl * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
 
 
-		iinv.sp1 += iinv.ai2;
-		iinv.sp2 += iinv.ai1;
+		iinv.sp1[ug.lc] += iinv.ai2;
+		iinv.sp2[ug.rc] += iinv.ai1;
 	
-	}
+ 	}
 
 	for (int cId = 0; cId < ug.nCell; ++cId)
 	{
@@ -206,9 +206,9 @@ void UINsVisterm::CmpSrc()
 			//iinv.bvc[ug.cId] += iinv.bm[ug.fId];  
 			//iinv.bwc[ug.cId] += iinv.bm[ug.fId];
 
-			iinv.buc += iinv.bm;  //计入源项的扩散项
-			iinv.bvc += iinv.bm;  
-			iinv.bwc += iinv.bm;
+			iinv.buc[ug.cId] += iinv.bm[ug.lc];  //计入源项的扩散项
+			iinv.bvc[ug.cId] += iinv.bm[ug.lc];  
+			iinv.bwc[ug.cId] += iinv.bm[ug.lc];
 			
 			//iinv.sp[ug.cId] = iinv.sp[ug.cId] + iinv.ai1[ug.lc];  //以cId单元构造动量方程时的系数（与质量通量相关）
 			//iinv.spj[ug.cId] = iinv.spj[ug.cId] + iinv.ai2[ug.rc]; //与cId相邻单元的系数
@@ -223,9 +223,9 @@ void UINsVisterm::CmpSrc()
 	    //iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
 		//iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 
-		iinv.buc += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bvc += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bwc += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
+		iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
+		iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
+		iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 	}
 	 //this->Addcoff();
 }

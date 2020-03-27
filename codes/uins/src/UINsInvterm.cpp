@@ -376,13 +376,13 @@ void UINsInvterm::UpdateSpeed()
 	{
 		ug.cId = cId;
 
-		iinv.uu = iinv.VdU * 1; //应该乘压力修正的梯度
-		iinv.vv = iinv.VdV * 1;
-		iinv.ww= iinv.VdW * 1;
+		iinv.uu[ug.cId] = iinv.VdU[ug.lc] * 1; //应该乘压力修正的梯度
+		iinv.vv[ug.cId] = iinv.VdV[ug.lc] * 1;
+		iinv.ww[ug.cId] = iinv.VdW[ug.lc] * 1;
 
-		inscom.prim[IIDX::IIU] = inscom.prim[IIDX::IIU] + iinv.uu;
-		inscom.prim[IIDX::IIV] = inscom.prim[IIDX::IIV] + iinv.vv;
-		inscom.prim[IIDX::IIW] = inscom.prim[IIDX::IIW] + iinv.ww;
+		inscom.prim[IIDX::IIU] = inscom.prim[IIDX::IIU] + iinv.uu[ug.cId];
+		inscom.prim[IIDX::IIV] = inscom.prim[IIDX::IIV] + iinv.vv[ug.cId];
+		inscom.prim[IIDX::IIW] = inscom.prim[IIDX::IIW] + iinv.ww[ug.cId];
 	}
 	
 }

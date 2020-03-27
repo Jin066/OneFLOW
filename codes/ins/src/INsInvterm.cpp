@@ -187,17 +187,17 @@ void INsInvterm::CmpINsFaceCorrectPresscoef()
      //iinv.Vdvj[ug.fId] = iinv.f1[ug.fId] * ( gcom.cvol1/((1+1)*iinv.sp[ug.lc]- iinv.spj[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 1)*iinv.sp[ug.rc] - iinv.spj[ug.rc]));  // (Vp/dv)j，用于求面速度修正量
 	 //iinv.aji[ug.fId] = iinv.rm * iinv.Vdvj[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId]; //ajp
 
-	iinv.Vdvu = iinv.f1 * ( gcom.cvol1/((1+1)*iinv.spu1- iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spu2 - iinv.sp2));  // (Vp/dv)j，用于求面速度修正量
-	iinv.Vdvv = iinv.f1 * (gcom.cvol1 / ((1 + 1)*iinv.spv1 - iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spv2 - iinv.sp2));
-	iinv.Vdvw = iinv.f1 * (gcom.cvol1 / ((1 + 1)*iinv.spw1 - iinv.sp1)) + iinv.f2 * (gcom.cvol2 / ((1 + 1)*iinv.spw2 - iinv.sp2));
+	iinv.Vdvu[ug.fId] = iinv.f1[ug.fId] * ( gcom.cvol1/((1+1)*iinv.spu1[ug.lc] - iinv.sp1[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 1)*iinv.spu2[ug.lc] - iinv.sp2[ug.lc]));  // (Vp/dv)j，用于求面速度修正量
+	iinv.Vdvv[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1 / ((1 + 1)*iinv.spv1[ug.lc] - iinv.sp1[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 1)*iinv.spv2[ug.lc] - iinv.sp2[ug.lc]));
+	iinv.Vdvw[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1 / ((1 + 1)*iinv.spw1[ug.lc] - iinv.sp1[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 1)*iinv.spw2[ug.lc] - iinv.sp2[ug.lc]));
 	
-	iinv.aju = iinv.rm * iinv.Vdvu * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist; //ajp
-	iinv.ajv = iinv.rm * iinv.Vdvv * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist;
-	iinv.ajw= iinv.rm * iinv.Vdvw * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist;
+	iinv.aju[ug.fId] = iinv.rm * iinv.Vdvu[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId]; //ajp
+	iinv.ajv[ug.fId] = iinv.rm * iinv.Vdvv[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId];
+	iinv.ajw[ug.fId] = iinv.rm * iinv.Vdvw[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId];
 
-	iinv.VdU = -gcom.cvol / ((1 + 1)*iinv.spu1 + iinv.sp1); //用于求单元修正速度量;
-	iinv.VdV= -gcom.cvol / ((1 + 1)*iinv.spv1+ iinv.sp1);
-	iinv.VdW= -gcom.cvol / ((1 + 1)*iinv.spw1+ iinv.sp1);
+	iinv.VdU[ug.lc] = -gcom.cvol / ((1 + 1)*iinv.spu1[ug.lc] + iinv.sp1[ug.lc]); //用于求单元修正速度量;
+	iinv.VdV[ug.lc] = -gcom.cvol / ((1 + 1)*iinv.spv1[ug.lc] + iinv.sp1[ug.lc]);
+	iinv.VdW[ug.lc] = -gcom.cvol / ((1 + 1)*iinv.spw1[ug.lc] + iinv.sp1[ug.lc]);
 }
 
 

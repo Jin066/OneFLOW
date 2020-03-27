@@ -112,7 +112,7 @@ void INsInvterm::CmpINsinvTerm()
 	//Real v2 = ONEFLOW::SQR(iinv.um, iinv.vm, iinv.wm);
 
 
-	iinv.vnflow = gcom.xfn * iinv.vm + gcom.yfn * iinv.um + gcom.zfn * iinv.wm;  //初始界面上 V*n(改动)
+	iinv.vnflow = gcom.xfn * iinv.um + gcom.yfn * iinv.vm + gcom.zfn * iinv.wm;  //初始界面上 V*n(改动)
 
 	//iinv.fq0[ug.fId] = iinv.rl * iinv.vnflow * gcom.farea; //初始界面上的质量通量
 
@@ -134,8 +134,8 @@ void INsInvterm::CmpINsinvTerm()
 	//iinv.ai1[ug.lc] = iinv.crl;   //界面左侧单元的系数
 	//iinv.ai2[ug.rc] = iinv.clr;   //界面右侧单元的系数
 
-	iinv.ai1= iinv.crl;   //界面左侧单元的系数
-	iinv.ai2= iinv.clr;   //界面右侧单元的系数
+	iinv.ai1= 1+iinv.crl;   //界面左侧单元的系数
+	iinv.ai2= 0.5+iinv.clr;   //界面右侧单元的系数
 	
      //iinv.ai1[ug.lc] = iinv.ai1[ug.lc]+crl;   //界面左侧单元的系数
 	//iinv.ai2[ug.rc] = iinv.ai2[ug.rc]+clr;   //界面右侧单元的系数

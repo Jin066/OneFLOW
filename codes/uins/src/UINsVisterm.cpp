@@ -138,9 +138,9 @@ void UINsVisterm::CmpNsVisterm()
 	Real l2rdz = (*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc];
 
 
-	Real Fn = (1/2) / (gcom.xfn * l2rdy + gcom.yfn * l2rdx + gcom.zfn * l2rdz) * gcom.farea;   // μ / ( n * d ) 法向扩散项系数(改动)
+	Real Fn = (1/2) / (1+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz) * gcom.farea;   // μ / ( n * d ) 法向扩散项系数(改动)
 	Real Ft = (1/2) * ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) -
-		(visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (gcom.xfn * l2rdy + gcom.yfn * l2rdx + gcom.zfn * l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
+		(visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (1+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
 
 	iinv.ai1 = iinv.ai1 + Fn;
 	iinv.ai2 = iinv.ai2 + Fn;

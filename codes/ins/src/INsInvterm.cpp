@@ -128,14 +128,14 @@ void INsInvterm::CmpINsinvTerm()
 	//iinv.aeig3 = ABS(iinv.vnrel - iinv.cm);
 
 
-	iinv.clr = MAX(0, iinv.fq0);  //从界面左侧单元流入右侧单元的初始质量流量
-	iinv.crl= iinv.clr - iinv.fq0;   //从界面右侧单元流入左侧单元的初始质量流量
+	iinv.clr[ug.fId] = MAX(0, iinv.fq0);  //从界面左侧单元流入右侧单元的初始质量流量
+	iinv.crl[ug.fId]= iinv.clr[ug.fId] - iinv.fq0;   //从界面右侧单元流入左侧单元的初始质量流量
 
 	//iinv.ai1[ug.lc] = iinv.crl;   //界面左侧单元的系数
 	//iinv.ai2[ug.rc] = iinv.clr;   //界面右侧单元的系数
 
-	iinv.ai1[ug.fId]= 1+iinv.crl;   //界面左侧单元的系数
-	iinv.ai2[ug.fId]= 0.5+iinv.clr;   //界面右侧单元的系数
+	iinv.ai1[ug.fId]= 1+iinv.crl[ug.fId];   //界面左侧单元的系数
+	iinv.ai2[ug.fId]= 0.5+iinv.clr[ug.fId];   //界面右侧单元的系数
 	
      //iinv.ai1[ug.lc] = iinv.ai1[ug.lc]+crl;   //界面左侧单元的系数
 	//iinv.ai2[ug.rc] = iinv.ai2[ug.rc]+clr;   //界面右侧单元的系数

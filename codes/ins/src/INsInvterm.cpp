@@ -114,26 +114,26 @@ void INsInvterm::CmpINsinvTerm()
 
 	iinv.vnflow = gcom.xfn * iinv.um + gcom.yfn * iinv.vm + gcom.zfn * iinv.wm;  //初始界面上 V*n
 
-	iinv.fq0[ug.fId] = iinv.rl * iinv.vnflow * gcom.farea; //初始界面上的质量通量
+	iinv.fq0 = iinv.rl * iinv.vnflow * gcom.farea; //初始界面上的质量通量
 
 	//Real fq0 = iinv.rl * iinv.vnflow * gcom.farea;
 
 	//Real gamm1 = iinv.gama - one;
 
-	//Real c2 = gamm1 * (iinv.hm - half * v2);
+	//Real c2 = gamm1 * (iinv.hm - half *v.cm);
+	//iinv.aeig3 = ABS(iinv.vnrel - i v2);
 	//iinv.cm = sqrt(ABS(c2));
 
 	//iinv.aeig1 = ABS(iinv.vnrel);
-	//iinv.aeig2 = ABS(iinv.vnrel + iinv.cm);
-	//iinv.aeig3 = ABS(iinv.vnrel - iinv.cm);
+	//iinv.aeig2 = ABS(iinv.vnrel + iininv.cm);
 
 
-     Real clr = MAX(0, iinv.fq0[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
-     Real crl = clr - iinv.fq0[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+     Real clr = MAX(0, iinv.fq0);  //从界面左侧单元流入右侧单元的初始质量流量
+     Real crl = clr - iinv.fq0;   //从界面右侧单元流入左侧单元的初始质量流量
 
 	//iinv.ai1[ug.lc] = iinv.crl;   //界面左侧单元的系数
-	//iinv.ai2[ug.rc] = iinv.clr;   //界面右侧单元的系数
-
+	//iinv.ai2[ug.rc] = iinv.clr   //界面右侧单元的系数
+;
 	iinv.ai1[ug.lc]= 1+crl;   //界面左侧单元的系数
 	iinv.ai2[ug.rc]= 0.5+clr;   //界面右侧单元的系数
 	
@@ -163,8 +163,8 @@ void INsInvterm::CmpINsFaceflux()
     iinv.f2[ug.fId] = de1 * de;  //右单元权重
  
 	Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu2[ug.rc]);  //（Vj/a）
-	Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2[ug.lc]);
-	Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2[ug.lc]);
+	Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv2[ug.rc]);
+	Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw1[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw2[ug.rc]);
 
     iinv.dist[ug.fId] = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]);
 	Real Pd1 = visQ.dqdx1[IIDX::IIP] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + visQ.dqdy1[IIDX::IIP] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + visQ.dqdz1[IIDX::IIP] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项

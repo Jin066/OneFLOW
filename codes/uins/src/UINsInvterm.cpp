@@ -114,42 +114,57 @@ void UINsInvterm::CmpInvMassFlux()
     {
         int kkk = 1;
     }
-	//iinv.ai1.resize(ug.nFace);
-	//iinv.ai2.resize(ug.nFace);
+	iinv.ai1.resize(ug.nFace);
+	iinv.ai2.resize(ug.nFace);
 	//iinv.aji.resize(ug.nFace);
 	//iinv.fq0.resize(ug.nFace);
-	//iinv.bm.resize(ug.nFace);
-	//iinv.dist.resize(ug.nFace);
-	//iinv.f1.resize(ug.nFace);
-	//iinv.f2.resize(ug.nFace);
+	iinv.bm.resize(ug.nFace);
+	iinv.dist.resize(ug.nFace);
+	iinv.f1.resize(ug.nFace);
+	iinv.f2.resize(ug.nFace);
 	//iinv.Vdvj.resize(ug.nFace);
-	//iinv.Vdv.resize(ug.nCell);
-	//iinv.buc.resize(ug.nCell);
-	//iinv.bvc.resize(ug.nCell);
-	//iinv.bwc.resize(ug.nCell);
+	//iinv.Vdv.resize(ug.nFace);
+	iinv.Vdvu.resize(ug.nFace);
+	iinv.Vdvv.resize(ug.nFace);
+	iinv.Vdvw.resize(ug.nFace);
+	iinv.aju.resize(ug.nFace);
+	iinv.ajv.resize(ug.nFace);
+	iinv.ajw.resize(ug.nFace);
+	iinv.VdU.resize(ug.nFace);
+	iinv.VdV.resize(ug.nFace);
+	iinv.VdW.resize(ug.nFace);
+	iinv.buc.resize(ug.nCell);
+	iinv.bvc.resize(ug.nCell);
+	iinv.bwc.resize(ug.nCell);
 	//iinv.bc.resize(ug.nCell);
 	//iinv.sp.resize(ug.nFace);
-	//iinv.sp1.resize(ug.nFace);
-	//iinv.sp2.resize(ug.nFace);
+	iinv.sp1.resize(ug.nFace);
+	iinv.sp2.resize(ug.nFace);
 	//iinv.spj.resize(ug.nFace);
-	//iinv.spu.resize(ug.nCell);
-	//iinv.spv.resize(ug.nCell);
-	//iinv.spw.resize(ug.nCell);
-	//iinv.bpu.resize(ug.nCell);
-	//iinv.bpv.resize(ug.nCell);
-	//iinv.bpw.resize(ug.nCell);
+	iinv.spu1.resize(ug.nFace);
+	iinv.spv1.resize(ug.nFace);
+	iinv.spw1.resize(ug.nFace);
+	iinv.spu2.resize(ug.nFace);
+	iinv.spv2.resize(ug.nFace);
+	iinv.spw2.resize(ug.nFace);
+	iinv.bpu.resize(ug.nFace);
+	iinv.bpv.resize(ug.nFace);
+	iinv.bpw.resize(ug.nFace);
+	iinv.sppu.resize(ug.nFace);
+	iinv.sppv.resize(ug.nFace);
+	iinv.sppw.resize(ug.nFace);
 	//iinv.ajp.resize(ug.nFace);
 	//iinv.app.resize(ug.nCell);
 	//iinv.spp.resize(ug.nCell);
-	//iinv.pp.resize(ug.nCell);
-	//iinv.pp1.resize(ug.nFace);
-	//iinv.pp2.resize(ug.nFace);
-	//iinv.uu.resize(ug.nCell);
-	//iinv.vv.resize(ug.nCell);
-	//iinv.ww.resize(ug.nCell);
-	//iinv.uuj.resize(ug.nFace);
-	//iinv.vvj.resize(ug.nFace);
-	//iinv.wwj.resize(ug.nFace);
+	iinv.pp.resize(ug.nCell);
+	iinv.pp1.resize(ug.nFace);
+	iinv.pp2.resize(ug.nFace);
+	iinv.uu.resize(ug.nCell);
+	iinv.vv.resize(ug.nCell);
+	iinv.ww.resize(ug.nCell);
+	iinv.uuj.resize(ug.nFace);
+	iinv.vvj.resize(ug.nFace);
+	iinv.wwj.resize(ug.nFace);
 	//iinv.ai1 = 0;
 	//iinv.ai2 = 0;
 	iinv.spu1 = 0;
@@ -311,7 +326,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	for (int cId = 0; cId < ug.nCell; ++cId)
 	{
 		ug.cId = cId;
-		inscom.prim[IIDX::IIP] = inscom.prim[IIDX::IIP]+iinv.pp;
+		inscom.prim[IIDX::IIP] = inscom.prim[IIDX::IIP]+iinv.pp[ug.cId];
 	}
 }
 

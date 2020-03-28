@@ -39,7 +39,7 @@ public:
 public:
     void CmpViscoff();
     void PrepareField();
-    void CmpNsVisterm();
+    //void CmpNsVisterm();
 	void CmpVisterm();
 	void CmpFaceVisterm();
 

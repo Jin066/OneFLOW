@@ -133,19 +133,18 @@ void UINsVisterm::CmpFaceVisterm()
 void UINsVisterm::CmpNsVisterm()
 {
 
-	iinv.l2rdx = (*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc];  //界面左右单元中心距
-	iinv.l2rdy = (*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc];
-	iinv.l2rdz = (*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc];
+	 Real l2rdx = (*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc];  //界面左右单元中心距
+	 Real l2rdy = (*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc];
+	 Real l2rdz = (*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc];
 
 
-     iinv.Fn = (1/2) / (1+gcom.xfn * iinv.l2rdx + gcom.yfn * iinv.l2rdy + gcom.zfn * iinv.l2rdz) * gcom.farea;   // μ / ( n * d ) 法向扩散项系数(改动)
-	 iinv.Ft = (1/2) * ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - (visQ.dqdx[IIDX::IIU] * iinv.l2rdx + visQ.dqdy[IIDX::IIV] * iinv.l2rdy + visQ.dqdz[IIDX::IIW] * iinv.l2rdz) / (1 + gcom.xfn * iinv.l2rdx + gcom.yfn * iinv.l2rdy + gcom.zfn * iinv.l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
-		
-
-	iinv.ai1[ug.lc] += iinv.Fn;
-	iinv.ai2[ug.lc] += iinv.Fn;
+     Real Fn = (1/2) / (1+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz) * gcom.farea;   // μ / ( n * d ) 法向扩散项系数(改动)
+	 Real Ft = (1/2) * ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - (visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (1 + gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
+	
+	 iinv.ai1 = iinv.ai1+Fn;
+	 iinv.ai2 = iinv.ai2+Fn;
 	//iinv.bm[ug.fId] = Ft;  //界面上归入源项的扩散项
-	iinv.bm[ug.lc] = iinv.Ft;  //界面上归入源项的扩散项
+	iinv.bm = Ft;  //界面上归入源项的扩散项
 
 
 	//iinv.flux[IIDX::IIRU] += (iinv.rm * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * half * (gcom.cvol1 + gcom.cvol2) / dist) * ((Pd1 + Pd2) - (iinv.pr - iinv.pl)) * gcom.farea;

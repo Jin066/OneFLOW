@@ -160,6 +160,8 @@ void UINsVisterm::CmpSrc()
 			iinv.spu1[ug.lc]+= iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
 			iinv.spv1[ug.lc]+= iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
 			iinv.spw1[ug.lc]+= iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
+
+			iinv.sp2[ug.rc] += iinv.ai1[ug.lc];
 	}
 
 	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)

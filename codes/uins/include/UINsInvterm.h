@@ -63,5 +63,6 @@ public:
     LimField * limf;
     MRField * iinvflux;
 };
+//void PrimToQ(RealField & prim, Real gama, RealField & q);
 
 EndNameSpace

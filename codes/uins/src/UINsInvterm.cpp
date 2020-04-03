@@ -165,20 +165,20 @@ void UINsInvterm::CmpInvMassFlux()
 	iinv.uuj.resize(ug.nFace);
 	iinv.vvj.resize(ug.nFace);
 	iinv.wwj.resize(ug.nFace);
-	//iinv.ai1 = 0;
-	//iinv.ai2 = 0;
-	iinv.spu1 = 0;
-	iinv.spv1 = 0;
-	iinv.spw1 = 0;
-	iinv.spu2 = 0;
-	iinv.spv2 = 0;
-	iinv.spw2 = 0;
+	iinv.ai1 = 0;
+	iinv.ai2 = 0;
+	iinv.spu1 = 1;
+	iinv.spv1 = 1;
+	iinv.spw1 = 1;
+	iinv.spu2 = 1;
+	iinv.spv2 = 1;
+	iinv.spw2 = 1;
 
 	iinv.bm = 0;
 	iinv.buc = 0;
 	iinv.bvc = 0;
 	iinv.bwc = 0;
-	//iinv.sp1 = 0;
+	iinv.sp1 = 0;
 	iinv.sp2 = 0;
 	iinv.spj = 0;
 	iinv.spp = 0;
@@ -374,15 +374,37 @@ void UINsInvterm::UpdateFaceflux()
 
 void UINsInvterm::CmpUpdateINsFaceflux()
 {
-	iinv.uuj[ug.fId] = 0 * iinv.Vdvu[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.xfn / iinv.dist[ug.fId];
-	iinv.vvj[ug.fId] = 0 * iinv.Vdvv[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.lc]) *gcom.yfn / iinv.dist[ug.fId];
-	iinv.wwj[ug.fId] = 0 * iinv.Vdvw[ug.fId] * (iinv.pp1[ug.lc] - iinv.pp2[ug.lc]) *gcom.zfn / iinv.dist[ug.fId];
+	iinv.uuj[ug.fId] =  iinv.Vdvu[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.rc]) *gcom.xfn / iinv.dist[ug.fId];
+	iinv.vvj[ug.fId] =  iinv.Vdvv[ug.fId] *(iinv.pp1[ug.lc] - iinv.pp2[ug.lc]) *gcom.yfn / iinv.dist[ug.fId];
+	iinv.wwj[ug.fId] =  iinv.Vdvw[ug.fId] * (iinv.pp1[ug.lc] - iinv.pp2[ug.lc]) *gcom.zfn / iinv.dist[ug.fId];
 
-	(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU] + 0 * iinv.rm * gcom.xfn * iinv.uuj[ug.fId] * gcom.farea;
-	(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + 0 * iinv.rm * gcom.xfn * iinv.vvj[ug.fId] * gcom.farea;
-	(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] + 0 * iinv.rm * gcom.xfn * iinv.wwj[ug.fId] * gcom.farea;
-	(*iinvflux)[3][ug.fId] = 0;
-	(*iinvflux)[4][ug.fId] = 0;
+	//PrimToQ(iinv.prim1, iinv.gama1, iinv.q1);
+	//PrimToQ(iinv.prim2, iinv.gama2, iinv.q2);
+
+	//for (int iEqu = 0; iEqu < inscom.nEqu; ++iEqu)
+	//{
+	//	iinv.dq[iEqu] = iinv.q2[iEqu] - iinv.q1[iEqu];
+	//}
+
+	//iinv.flux[IIDX::IIR] = iinv.flux[IIDX::IIR];
+	iinv.flux[IIDX::IIRU] += iinv.rm * gcom.xfn * iinv.uuj[ug.fId] * gcom.farea;
+		iinv.flux[IIDX::IIRV] += iinv.rm * gcom.yfn * iinv.vvj[ug.fId] * gcom.farea;
+		iinv.flux[IIDX::IIRW] += iinv.rm * gcom.zfn * iinv.wwj[ug.fId] * gcom.farea;
+	//iinv.flux[IIDX::IIRE] = iinv.flux[IIDX::IIRE];
+
+
+
+	for (int iEqu = 0; iEqu < inscom.nTEqu; ++iEqu)
+	{
+		(*iinvflux)[iEqu][ug.fId] = iinv.flux[iEqu];
+	}
+
+
+	//(*iinvflux)[0][ug.fId] = iinv.flux[IIDX::IIRU] + iinv.rm * gcom.xfn * iinv.uuj[ug.fId] * gcom.farea;
+	//(*iinvflux)[1][ug.fId] = iinv.flux[IIDX::IIRV] + iinv.rm * gcom.xfn * iinv.vvj[ug.fId] * gcom.farea;
+	//(*iinvflux)[2][ug.fId] = iinv.flux[IIDX::IIRW] + iinv.rm * gcom.xfn * iinv.wwj[ug.fId] * gcom.farea;
+	//(*iinvflux)[3][ug.fId] = 0;
+	//(*iinvflux)[4][ug.fId] = 0;
 }
 
 void UINsInvterm::UpdateSpeed()

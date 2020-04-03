@@ -188,7 +188,7 @@ void INsLusgs::GetStandardFluxIncrement( int signOfMatrix )
     nslu.dfj[ IIDX::IIRU ] = lmd1 * nslu.dqj[ IIDX::IIRU ] - um * term1 + gcom.xfn * term2;
     nslu.dfj[ IIDX::IIRV ] = lmd1 * nslu.dqj[ IIDX::IIRV ] - vm * term1 + gcom.yfn * term2;
     nslu.dfj[ IIDX::IIRW ] = lmd1 * nslu.dqj[ IIDX::IIRW ] - wm * term1 + gcom.zfn * term2;
-   // nslu.dfj[ IIDX::IIRE ] = lmd1 * nslu.dqj[ IIDX::IIRE ] - hm * term1 + vn_fluid * term2;
+    nslu.dfj[ IIDX::IIRE ] = lmd1 * nslu.dqj[ IIDX::IIRE ] - hm * term1 + vn_fluid * term2;
 
     for ( int iEqu = nslu.nBEqu; iEqu < nslu.nEqu; ++ iEqu )
     {

@@ -203,17 +203,17 @@ void INSCmpGamaT(int flag)
 
 void INsCmpRHS()
 {
-	INsCmpInv();
+	INsCmpInv(); //计算对流项
 
-	INsCmpVis();
+	INsCmpVis(); //计算扩散项
 
-	INsCmpSrc();
+	INsCmpSrc(); //计算源项和动量方程系数
 
-	//INsMomPred();  //需要解动量方程组
+	//INsMomPred(); //求解动量方程
 
-	INsCmpFaceflux();
+	INsCmpFaceflux(); //计算界面流量
 
-	INsCorrectPresscoef();
+	INsCorrectPresscoef(); //计算压力修正方程系数
 
 	INsCmpPressCorrectEquandUpdatePress();  //需要解压力修正方程组，增设单元修正压力未知量
 

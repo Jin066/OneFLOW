@@ -135,7 +135,7 @@ void INsInvterm::CmpINsinvTerm()
 	//iinv.ai2[ug.rc] = iinv.clr   //界面右侧单元的系数
 ;
 	iinv.ai1[ug.lc]= 1+crl;   //界面左侧单元的系数
-	iinv.ai2[ug.rc]= 0.5+clr;   //界面右侧单元的系数
+	iinv.ai2[ug.rc]= 1+clr;   //界面右侧单元的系数
 	
      //iinv.ai1[ug.lc] = iinv.ai1[ug.lc]+crl;   //界面左侧单元的系数
 	//iinv.ai2[ug.rc] = iinv.ai2[ug.rc]+clr;   //界面右侧单元的系数

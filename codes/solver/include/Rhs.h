@@ -60,7 +60,7 @@ void INsCorrectPresscoef();
 void INsCmpInv();
 void INsCmpVis();
 void INsCmpSrc();
-void INsMomPred();
+void INsMomPre();
 void INsCmpFaceflux();
 void INsCmpPressCorrectEquandUpdatePress();
 void INsUpdateFaceflux();

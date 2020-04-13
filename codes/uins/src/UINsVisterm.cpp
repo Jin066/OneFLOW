@@ -68,7 +68,7 @@ void UINsVisterm::CmpViscoff()
     uinsf.Init();
     visQ.Init( inscom.nEqu );
     //visT.Init( inscom.nTModel );
-    Ivis.Init();
+    //Ivis.Init();
    // heat_flux.Init();
 
     Alloc();
@@ -202,9 +202,9 @@ void UINsVisterm::CmpSrc()
 			//iinv.bvc[ug.cId] += iinv.bm[ug.fId];  
 			//iinv.bwc[ug.cId] += iinv.bm[ug.fId];
 
-			iinv.buc[ug.cId] += iinv.bm[ug.lc];  //计入源项的扩散项
-			iinv.bvc[ug.cId] += iinv.bm[ug.lc];  
-			iinv.bwc[ug.cId] += iinv.bm[ug.lc];
+			iinv.buc[ug.lc] += iinv.bm[ug.lc];  //计入源项的扩散项
+			iinv.bvc[ug.lc] += iinv.bm[ug.lc];  
+			iinv.bwc[ug.lc] += iinv.bm[ug.lc];
 			
 			//iinv.sp[ug.cId] = iinv.sp[ug.cId] + iinv.ai1[ug.lc];  //以cId单元构造动量方程时的系数（与质量通量相关）
 			//iinv.spj[ug.cId] = iinv.spj[ug.cId] + iinv.ai2[ug.rc]; //与cId相邻单元的系数
@@ -219,9 +219,9 @@ void UINsVisterm::CmpSrc()
 	    //iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
 		//iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 
-		iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
+		iinv.buc[ug.lc] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
+		iinv.bvc[ug.lc] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
+		iinv.bwc[ug.lc] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 	}
 	 //this->Addcoff();
 }

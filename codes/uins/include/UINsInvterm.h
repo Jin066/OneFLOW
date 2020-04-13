@@ -42,8 +42,8 @@ public:
     void CmpInvMassFlux();
     void CmpInvFace();
     void CmpLimiter();
-	void MomPred();
 	void CmpFaceflux();
+	void CmpINsRes();
 	void CmpCorrectPresscoef();
 	void CmpPressCorrectEqu();
 	void UpdateFaceflux();
@@ -51,6 +51,7 @@ public:
 	void UpdateSpeed();
     void AddFlux();
     void PrepareFaceValue();
+	void CmpPreGrad();
 	//void CmpINsinvTerm();
     //void UpdateFaceInvFlux();
     void ReadTmp();
@@ -58,6 +59,7 @@ public:
     void GetQlQrField();
     void ReconstructFaceValueField();
     void BoundaryQlQrFixField();
+	void MomPre();
 public:
     Limiter * limiter;
     LimField * limf;

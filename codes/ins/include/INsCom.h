@@ -144,6 +144,7 @@ public:
 extern INsCom inscom;
 
 void INsExtract( RealField & prim, Real & rm, Real & um, Real & vm, Real & wm, Real & pm );
+
 bool INsCheckFunction( RealField & q );
 
 EndNameSpace

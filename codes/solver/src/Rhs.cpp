@@ -209,7 +209,7 @@ void INsCmpRHS()
 
 	INsCmpSrc(); //计算源项和动量方程系数
 
-	//INsMomPred(); //求解动量方程
+	INsMomPre(); //求解动量方程
 
 	INsCmpFaceflux(); //计算界面流量
 
@@ -220,6 +220,8 @@ void INsCmpRHS()
 	INsCmpSpeedCorrectandUpdateSpeed();  //需要先增设界面修正速度未知量并进行求解,更新单元速度和压力
 
 	INsUpdateFaceflux();   //更新界面流量
+
+
 
 }
 
@@ -256,10 +258,10 @@ void INsCmpSrc()
 	delete uINsVisterm;
 }
 
-void INsMomPred()
+void INsMomPre()
 {
 	UINsInvterm * uINsInvterm = new UINsInvterm();
-	uINsInvterm->MomPred();
+	uINsInvterm->MomPre();
 	delete uINsInvterm;
 }
 
@@ -304,8 +306,6 @@ void INsCmpSpeedCorrectandUpdateSpeed()
 //	uINsInvterm->CmpCorrectSpeed();
 //	delete uINsInvterm;
 //}
-
-
 
 
 

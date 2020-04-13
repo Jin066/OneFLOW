@@ -124,7 +124,6 @@ void IFieldProperty::DownloadInterfaceValue()
         }
     }
 }
-
 void IFieldProperty::UploadOversetInterfaceValue()
 {
     Grid * gridIn = Zone::GetGrid();

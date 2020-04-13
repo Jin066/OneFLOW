@@ -118,7 +118,7 @@ void TimeIntegral::Lusgs()
     {
         ONEFLOW::SsSgTask( "LUSGS_LOWER_SWEEP"     );
         ONEFLOW::SsSgTask( "EXCHANGE_INTERFACE_DQ" );
-       ONEFLOW::SsSgTask( "LUSGS_UPPER_SWEEP"     );
+        ONEFLOW::SsSgTask( "LUSGS_UPPER_SWEEP"     );
     }
 
     ONEFLOW::SsSgTask( "UPDATE_FLOWFIELD_LUSGS" );

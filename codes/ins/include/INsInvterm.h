@@ -61,7 +61,7 @@ public:
     RealField q, q1, q2;
     RealField dq;
     RealField flux, flux1, flux2;
-	RealField bc, spj, aji, Vdv, spp,  ajp, app, spu1, spv1, spw1, spu2, spv2, spw2, sp1, sp2, bm, buc, bvc, bwc,  dist, Vdvu, Vdvv, Vdvw, aju, ajv, ajw, VdU, VdV, VdW,bpu, bpv, bpw, sppu, sppv, sppw, pp1, pp2, uu, vv, ww, ai1, ai2, f1, f2, pp, uuj, vvj, wwj;
+	RealField bc, spj, aji, Vdv, spp,  ajp, app, spu1, spv1, spw1, spu2, spv2, spw2, sp1, sp2, bm, buc, bvc, bwc,  dist, Vdvu, Vdvv, Vdvw, aju, ajv, ajw, VdU, VdV, VdW,bpu, bpv, bpw, sppu, sppv, sppw, pp1, pp2, uu, vv, ww, ai1, ai2, f1, f2, pp, uuj, vvj, wwj,muc,mvc,mwc,uc,vc,wc, mp,ppr,ppl, bp, dqqdx, dqqdy, dqqdz;
 
 public:
     Real aeig1, aeig2, aeig3;
@@ -69,7 +69,6 @@ public:
 
     Real eig11, eig12, eig13;
     Real eig21, eig22, eig23;
-
 	Real vnrel, Vau, Vav, Vaw,vnflow,Fn,Ft,fq0;  // l2rdx, l2rdy, l2rdz,
     Real cl, cr, cm;
 public:

@@ -207,6 +207,8 @@ void INsCmpRHS()
 
 	INsCmpVis(); //计算扩散项
 
+	//INsCmpUnstead(); 计算非稳态项
+
 	INsCmpSrc(); //计算源项和动量方程系数
 
 	INsMomPre(); //求解动量方程
@@ -221,7 +223,7 @@ void INsCmpRHS()
 
 	INsUpdateFaceflux();   //更新界面流量
 
-
+	//INsCheckConvg();
 
 }
 
@@ -241,20 +243,8 @@ void INsCmpVis()
 
 void INsCmpSrc()
 {
-	//if (inscom.chemModel == 1)
-	//{
-	//	INsCmpChemSrc();
-	//}
-
-	//INsCmpTurbEnergy();
-
-	//dual time step source
-	//if (ctrl.idualtime == 1)
-	//{
-	//	INsCmpDualTimeStepSrc();
-	//}
 	UINsVisterm * uINsVisterm = new UINsVisterm();
-	uINsVisterm->CmpSrc();
+	uINsVisterm->CmpINsSrc();
 	delete uINsVisterm;
 }
 

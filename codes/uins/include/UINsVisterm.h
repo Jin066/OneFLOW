@@ -36,6 +36,7 @@ public:
     typedef void ( UINsVisterm:: * VisPointer )();
     VisPointer visPointer;
     MRField * visflux;
+	//MRField * spuj, *spvj, *spwj;
 public:
     void CmpViscoff();
     void PrepareField();
@@ -45,7 +46,7 @@ public:
 
     void Alloc();
     void DeAlloc();
-	void CmpSrc();
+	void CmpINsSrc();
 	//void Addcoff();
 
 public:

@@ -67,17 +67,11 @@ void UINsVisterm::CmpViscoff()
     ug.Init();
     uinsf.Init();
     visQ.Init( inscom.nEqu );
-    //visT.Init( inscom.nTModel );
-    //Ivis.Init();
-   // heat_flux.Init();
 
     Alloc();
 
-    //this->SetVisPointer();
-
     this->PrepareField();
     this->CmpVisterm();
-    //this->Addterm();
 
     DeAlloc();
 }
@@ -113,12 +107,6 @@ void UINsVisterm::CmpVisterm()
             int kkk = 1;
         }
 
-        if ( ug.lc == 11 || ug.rc == 11 )
-        {
-        }
-
-        //this->PrepareFaceValue();
-
         this->CmpFaceVisterm();  //要改动
 
     }
@@ -126,104 +114,68 @@ void UINsVisterm::CmpVisterm()
 
 void UINsVisterm::CmpFaceVisterm()
 {
-    //this->CmpNsVisterm();  //要改动
+
 	Real l2rdx = (*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc];  //界面左右单元中心距
 	Real l2rdy = (*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc];
 	Real l2rdz = (*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc];
 
 
-	iinv.Fn = (1/2) / (1 + gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz) * gcom.farea;   // μ / ( n * d ) 法向扩散项系数(改动)
-	iinv.Ft = (1/2) * ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - (visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (1 + gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
+	iinv.Fn = (1 / 2) / (1 + gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz) * gcom.farea;   // μ / ( n * d ) 法向扩散项系数(改动)
+	iinv.Ft = (1 / 2) * ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - (visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (1 + gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
 
-	iinv.ai1[ug.lc] += iinv.Fn;
-	iinv.ai2[ug.rc] += iinv.Fn;
-	//iinv.bm[ug.fId] = Ft;  //界面上归入源项的扩散项
-	iinv.bm[ug.lc] = iinv.Ft;  //界面上归入源项的扩散项
+	iinv.akk1[ug.lc] = iinv.Fn;    //该界面上的扩散流
+	iinv.akk2[ug.rc] = -iinv.Fn;
 
+	iinv.ak1[ug.lc] += iinv.Fn;   //归于动量方程中主对角线系数
+	iinv.ak2[ug.rc] -= iinv.Fn;
 
-	//iinv.flux[IIDX::IIRU] += (iinv.rm * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * half * (gcom.cvol1 + gcom.cvol2) / dist) * ((Pd1 + Pd2) - (iinv.pr - iinv.pl)) * gcom.farea;
-	//iinv.flux[IIDX::IIRV] += (iinv.rm * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * half * (gcom.cvol1 + gcom.cvol2) / dist) * ((Pd1 + Pd2) - (iinv.pr - iinv.pl)) * gcom.farea;
-	//iinv.flux[IIDX::IIRW] += (iinv.rm * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * half * (gcom.cvol1 + gcom.cvol2) / dist) * ((Pd1 + Pd2) - (iinv.pr - iinv.pl)) * gcom.farea;
-
+	iinv.bm1[ug.lc] += iinv.Ft;  //界面上归入源项的扩散项
+	iinv.bm2[ug.rc] += iinv.Ft;
 }
 
 
-void UINsVisterm::CmpSrc()
+
+void UINsVisterm::CmpINsSrc()
 {
-	for (int fId = 0; fId < ug.nBFace; ++fId)
-	{
-		ug.fId = fId;
-		ug.lc = (*ug.lcf)[ug.fId];
-		ug.rc = (*ug.rcf)[ug.fId];
-		//if ( ug.lc == 0 ) cout << fId << endl;
-
-			iinv.spu1[ug.lc]+= iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (1+(*uinsf.timestep)[0][ug.lc]) - gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
-			iinv.spv1[ug.lc]+= iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (1+(*uinsf.timestep)[0][ug.lc]) - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
-			iinv.spw1[ug.lc]+= iinv.ai1[ug.lc]+ iinv.rl * gcom.cvol1 / (1+(*uinsf.timestep)[0][ug.lc]) - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
-
-			iinv.sp2[ug.rc] += iinv.ai1[ug.lc];
-	}
-
-	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
-	{
-		ug.fId = fId;
-		ug.lc = (*ug.lcf)[ug.fId];
-		ug.rc = (*ug.rcf)[ug.fId];
-
-		//if ( ug.lc == 0 || ug.rc == 0 ) cout << fId << endl;
-
-		iinv.spu1[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc]- gcom.cvol1 * visQ.dqdx1[IIDX::IIP];
-		iinv.spv1[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdy1[IIDX::IIP];
-		iinv.spw1[ug.lc] += iinv.ai1[ug.lc] + iinv.rl * gcom.cvol1 / (*uinsf.timestep)[0][ug.lc] - gcom.cvol1 * visQ.dqdz1[IIDX::IIP];
-
-		
-		iinv.spu2[ug.rc] += iinv.ai2[ug.rc] + iinv.rr * gcom.cvol2 /(*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdx2[IIDX::IIP];
-		iinv.spv2[ug.rc]+= iinv.ai2[ug.rc] + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2 * visQ.dqdy2[IIDX::IIP];
-		iinv.spw2[ug.rc]+= iinv.ai2[ug.rc] + iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.rc] - gcom.cvol2* visQ.dqdz2[IIDX::IIP];
-
-
-		iinv.sp1[ug.lc] += iinv.ai2[ug.rc];
-		iinv.sp2[ug.rc] += iinv.ai1[ug.lc];
-	
- 	}
 
 	for (int cId = 0; cId < ug.nCell; ++cId)
 	{
 		ug.cId = cId;
-		int fn = (*ug.c2f)[ug.cId].size();
+
+		iinv.spu[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - gcom.cvol * (*uinsf.dqdx)[IIDX::IIP][ug.cId]; //矩阵主对角线系数，动量方程单元主系数
+		iinv.spv[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - gcom.cvol * (*uinsf.dqdy)[IIDX::IIP][ug.cId];
+		iinv.spw[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - gcom.cvol * (*uinsf.dqdz)[IIDX::IIP][ug.cId];
+
+		iinv.buc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId];   //动量方程源项
+		iinv.bvc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId];
+		iinv.bwc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId];
+
+		int fn = (*ug.c2f)[ug.cId].size(); 
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{
 			int fId = (*ug.c2f)[ug.cId][iFace];
 			ug.fId = fId;
-			ug.lc = ( *ug.lcf )[ug.fId];
-			ug.rc = ( *ug.rcf )[ug.fId];
+			ug.lc = (*ug.lcf)[ug.fId];
+			ug.rc = (*ug.rcf)[ug.fId];
+			if (ug.cId == ug.lc)
+			{
+				iinv.spuj[ug.cId][ug.rc] = iinv.aii2[ug.rc] + iinv.akk2[ug.rc];  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
+				iinv.spvj[ug.cId][ug.rc] = iinv.aii2[ug.rc] + iinv.akk2[ug.rc];
+				iinv.spwj[ug.cId][ug.rc] = iinv.aii2[ug.rc] + iinv.akk2[ug.rc];
+				
+				iinv.sj[ug.cId] += iinv.aii2[ug.rc] + iinv.akk2[ug.rc]; //矩阵非零系数相加，用于求压力修正方程
 
-			//iinv.buc[ug.cId] += iinv.bm[ug.fId];  //计入源项的扩散项
-			//iinv.bvc[ug.cId] += iinv.bm[ug.fId];  
-			//iinv.bwc[ug.cId] += iinv.bm[ug.fId];
+			}
+			else if (ug.cId == ug.rc)
+			{
+				iinv.spuj[ug.cId][ug.lc] = iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
+				iinv.spvj[ug.cId][ug.lc] = iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
+				iinv.spwj[ug.cId][ug.lc] = iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
 
-			iinv.buc[ug.lc] += iinv.bm[ug.lc];  //计入源项的扩散项
-			iinv.bvc[ug.lc] += iinv.bm[ug.lc];  
-			iinv.bwc[ug.lc] += iinv.bm[ug.lc];
-			
-			//iinv.sp[ug.cId] = iinv.sp[ug.cId] + iinv.ai1[ug.lc];  //以cId单元构造动量方程时的系数（与质量通量相关）
-			//iinv.spj[ug.cId] = iinv.spj[ug.cId] + iinv.ai2[ug.rc]; //与cId相邻单元的系数
-			//iinv.sp2[ug.cId] = iinv.sp2[ug.cId]  + iinv.ai2[ug.rc] +iinv.rr * gcom.cvol2 / (*uinsf.timestep)[0][ug.cId];
+				iinv.sj[ug.cId] += iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
+			}
 		}
-		                       //iinv.spu[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId]- gcom.cvol * visQ.dqdx1[IIDX::IIP]; //加上时间项和压力梯度项的cId单元系数(计算速度u)
-		                       //iinv.spv[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdy1[IIDX::IIP];
-		
-	    //iinv.sp[ug.cId] += iinv.rl * gcom.cvol / (*uinsf.timestep)[0][ug.cId] - gcom.cvol * visQ.dqdz1[IIDX::IIP];
-	    
-		//iinv.buc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
-	    //iinv.bvc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
-		//iinv.bwc[ug.cId] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
-
-		iinv.buc[ug.lc] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIU] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bvc[ug.lc] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIV] / (*uinsf.timestep)[0][ug.cId];
-		iinv.bwc[ug.lc] += iinv.rl * gcom.cvol * iinv.prim[IIDX::IIW] / (*uinsf.timestep)[0][ug.cId];
 	}
-	 //this->Addcoff();
 }
 
 //void UINsVisterm::Addcoff()

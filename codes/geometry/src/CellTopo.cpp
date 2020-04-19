@@ -100,7 +100,7 @@ void CellTopo::CmpC2f( FaceTopo * faceTopo )
     int nBFace = faceTopo->GetNBFace();
     int nFace = faceTopo->GetNFace();
 
-    c2f.resize( nCell );
+    c2f.resize( nCell+ nBFace);  //ins时做了修改
 
     for ( int iFace = 0; iFace < nBFace; ++ iFace )
     {

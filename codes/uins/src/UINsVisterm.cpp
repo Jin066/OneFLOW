@@ -124,10 +124,10 @@ void UINsVisterm::CmpFaceVisterm()
 	iinv.Ft = (1 / 2) * ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - (visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (1 + gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)) * gcom.farea;//归入源项的扩散项(改动）
 
 	iinv.akk1[ug.lc] = iinv.Fn;    //该界面上的扩散流
-	iinv.akk2[ug.rc] = -iinv.Fn;
+	iinv.akk2[ug.rc] = -iinv.Fn;   
 
-	iinv.ak1[ug.lc] += iinv.Fn;   //归于动量方程中主对角线系数
-	iinv.ak2[ug.rc] -= iinv.Fn;
+	iinv.ak1[ug.lc] += iinv.akk1[ug.lc];   //归于动量方程中主对角线系数
+	iinv.ak2[ug.rc] += iinv.akk2[ug.rc];
 
 	iinv.bm1[ug.lc] += iinv.Ft;  //界面上归入源项的扩散项
 	iinv.bm2[ug.rc] += iinv.Ft;
@@ -138,7 +138,7 @@ void UINsVisterm::CmpFaceVisterm()
 void UINsVisterm::CmpINsSrc()
 {
 
-	for (int cId = 0; cId < ug.nCell; ++cId)
+	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
 
@@ -149,7 +149,7 @@ void UINsVisterm::CmpINsSrc()
 		iinv.buc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId];   //动量方程源项
 		iinv.bvc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId];
 		iinv.bwc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId];
-
+		
 		int fn = (*ug.c2f)[ug.cId].size(); 
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{

@@ -43,7 +43,7 @@ public:
     void CmpInvFace();
     void CmpLimiter();
 	void CmpFaceflux();
-	void CmpINsRes();
+	void CmpINsMomRes();
 	void CmpCorrectPresscoef();
 	void CmpPressCorrectEqu();
 	void UpdateFaceflux();

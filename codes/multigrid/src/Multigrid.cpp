@@ -109,23 +109,60 @@ void MG::MultigridSolve()
 
 void MG::Run()
 {
-    TimeSpan * timeSpan = new TimeSpan();
-    while ( SimuIterState::Running() )
-    {
-        Iteration::outerSteps ++;
-        ctrl.currTime += ctrl.pdt;
-   
-        //Inner loop
-        Iteration::innerSteps = 0;
-        while ( ! SolverState::Converge() )
-        {
-            Iteration::innerSteps ++;
+	int startStrategy = ONEFLOW::GetDataValue< int >("startStrategy");
+	if (startStrategy == 2)
+	{
+		double rhs_u = 1e-8;
+		double rhs_v = 1e-8;
+		double rhs_w = 1e-8;
+		double rhs_p = 1e-8;
 
-            this->SolveInnerIter();
-        }
-        this->OuterProcess( timeSpan );
-    }
-    delete timeSpan;
+		Real res_u, res_v, res_w, res_p;
+
+	   TimeSpan * timeSpan = new TimeSpan();
+		while (SimuIterState::Running())
+		{
+			Iteration::outerSteps++;
+			ctrl.currTime += ctrl.pdt;
+
+			//Inner loop
+			Iteration::innerSteps = 0;
+
+			res_u = 1;
+			res_v = 1;
+			res_w = 1;
+			res_p = 1;
+			
+			while ( res_u > rhs_u || res_v > rhs_v|| res_w > rhs_w|| res_p > rhs_p)
+			{
+				Iteration::innerSteps++;
+
+				this->SolveInnerIter();
+			}
+			this->OuterProcess(timeSpan);
+		}
+		delete timeSpan;
+	}
+	else
+	{
+		TimeSpan * timeSpan = new TimeSpan();
+		while (SimuIterState::Running())
+		{
+			Iteration::outerSteps++;
+			ctrl.currTime += ctrl.pdt;
+
+			//Inner loop
+			Iteration::innerSteps = 0;
+			while (!SolverState::Converge())
+			{
+				Iteration::innerSteps++;
+
+				this->SolveInnerIter();
+			}
+			this->OuterProcess(timeSpan);
+		}
+		delete timeSpan;
+	}
 }
 
 void MG::InnerProcess()
@@ -277,11 +314,23 @@ void MG::FastSolveFlowFieldByMultigridMethod( int gl )
 
 void MG::SolveMultigridFlowField( int gl )
 {
-    this->MWrap( & MG::PreprocessMultigridFlowField       , gl );
-    this->MWrap( & MG::PreRelaxationCycle                 , gl );
-    this->FastSolveFlowFieldByMultigridMethod( gl );
-    this->MWrap( & MG::PostRelaxationCycle                , gl );
-    this->MWrap( & MG::PostprocessMultigridFlowField      , gl );
+	int startStrategy = ONEFLOW::GetDataValue< int >("startStrategy");
+	if (startStrategy == 2)
+	{
+		//this->MWrap(&MG::PreprocessMultigridFlowField, gl);
+		this->MWrap(&MG::PreRelaxationCycle, gl);
+		this->FastSolveFlowFieldByMultigridMethod(gl);
+		this->MWrap(&MG::PostRelaxationCycle, gl);
+		this->MWrap(&MG::PostprocessMultigridFlowField, gl);
+	}
+	else
+	{
+		this->MWrap(&MG::PreprocessMultigridFlowField, gl);
+		this->MWrap(&MG::PreRelaxationCycle, gl);
+		this->FastSolveFlowFieldByMultigridMethod(gl);
+		this->MWrap(&MG::PostRelaxationCycle, gl);
+		this->MWrap(&MG::PostprocessMultigridFlowField, gl);
+	}
 }
 
 void MG::SolveInnerIter()
@@ -320,9 +369,18 @@ void MG::WeakIter()
 
 void MG::StrongIter()
 {
-    this->ZeroResidualsForAllSolvers();
+	int startStrategy = ONEFLOW::GetDataValue< int >("startStrategy");
+	if (startStrategy == 2)
+	{
+		//this->ZeroResidualsForAllSolvers();
+		this->SolveMultigridFlowField(0);
+	}
+	else
+	{
+		this->ZeroResidualsForAllSolvers();
 
-    this->SolveMultigridFlowField( 0 );
+		this->SolveMultigridFlowField(0);
+	}
 }
 
 

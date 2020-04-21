@@ -30,6 +30,8 @@ typedef void ( * TIME_INTEGRAL )( void );
 
 const int MULTI_STAGE = 1;
 const int LUSGS = 2;
+const int SIMPLE = 3;
+
 
 class SweepState
 {
@@ -53,6 +55,7 @@ public:
 public:
     static void RungeKutta();
     static void Lusgs();
+	static void Simple();
 };
 
 EndNameSpace

@@ -159,18 +159,18 @@ void UINsVisterm::CmpINsSrc()
 			ug.rc = (*ug.rcf)[ug.fId];
 			if (ug.cId == ug.lc)
 			{
-				iinv.spuj[ug.cId][ug.rc] = iinv.aii2[ug.rc] + iinv.akk2[ug.rc];  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
-				iinv.spvj[ug.cId][ug.rc] = iinv.aii2[ug.rc] + iinv.akk2[ug.rc];
-				iinv.spwj[ug.cId][ug.rc] = iinv.aii2[ug.rc] + iinv.akk2[ug.rc];
+				iinv.spuj[ug.cId][ug.rc] = -(iinv.aii2[ug.rc] + iinv.akk2[ug.rc]);  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
+				iinv.spvj[ug.cId][ug.rc] = -(iinv.aii2[ug.rc] + iinv.akk2[ug.rc]);
+				iinv.spwj[ug.cId][ug.rc] = -(iinv.aii2[ug.rc] + iinv.akk2[ug.rc]);
 				
 				iinv.sj[ug.cId] += iinv.aii2[ug.rc] + iinv.akk2[ug.rc]; //矩阵非零系数相加，用于求压力修正方程
 
 			}
 			else if (ug.cId == ug.rc)
 			{
-				iinv.spuj[ug.cId][ug.lc] = iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
-				iinv.spvj[ug.cId][ug.lc] = iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
-				iinv.spwj[ug.cId][ug.lc] = iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
+				iinv.spuj[ug.cId][ug.lc] = -(iinv.aii2[ug.lc] + iinv.akk2[ug.lc]);
+				iinv.spvj[ug.cId][ug.lc] = -(iinv.aii2[ug.lc] + iinv.akk2[ug.lc]);
+				iinv.spwj[ug.cId][ug.lc] = -(iinv.aii2[ug.lc] + iinv.akk2[ug.lc]);
 
 				iinv.sj[ug.cId] += iinv.aii2[ug.lc] + iinv.akk2[ug.lc];
 			}

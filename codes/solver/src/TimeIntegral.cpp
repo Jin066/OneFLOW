@@ -58,6 +58,10 @@ void TimeIntegral::Init()
     {
         TimeIntegral::timeIntegral = & TimeIntegral::RungeKutta;
     }
+	else if (ctrl.time_integral == SIMPLE)
+	{
+		TimeIntegral::timeIntegral = &TimeIntegral::Simple;
+	}
     else
     {
         TimeIntegral::timeIntegral = & TimeIntegral::Lusgs;
@@ -123,6 +127,25 @@ void TimeIntegral::Lusgs()
 
     ONEFLOW::SsSgTask( "UPDATE_FLOWFIELD_LUSGS" );
     ONEFLOW::SsSgTask( "CMP_BOUNDARY"           );
+}
+
+void TimeIntegral::Simple()
+{
+	//ONEFLOW::SsSgTask("ZERO_DQ_FIELD");
+	ONEFLOW::SsSgTask("CMP_TIME_STEP");
+	//ONEFLOW::SsSgTask("LOAD_RESIDUALS");
+	ONEFLOW::SsSgTask("UPDATE_RESIDUALS");
+	//ONEFLOW::SsSgTask("INIT_LUSGS");
+
+	//for (int iSweep = 0; iSweep < SweepState::nSweeps; ++iSweep)
+	//{
+	//	ONEFLOW::SsSgTask("LUSGS_LOWER_SWEEP");
+	//	ONEFLOW::SsSgTask("EXCHANGE_INTERFACE_DQ");
+	//	ONEFLOW::SsSgTask("LUSGS_UPPER_SWEEP");
+	//}
+
+	//ONEFLOW::SsSgTask("UPDATE_FLOWFIELD_LUSGS");
+	//ONEFLOW::SsSgTask("CMP_BOUNDARY");
 }
 
 EndNameSpace

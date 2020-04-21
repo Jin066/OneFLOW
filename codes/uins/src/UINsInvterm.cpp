@@ -97,12 +97,12 @@ void UINsInvterm::CmpInvcoff()
     iinv.Init();
     ug.Init();
     uinsf.Init();
-    Alloc();
+    //Alloc();
 
     this->CmpInvFace();
     this->CmpInvMassFlux();  //需要改动
 
-    DeAlloc();
+   //DeAlloc();
 }
 
 void UINsInvterm::CmpInvMassFlux()
@@ -172,6 +172,7 @@ void UINsInvterm::CmpInvMassFlux()
 	iinv.spuj.resize(ug.nTCell, ug.nTCell);
 	iinv.spvj.resize(ug.nTCell, ug.nTCell);
 	iinv.spwj.resize(ug.nTCell, ug.nTCell);
+	iinv.sjp.resize(ug.nTCell, ug.nTCell);
 	//iinv.ajp.resize(ug.nFace);
 	//iinv.app.resize(ug.nCell);
 	iinv.spp.resize(ug.nFace);
@@ -289,15 +290,15 @@ void UINsInvterm::MomPre()
 			ug.rc = (*ug.rcf)[ug.fId];
 			if (ug.cId == ug.lc)
 			{
-				iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.rc] * iinv.ur;   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-				iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.rc] * iinv.vr;
-				iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.rc] * iinv.wr;
+				iinv.muc[ug.cId] += -iinv.spuj[ug.cId][ug.rc] * iinv.ur;   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+				iinv.mvc[ug.cId] += -iinv.spvj[ug.cId][ug.rc] * iinv.vr;
+				iinv.mwc[ug.cId] += -iinv.spwj[ug.cId][ug.rc] * iinv.wr;
 			}
 			else if (ug.cId == ug.rc)
 			{
-				iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.lc] * iinv.ul; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-				iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.lc] * iinv.vl;
-				iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.lc] * iinv.wl;
+				iinv.muc[ug.cId] += -iinv.spuj[ug.cId][ug.lc] * iinv.ul; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+				iinv.mvc[ug.cId] += -iinv.spvj[ug.cId][ug.lc] * iinv.vl;
+				iinv.mwc[ug.cId] += -iinv.spwj[ug.cId][ug.lc] * iinv.wl;
 			}
 		}
      	iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / iinv.spu[ug.cId];  //下一时刻速度的预测值
@@ -309,7 +310,7 @@ void UINsInvterm::MomPre()
 	    //inscom.prim[IIDX::IIW] = iinv.wc[ug.cId];
     }
 
-	    //this->CmpINsRes();
+	    this->CmpINsMomRes();
 }
 
 
@@ -341,27 +342,23 @@ void UINsInvterm::CmpFaceflux()
 
 }
 
-void UINsInvterm::CmpINsRes()
+void UINsInvterm::CmpINsMomRes()
 {
-	
-	UnsGrid * grid = Zone::GetUnsGrid();
-	MRField * res = GetFieldPointer< MRField >(grid, "res");
-	int nEqu = res->GetNEqu();
-	for (int fId = 0; fId < ug.nFace; ++fId)
-	{
-		ug.fId = fId;
-		ug.lc = (*ug.lcf)[ug.fId];
-		ug.rc = (*ug.rcf)[ug.fId];
-		//if ( ug.lc == 0 ) cout << fId << endl;
+	Real res_mu, res_mv, res_mw;
+	res_mu = 0;
+	res_mv = 0;
+	res_mw = 0;
 
-		
-			(*res)[0][ug.lc] = 0;
-			(*res)[1][ug.lc] = iinv.spu1[ug.lc]* iinv.ul+iinv.muc[ug.lc]- iinv.buc[ug.lc];
-			(*res)[2][ug.lc] = iinv.spv1[ug.lc] * iinv.vl + iinv.mvc[ug.lc] - iinv.bvc[ug.lc];
-			(*res)[3][ug.lc] = iinv.spw1[ug.lc] * iinv.wl + iinv.mwc[ug.lc] - iinv.bwc[ug.lc];
-			(*res)[4][ug.lc] = 0;
-		
+	for (int cId = 0; cId < ug.nTCell; ++cId)
+	{
+		ug.cId = cId;
+
+		res_mu += 1;
+		res_mv += 1;
+		res_mw += 1;
+
 	}
+	
 }
 
 void UINsInvterm::AddFlux()
@@ -437,6 +434,15 @@ void UINsInvterm::CmpCorrectPresscoef()
 
 			iinv.bp[ug.cId] -= iinv.fq[ug.fId];  //压力修正方程源项
 
+			if (ug.cId == ug.lc)
+			{
+				iinv.sjp[ug.cId][ug.rc] = -iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
+			}
+			else if(ug.cId==ug.rc)
+			{
+				iinv.sjp[ug.cId][ug.lc] = -iinv.ajp[ug.fId];
+			}
+			
 			iinv.spp[ug.cId] += iinv.ajp[ug.fId];   //压力修正方程的矩阵主对角项
 		}
 	}
@@ -456,13 +462,12 @@ void UINsInvterm::CmpPressCorrectEqu()
 			ug.rc = (*ug.rcf)[ug.fId];
 			if (ug.cId == ug.lc)
 			{
-				iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp0[ug.rc];
+				iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp0[ug.rc]; //高斯赛戴尔迭代求解时的相邻单元的值，矩阵法不需要
 			}
 			else if (ug.cId == ug.rc)
 			{
 				iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp0[ug.lc];
 			}
-
 		}
 		iinv.pp0[ug.cId] = (iinv.mp[ug.cId] + iinv.bp[ug.cId]) / iinv.spp[ug.cId]; //压力修正值
 		iinv.pp[ug.cId] = iinv.pp0[ug.cId]; //当前时刻的压力修正值

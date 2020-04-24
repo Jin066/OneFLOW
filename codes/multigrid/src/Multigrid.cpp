@@ -21,6 +21,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "Multigrid.h"
+#include "INsInvterm.h"
 #include "Mesh.h"
 #include "Ctrl.h"
 #include "Solver.h"
@@ -117,7 +118,6 @@ void MG::Run()
 		double rhs_w = 1e-8;
 		double rhs_p = 1e-8;
 
-		Real res_u, res_v, res_w, res_p;
 
 	   TimeSpan * timeSpan = new TimeSpan();
 		while (SimuIterState::Running())
@@ -128,12 +128,12 @@ void MG::Run()
 			//Inner loop
 			Iteration::innerSteps = 0;
 
-			res_u = 1;
-			res_v = 1;
-			res_w = 1;
-			res_p = 1;
+			iinv.res_u = 1;
+			iinv.res_v = 1;
+			iinv.res_w = 1;
+			iinv.res_p = 1;
 			
-			while ( res_u > rhs_u || res_v > rhs_v|| res_w > rhs_w|| res_p > rhs_p)
+			while (iinv.res_u > rhs_u || iinv.res_v > rhs_v|| iinv.res_w > rhs_w|| iinv.res_p > rhs_p)
 			{
 				Iteration::innerSteps++;
 

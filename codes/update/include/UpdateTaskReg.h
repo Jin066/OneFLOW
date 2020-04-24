@@ -26,8 +26,11 @@ License
 
 BeginNameSpace( ONEFLOW )
 
-DEFINE_DATA_CLASS( UpdateFlowField );
+DEFINE_DATA_CLASS(UpdateFlowField );
+
+DEFINE_DATA_CLASS(UpdateINsFlowField);
 
 void RegisterUpdateTask();
+
 
 EndNameSpace

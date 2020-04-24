@@ -24,14 +24,16 @@ License
 #include "Update.h"
 #include "SolverState.h"
 #include "TaskRegister.h"
+#include "..\..\..\build\OneFLOW\UpdateINsTaskReg.h"
 
 BeginNameSpace( ONEFLOW )
 
 REGISTER_TASK( RegisterUpdateTask )
 
+
 void RegisterUpdateTask()
 {
-    REGISTER_DATA_CLASS( UpdateFlowField );
+		REGISTER_DATA_CLASS(UpdateFlowField);
 }
 
 void UpdateFlowField( StringField & data )
@@ -41,5 +43,7 @@ void UpdateFlowField( StringField & data )
     update->UpdateFlowField( sTid );
     delete update;
 }
+
+
 
 EndNameSpace

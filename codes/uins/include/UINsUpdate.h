@@ -31,7 +31,7 @@ public:
     UINsUpdate ();
     ~UINsUpdate();
 public:
-    void UpdateFlowField( int sTid );
+    void UpdateINsFlowField( int sTid );
     void PrepareData();
     void DumpProbeInfo();
     void SolutionFix();

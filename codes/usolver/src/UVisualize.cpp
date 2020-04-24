@@ -642,20 +642,29 @@ void CmpMach( MRField * r, MRField * u, MRField * v, MRField * w, MRField * p, M
 {
     UnsGrid * grid = Zone::GetUnsGrid();
     int nNode = grid->nNode;
-    for ( int iNode = 0; iNode < nNode; ++ iNode )
-    {
-        Real rm = ( * r )[ 0 ][ iNode ];
-        Real um = ( * u )[ 0 ][ iNode ];
-        Real vm = ( * v )[ 0 ][ iNode ];
-        Real wm = ( * w )[ 0 ][ iNode ];
-        Real pm = ( * p )[ 0 ][ iNode ];
+	for (int iNode = 0; iNode < nNode; ++iNode)
+	{
+		Real rm = (*r)[0][iNode];
+		Real um = (*u)[0][iNode];
+		Real vm = (*v)[0][iNode];
+		Real wm = (*w)[0][iNode];
+		Real pm = (*p)[0][iNode];
 
-        Real gm = ( * gama )[ 0 ][ iNode ];
-        Real v2 = SQR( um, vm, wm );
-        Real c2 = gm * pm / rm;
-        Real mm = sqrt( v2 / c2 );
-        ( * mach )[ 0 ][ iNode ] = mm;
-    }
+		Real gm = (*gama)[0][iNode];
+		int startStrategy = ONEFLOW::GetDataValue< int >("startStrategy");
+		if (startStrategy == 2)
+		{
+			(*mach)[0][iNode] = 0;
+		}
+		else
+		{
+			Real v2 = SQR(um, vm, wm);
+			Real c2 = gm * pm / rm;
+			Real mm = sqrt(v2 / c2);
+			(*mach)[0][iNode] = mm;
+		}
+	}
+		
 }
 
 EndNameSpace

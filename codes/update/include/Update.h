@@ -37,6 +37,7 @@ public:
     FieldWrap *dq;
 public:
     virtual void UpdateFlowField( int sTid ){};
+	virtual void UpdateINsFlowField(int sTid) {};
     virtual void DumpProbeInfo() {};
     virtual void SolutionFix() {};
 };

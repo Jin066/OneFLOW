@@ -198,19 +198,18 @@ void INSCmpGamaT(int flag)
 			Real & pressure = ( * uinsf.q )[ IIDX::IIP ][ cId ];
 			( * uinsf.gama )[ 0 ][ cId ] = inscom.gama_ref;
 			//( * uinsf.tempr )[ IIDX::IITT ][ cId ] = pressure / ( inscom.statecoef * density * oamw );
+			(*uinsf.tempr)[IIDX::IITT][cId] = 0;
 		}
 	}
 }
 
 void INsCmpRHS()
 {
-	if (Iteration::innerSteps == 1)
+	if (ctrl.currTime == 0.001)
 	{
 		INsCmpInv(); //计算对流项
 
 		INsCmpVis(); //计算扩散项
-
-		//INsCmpUnstead(); 计算非稳态项
 
 		INsCmpSrc(); //计算源项和动量方程系数
 
@@ -226,12 +225,39 @@ void INsCmpRHS()
 
 		INsUpdateFaceflux();   //更新界面流量
 
-		//INsCheckConvg();
 	}
 	else
 	{
-		;
+		INsCmpTimestep();
+
+		INsCmpInv(); //计算对流项
+
+		INsCmpVis(); //计算扩散项
+
+		INsCmpUnstead(); //计算非稳态项
+
+		INsCmpSrc(); //计算源项和动量方程系数
+
+		INsMomPre(); //求解动量方程
+
+		INsCmpFaceflux(); //计算界面流量
+
+		INsCorrectPresscoef(); //计算压力修正方程系数
+
+		INsCmpPressCorrectEquandUpdatePress();  //需要解压力修正方程组，增设单元修正压力未知量
+
+		INsCmpSpeedCorrectandUpdateSpeed();  //需要先增设界面修正速度未知量并进行求解,更新单元速度和压力
+
+		INsUpdateFaceflux();   //更新界面流量
+
 	}
+}
+
+void INsCmpTimestep()
+{
+	UINsInvterm * uINsInvterm = new UINsInvterm();
+	uINsInvterm->CmpINsTimestep();
+	delete uINsInvterm;
 }
 
 void INsCmpInv()
@@ -245,6 +271,13 @@ void INsCmpVis()
 {
 	UINsVisterm * uINsVisterm = new UINsVisterm();
 	uINsVisterm->CmpViscoff();
+	delete uINsVisterm;
+}
+
+void INsCmpUnstead()
+{
+	UINsVisterm * uINsVisterm = new UINsVisterm();
+	uINsVisterm->CmpUnsteadcoff();
 	delete uINsVisterm;
 }
 

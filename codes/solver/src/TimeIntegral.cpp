@@ -132,8 +132,9 @@ void TimeIntegral::Lusgs()
 void TimeIntegral::Simple()
 {
 	//ONEFLOW::SsSgTask("ZERO_DQ_FIELD");
-	ONEFLOW::SsSgTask("CMP_TIME_STEP");
+	//ONEFLOW::SsSgTask("CMP_TIME_STEP");
 	//ONEFLOW::SsSgTask("LOAD_RESIDUALS");
+	
 	ONEFLOW::SsSgTask("UPDATE_RESIDUALS");
 	//ONEFLOW::SsSgTask("INIT_LUSGS");
 
@@ -143,9 +144,8 @@ void TimeIntegral::Simple()
 	//	ONEFLOW::SsSgTask("EXCHANGE_INTERFACE_DQ");
 	//	ONEFLOW::SsSgTask("LUSGS_UPPER_SWEEP");
 	//}
-
-	//ONEFLOW::SsSgTask("UPDATE_FLOWFIELD_LUSGS");
-	//ONEFLOW::SsSgTask("CMP_BOUNDARY");
+	ONEFLOW::SsSgTask("UPDATE_FLOWFIELD_SIMLIE");
+	ONEFLOW::SsSgTask("CMP_BOUNDARY");
 }
 
 EndNameSpace

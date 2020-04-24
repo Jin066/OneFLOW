@@ -23,6 +23,7 @@ License
 //#include "UINsCorrectSpeed.h"
 #include "INsInvterm.h"
 #include "INsVisterm.h"
+#include "Iteration.h"
 #include "UINsCom.h"
 #include "Zone.h"
 #include "DataBase.h"
@@ -83,40 +84,54 @@ void INsInvterm::Solve()
 }
 
 void INsInvterm::CmpINsinvTerm()
-{
-	INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
-	INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
+{ 
+	if (ctrl.currTime == 0.001)
+	{
+		INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
+		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
 
-	Real v2l = ONEFLOW::SQR(iinv.ul, iinv.vl, iinv.wl);
-	Real v2r = ONEFLOW::SQR(iinv.ur, iinv.vr, iinv.wr);
+		Real v2l = ONEFLOW::SQR(iinv.ul, iinv.vl, iinv.wl);
+		Real v2r = ONEFLOW::SQR(iinv.ur, iinv.vr, iinv.wr);
 
-	Real vnl = gcom.xfn * iinv.ul + gcom.yfn * iinv.vl + gcom.zfn * iinv.wl - gcom.vfn;       // V * n
-	Real vnr = gcom.xfn * iinv.ur + gcom.yfn * iinv.vr + gcom.zfn * iinv.wr - gcom.vfn;
+		Real vnl = gcom.xfn * iinv.ul + gcom.yfn * iinv.vl + gcom.zfn * iinv.wl - gcom.vfn;       // V * n
+		Real vnr = gcom.xfn * iinv.ur + gcom.yfn * iinv.vr + gcom.zfn * iinv.wr - gcom.vfn;
 
-	Real rvnl = iinv.rl * vnl;   //ρ * V * n
-	Real rvnr = iinv.rr * vnr;
-
-
-	iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
-	iinv.uf[ug.fId] = (iinv.ul + iinv.ur ) * half;
-	iinv.vf[ug.fId] = (iinv.vl + iinv.vr ) * half;
-	iinv.wf[ug.fId] = (iinv.wl + iinv.wr ) * half;
-
-	
-	iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId];  //初始界面上 V*n
-
-	iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
-
-     Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
-     Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+		Real rvnl = iinv.rl * vnl;   //ρ * V * n
+		Real rvnr = iinv.rr * vnr;
 
 
-	iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
-	iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
-	
-    iinv.ai1[ug.lc]+= crl;   //流入单元的流量
-	iinv.ai2[ug.rc]+=clr;   //流出单元的流量
-	
+		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
+		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half;
+		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half;
+		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half;
+
+
+		iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId]- gcom.vfn;  //初始界面上 V*n
+
+		iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
+
+		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
+		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+
+
+		iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
+		iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
+
+		iinv.ai1[ug.lc] += crl;   //流入单元的流量
+		iinv.ai2[ug.rc] += clr;   //流出单元的流量
+	}
+	else
+	{
+		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
+		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+
+
+		iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
+		iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
+
+		iinv.ai1[ug.lc] += crl;   //流入单元的流量
+		iinv.ai2[ug.rc] += clr;   //流出单元的流量
+	}
 }
 
 void INsInvterm::CmpINsFaceflux()
@@ -136,9 +151,9 @@ void INsInvterm::CmpINsFaceflux()
 	iinv.f1[ug.fId] = de2 * de;  //左单元权重
     iinv.f2[ug.fId] = de1 * de;  //右单元权重
  
-	Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spu[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spu[ug.rc]);  //（Vj/a）
-	Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spv[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spv[ug.rc]);
-	Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / iinv.spw[ug.lc]) + iinv.f2[ug.fId] * (gcom.cvol2 / iinv.spw[ug.rc]);
+	Real Vau = iinv.f1[ug.fId] * (gcom.cvol1 / (1+iinv.spu[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / (1+iinv.spu[ug.rc]));  //（Vj/a）
+	Real Vav = iinv.f1[ug.fId] * (gcom.cvol1 / (1+iinv.spv[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / (1+iinv.spv[ug.rc]));
+	Real Vaw = iinv.f1[ug.fId] * (gcom.cvol1 / (1+iinv.spw[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / (1+iinv.spw[ug.rc]));
 
     iinv.dist[ug.fId] = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]);
 	Real Pd1 = visQ.dqdx1[IIDX::IIP] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + visQ.dqdy1[IIDX::IIP] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + visQ.dqdz1[IIDX::IIP] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项
@@ -146,9 +161,9 @@ void INsInvterm::CmpINsFaceflux()
 	Real Pd = Pd1 + Pd2;
 
 	
-	iinv.uf[ug.fId] = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (iinv.Vau*gcom.xfn / iinv.dist[ug.fId])*( Pd - (iinv.pr - iinv.pl));  //下一时刻的界面预测速度
-	iinv.vf[ug.fId] = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (iinv.Vav*gcom.yfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
-	iinv.wf[ug.fId] = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (iinv.Vaw*gcom.zfn / iinv.dist[ug.fId])*(Pd - (iinv.pr - iinv.pl));
+	iinv.uf[ug.fId] = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (iinv.Vau*gcom.xfn / (1+iinv.dist[ug.fId]))*( Pd - (iinv.pr - iinv.pl));  //下一时刻的界面预测速度
+	iinv.vf[ug.fId] = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (iinv.Vav*gcom.yfn / (1+iinv.dist[ug.fId]))*(Pd - (iinv.pr - iinv.pl));
+	iinv.wf[ug.fId] = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (iinv.Vaw*gcom.zfn / (1+iinv.dist[ug.fId]))*(Pd - (iinv.pr - iinv.pl));
 
 	iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId];
 	
@@ -159,14 +174,14 @@ void INsInvterm::CmpINsFaceflux()
 void INsInvterm::CmpINsFaceCorrectPresscoef()
 {
 
-	iinv.Vdvu[ug.fId] = iinv.f1[ug.fId] * ( gcom.cvol1/((1+1)*iinv.spu[ug.lc] - iinv.sj[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 2)*iinv.spu[ug.rc] - iinv.sj[ug.rc]));  // (Vp/dv)j，用于求面速度修正量
-	iinv.Vdvv[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1 / ((1+1)*iinv.spv[ug.lc] - iinv.sj[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 2)*iinv.spv[ug.rc] - iinv.sj[ug.rc]));
-	iinv.Vdvw[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1 / ((1+1)*iinv.spw[ug.lc] - iinv.sj[ug.lc])) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1 + 2)*iinv.spw[ug.rc] - iinv.sj[ug.rc]));
+	iinv.Vdvu[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1/((1+1)*iinv.spu[ug.lc] - iinv.sj[ug.lc]+1)) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1+1)*iinv.spu[ug.rc] - iinv.sj[ug.rc]+1));  // (Vp/dv)j，用于求面速度修正量
+	iinv.Vdvv[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1 / ((1+1)*iinv.spv[ug.lc] - iinv.sj[ug.lc]+1)) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1+1)*iinv.spv[ug.rc] - iinv.sj[ug.rc]+1));
+	iinv.Vdvw[ug.fId] = iinv.f1[ug.fId] * (gcom.cvol1 / ((1+1)*iinv.spw[ug.lc] - iinv.sj[ug.lc]+1)) + iinv.f2[ug.fId] * (gcom.cvol2 / ((1+1)*iinv.spw[ug.rc] - iinv.sj[ug.rc]+1));
 	
 
-	iinv.aju[ug.fId] = iinv.rm * iinv.Vdvu[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId]; //压力修正方程中，矩阵中非零系数
-	iinv.ajv[ug.fId] = iinv.rm * iinv.Vdvv[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId];
-	iinv.ajw[ug.fId] = iinv.rm * iinv.Vdvw[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / iinv.dist[ug.fId];
+	iinv.aju[ug.fId] = iinv.rm * iinv.Vdvu[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (iinv.dist[ug.fId]); //压力修正方程中，矩阵中非零系数
+	iinv.ajv[ug.fId] = iinv.rm * iinv.Vdvv[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (iinv.dist[ug.fId]);
+	iinv.ajw[ug.fId] = iinv.rm * iinv.Vdvw[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (iinv.dist[ug.fId]);
 
 	iinv.ajp[ug.fId] = iinv.aju[ug.fId] * gcom.xfn + iinv.ajv[ug.fId] * gcom.yfn + iinv.ajw[ug.fId] * gcom.zfn;
 }

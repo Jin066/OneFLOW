@@ -36,11 +36,11 @@ public:
     typedef void ( UINsVisterm:: * VisPointer )();
     VisPointer visPointer;
     MRField * visflux;
-	//MRField * spuj, *spvj, *spwj;
+	
 public:
     void CmpViscoff();
     void PrepareField();
-    //void CmpNsVisterm();
+    
 	void CmpVisterm();
 	void CmpFaceVisterm();
 
@@ -49,6 +49,7 @@ public:
 	void CmpINsSrc();
 	//void Addcoff();
 
+	void CmpUnsteadcoff();
 public:
     void PrepareFaceValue();
     void SaveFacePara();

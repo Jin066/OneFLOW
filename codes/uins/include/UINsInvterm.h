@@ -38,12 +38,14 @@ public:
 public:
     void Alloc();
     void DeAlloc();
+	void CmpINsTimestep();
     void CmpInvcoff();
     void CmpInvMassFlux();
     void CmpInvFace();
     void CmpLimiter();
 	void CmpFaceflux();
 	void CmpINsMomRes();
+	void CmpINsPreRes();
 	void CmpCorrectPresscoef();
 	void CmpPressCorrectEqu();
 	void UpdateFaceflux();

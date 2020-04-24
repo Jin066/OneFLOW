@@ -41,6 +41,7 @@ public:
     static int iterMode;
     static int cycleType;
     static int currentGridLevel;
+	
 public:
     static void Init();
 public:

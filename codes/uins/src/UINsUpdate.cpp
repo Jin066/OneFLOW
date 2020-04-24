@@ -43,7 +43,7 @@ UINsUpdate::~UINsUpdate()
 {
 }
 
-void UINsUpdate::UpdateFlowField( int sTid )
+void UINsUpdate::UpdateINsFlowField( int sTid )
 {
     GetUpdateField( sTid, this->q, this->dq );
 

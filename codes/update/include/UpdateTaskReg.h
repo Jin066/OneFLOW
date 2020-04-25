@@ -32,5 +32,7 @@ DEFINE_DATA_CLASS(UpdateINsFlowField);
 
 void RegisterUpdateTask();
 
+void RegisterINsUpdateTask();
+
 
 EndNameSpace

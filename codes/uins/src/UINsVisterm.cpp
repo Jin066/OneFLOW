@@ -150,7 +150,7 @@ void UINsVisterm::CmpUnsteadcoff()
 
 void UINsVisterm::CmpINsSrc()
 {
-	if (ctrl.currTime == 0.001)
+	if (Iteration::innerSteps = 1)
 	{
 		for (int cId = 0; cId < ug.nTCell; ++cId)
 		{

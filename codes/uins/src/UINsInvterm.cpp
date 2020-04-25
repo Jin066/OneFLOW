@@ -114,7 +114,7 @@ void UINsInvterm::CmpINsTimestep()
 
 void UINsInvterm::CmpInvMassFlux()
 {
-	if (ctrl.currTime == 0.001)
+	if (Iteration::innerSteps = 1)
 	{
 		iinv.ai1.resize(ug.nTCell);
 		iinv.ai2.resize(ug.nTCell);

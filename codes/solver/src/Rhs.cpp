@@ -205,7 +205,7 @@ void INSCmpGamaT(int flag)
 
 void INsCmpRHS()
 {
-	if (ctrl.currTime == 0.001)
+	if (Iteration::innerSteps = 1)
 	{
 		INsCmpInv(); //计算对流项
 

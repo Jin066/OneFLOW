@@ -294,8 +294,8 @@ void UINsInvterm::PrepareFaceValue()
 
     for ( int iEqu = 0; iEqu < limf->nEqu; ++ iEqu )
     {
-        iinv.prim1[ iEqu ] = ( * limf->qf1 )[ iEqu ][ ug.fId ];
-        iinv.prim2[ iEqu ] = ( * limf->qf2 )[ iEqu ][ ug.fId ];
+        iinv.prim1[ iEqu ] = (*limf->q)[iEqu][ug.lc];
+        iinv.prim2[ iEqu ] = (*limf->q)[iEqu][ug.rc];
     }
 }
 

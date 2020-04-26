@@ -90,21 +90,10 @@ void INsInvterm::CmpINsinvTerm()
 		INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
 		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
 
-		Real v2l = ONEFLOW::SQR(iinv.ul, iinv.vl, iinv.wl);
-		Real v2r = ONEFLOW::SQR(iinv.ur, iinv.vr, iinv.wr);
-
-		Real vnl = gcom.xfn * iinv.ul + gcom.yfn * iinv.vl + gcom.zfn * iinv.wl - gcom.vfn;       // V * n
-		Real vnr = gcom.xfn * iinv.ur + gcom.yfn * iinv.vr + gcom.zfn * iinv.wr - gcom.vfn;
-
-		Real rvnl = iinv.rl * vnl;   //ρ * V * n
-		Real rvnr = iinv.rr * vnr;
-
-
 		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
 		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half;
 		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half;
 		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half;
-
 
 		iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId]- gcom.vfn;  //初始界面上 V*n
 

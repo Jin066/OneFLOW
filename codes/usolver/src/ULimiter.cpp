@@ -213,7 +213,7 @@ void LimField::CmpFaceValue()
         {
             for ( int iEqu = 0; iEqu < this->nEqu; ++ iEqu )
             {
-                ( * this->qf1 )[ iEqu ][ ug.fId ] = qTry[ iEqu ];
+                ( * this->qf1 )[ iEqu ][ ug.fId] = qTry[ iEqu ];
             }
         }
 
@@ -223,7 +223,7 @@ void LimField::CmpFaceValue()
 
         for ( int iEqu = 0; iEqu < this->nEqu; ++ iEqu )
         {
-            qTry[ iEqu ] = ( * this->qf2 )[ iEqu ][ ug.fId ];
+            qTry[ iEqu ] = ( * this->qf2 )[ iEqu ][ ug.fId];
         }
 
         for ( int iEqu = 0; iEqu < this->nEqu; ++ iEqu )

@@ -29,6 +29,7 @@ License
 #include "Boundary.h"
 #include "BcRecord.h"
 #include "Iteration.h"
+#include "DataBase.h"
 
 BeginNameSpace( ONEFLOW )
 

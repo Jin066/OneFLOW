@@ -91,9 +91,9 @@ void INsInvterm::CmpINsinvTerm()
 		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
 
 		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
-		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half;
-		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half;
-		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half;
+		iinv.uf[ug.fId] = (iinv.ul + iinv.ur + iinv.pl + iinv.pr) * half;
+		iinv.vf[ug.fId] = (iinv.vl + iinv.vr + iinv.pl + iinv.pr) * half;
+		iinv.wf[ug.fId] = (iinv.wl + iinv.wr + iinv.pl + iinv.pr) * half;
 
 		iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId]- gcom.vfn;  //初始界面上 V*n
 

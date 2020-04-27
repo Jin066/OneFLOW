@@ -63,10 +63,11 @@ void UINsInvterm::CmpLimiter()
     limiter->CmpLimiter();
 }
 
-void UINsInvterm::CmpInvFace()  //不改动
+void UINsInvterm::CmpInvFace()  //单元数据重构
 {
     //uins_grad.Init();
     //uins_grad.CmpGrad();
+
 
     this->CmpLimiter();   //不改
 
@@ -294,8 +295,8 @@ void UINsInvterm::PrepareFaceValue()
 
     for ( int iEqu = 0; iEqu < limf->nEqu; ++ iEqu )
     {
-        iinv.prim1[ iEqu ] = (*limf->q)[iEqu][ug.lc];
-        iinv.prim2[ iEqu ] = (*limf->q)[iEqu][ug.rc];
+        iinv.prim1[ iEqu ] = (*limf->qf1)[iEqu][ug.fId];
+        iinv.prim2[ iEqu ] = (*limf->qf2)[iEqu][ug.fId];
     }
 }
 
@@ -314,24 +315,53 @@ void UINsInvterm::MomPre()
 			ug.rc = (*ug.rcf)[ug.fId];
 			if (ug.cId == ug.lc)
 			{
-				iinv.muc[ug.cId] += -iinv.spuj[ug.cId][ug.rc] * iinv.ur;   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-				iinv.mvc[ug.cId] += -iinv.spvj[ug.cId][ug.rc] * iinv.vr;
-				iinv.mwc[ug.cId] += -iinv.spwj[ug.cId][ug.rc] * iinv.wr;
+				iinv.muc[ug.cId] += -iinv.spuj[ug.cId][ug.rc];   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+				iinv.mvc[ug.cId] += -iinv.spvj[ug.cId][ug.rc];
+				iinv.mwc[ug.cId] += -iinv.spwj[ug.cId][ug.rc];
 			}
 			else if (ug.cId == ug.rc)
 			{
-				iinv.muc[ug.cId] += -iinv.spuj[ug.cId][ug.lc] * iinv.ul; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-				iinv.mvc[ug.cId] += -iinv.spvj[ug.cId][ug.lc] * iinv.vl;
-				iinv.mwc[ug.cId] += -iinv.spwj[ug.cId][ug.lc] * iinv.wl;
+				iinv.muc[ug.cId] += -iinv.spuj[ug.cId][ug.lc]; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+				iinv.mvc[ug.cId] += -iinv.spvj[ug.cId][ug.lc];
+				iinv.mwc[ug.cId] += -iinv.spwj[ug.cId][ug.lc];
 			}
 		}
-     	iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (1+iinv.spu[ug.cId]);  //下一时刻速度的预测值
-		iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (1+iinv.spv[ug.cId]);
-		iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (1+iinv.spw[ug.cId]);
 
-		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
-		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
-		(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
+
+		if (!iinv.spu[ug.cId] == 0)
+		{
+			iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
+			(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
+		}
+		else
+		{
+			//iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (0.01+iinv.spu[ug.cId]);
+			iinv.uc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
+		}
+		if (!iinv.spv[ug.cId] == 0)
+		{
+			iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
+			(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
+		}
+		else
+		{
+			//iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (0.01+iinv.spv[ug.cId]);
+			iinv.vc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+		}
+		if (!iinv.spv[ug.cId] == 0)
+		{
+			iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
+			(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
+		}
+		else
+		{
+			//iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (0.01+iinv.spw[ug.cId]);
+			 iinv.wc[ug.cId]=(*uinsf.q)[IIDX::IIW][ug.cId];
+		}
+
+		//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
+		//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
+		//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
 
     }
 

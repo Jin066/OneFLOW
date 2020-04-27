@@ -121,8 +121,8 @@ void UINsVisterm::CmpFaceVisterm()
 	Real l2rdz = (*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc];
 
 
-	iinv.Fn = (1/2) * gcom.farea /(4+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz);   // μ / ( n * d ) 法向扩散项系数(改动)
-	iinv.Ft = (1/2)*((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - ((visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (4+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)))* gcom.farea;//归入源项的扩散项(改动）
+	iinv.Fn = gcom.farea /(2+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz);   // μ / ( n * d ) 法向扩散项系数(改动)
+	iinv.Ft = ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - ((visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (4+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)))* gcom.farea;//归入源项的扩散项(改动）
 
 	iinv.akk1[ug.lc] = iinv.Fn;    //该界面上的扩散流
 	iinv.akk2[ug.rc] = -iinv.Fn;   

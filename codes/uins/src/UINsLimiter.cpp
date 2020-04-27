@@ -82,8 +82,8 @@ void INsLimField::BcQlQrFix()
 
             ( * this->qf1 )[ iEqu ][ ug.fId ] = tmp;
             ( * this->qf2 )[ iEqu ][ ug.fId ] = tmp;
-        }
 
+        }
         if ( bcType == BC::SOLID_SURFACE )
         {
             for ( int iEqu = 0; iEqu < this->nEqu; ++ iEqu )

@@ -53,6 +53,7 @@ public:
 	void UpdateSpeed();
     void AddFlux();
     void PrepareFaceValue();
+	void PrepareProFaceValue();
 	void CmpPreGrad();
 	//void CmpINsinvTerm();
     //void UpdateFaceInvFlux();

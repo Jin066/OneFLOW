@@ -21,6 +21,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "UINsUpdate.h"
+#include "INsInvterm.h"
 #include "UCom.h"
 #include "INsCom.h"
 #include "UINsCom.h"
@@ -50,7 +51,7 @@ void UINsUpdate::UpdateINsFlowField( int sTid )
     ug.Init();
     uinsf.Init();
 
-    for ( int cId = 0; cId < ug.nCell; ++ cId )
+    for ( int cId = 0; cId < ug.nTCell; ++ cId )
     {
         ug.cId = cId;
 
@@ -141,10 +142,11 @@ void UINsUpdate::SolutionFix()
 
 void UINsUpdate::UpdateFlowFieldValue()
 {
-    for ( int iEqu = 0; iEqu < inscom.nTEqu; ++ iEqu )
-    {
-        ( * uinsf.q )[ iEqu ][ ug.cId ] = inscom.prim[ iEqu ];
-    }
+	(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
+	(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
+	(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
+	(*uinsf.q)[IIDX::IIP][ug.cId] = iinv.pc[ug.cId];
+
 
     for ( int iEqu = 0; iEqu < inscom.nTModel; ++ iEqu )
     {

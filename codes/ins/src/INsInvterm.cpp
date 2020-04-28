@@ -125,6 +125,9 @@ void INsInvterm::CmpINsinvTerm()
 
 void INsInvterm::CmpINsFaceflux()
 {
+	INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
+	INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
+
 	Real dx1 = (*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc];
 	Real dy1 = (*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc];
 	Real dz1 = (*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc];
@@ -163,14 +166,14 @@ void INsInvterm::CmpINsFaceflux()
 void INsInvterm::CmpINsFaceCorrectPresscoef()
 {
 
-	iinv.Vdvu[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] /((1+1)*iinv.spu[ug.lc] - iinv.sj[ug.lc]+1)) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / ((1+1)*iinv.spu[ug.rc] - iinv.sj[ug.rc]));  // (Vp/dv)j，用于求面速度修正量
-	iinv.Vdvv[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] / ((1+1)*iinv.spv[ug.lc] - iinv.sj[ug.lc]+1)) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / ((1+1)*iinv.spv[ug.rc] - iinv.sj[ug.rc]));
-	iinv.Vdvw[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] / ((1+1)*iinv.spw[ug.lc] - iinv.sj[ug.lc]+1)) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / ((1+1)*iinv.spw[ug.rc] - iinv.sj[ug.rc]));
+	iinv.Vdvu[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] /((1+1)*iinv.spu[ug.lc] - iinv.sj[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / ((1+1)*iinv.spu[ug.rc] - iinv.sj[ug.rc]));  // (Vp/dv)j，用于求面速度修正量
+	iinv.Vdvv[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] / ((1+1)*iinv.spv[ug.lc] - iinv.sj[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / ((1+1)*iinv.spv[ug.rc] - iinv.sj[ug.rc]));
+	iinv.Vdvw[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] / ((1+1)*iinv.spw[ug.lc] - iinv.sj[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / ((1+1)*iinv.spw[ug.rc] - iinv.sj[ug.rc]));
 	
 
-	iinv.aju[ug.fId] = iinv.rf[ug.fId] * iinv.Vdvu[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (1+iinv.dist[ug.fId]); //压力修正方程中，矩阵中非零系数
-	iinv.ajv[ug.fId] = iinv.rf[ug.fId] * iinv.Vdvv[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (1+iinv.dist[ug.fId]);
-	iinv.ajw[ug.fId] = iinv.rf[ug.fId] * iinv.Vdvw[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (1+iinv.dist[ug.fId]);
+	iinv.aju[ug.fId] = iinv.rf[ug.fId] * iinv.Vdvu[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (iinv.dist[ug.fId]); //压力修正方程中，矩阵中非零系数
+	iinv.ajv[ug.fId] = iinv.rf[ug.fId] * iinv.Vdvv[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (iinv.dist[ug.fId]);
+	iinv.ajw[ug.fId] = iinv.rf[ug.fId] * iinv.Vdvw[ug.fId] * SQR(gcom.xfn, gcom.yfn, gcom.zfn) * gcom.farea / (iinv.dist[ug.fId]);
 
 	iinv.ajp[ug.fId] = iinv.aju[ug.fId] * gcom.xfn + iinv.ajv[ug.fId] * gcom.yfn + iinv.ajw[ug.fId] * gcom.zfn;
 }

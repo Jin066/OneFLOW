@@ -134,6 +134,9 @@ void TimeIntegral::Simple()
 	ONEFLOW::SsSgTask("UPDATE_RESIDUALS");
 	ONEFLOW::SsSgTask("UPDATE_FLOWFIELD_LUSGS");
 	ONEFLOW::SsSgTask("CMP_BOUNDARY");
+
+	ONEFLOW::SsSgTask("SOL_TURB");
+	ONEFLOW::SsSgTask("SOL_HEAT");
 }
 
 EndNameSpace

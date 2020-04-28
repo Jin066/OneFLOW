@@ -205,7 +205,7 @@ void INSCmpGamaT(int flag)
 
 void INsCmpRHS()
 {
-	if (Iteration::innerSteps = 1)
+	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 	{
 		INsCmpInv(); //计算对流项
 
@@ -224,7 +224,6 @@ void INsCmpRHS()
 		INsCmpSpeedCorrectandUpdateSpeed();  //需要先增设界面修正速度未知量并进行求解,更新单元速度和压力
 
 		INsUpdateFaceflux();   //更新界面流量
-
 	}
 	else
 	{

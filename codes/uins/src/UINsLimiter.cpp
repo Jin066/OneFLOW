@@ -79,29 +79,73 @@ void INsLimField::BcQlQrFix()
 		ug.lc = (*ug.lcf)[ug.fId];
 		ug.rc = (*ug.rcf)[ug.fId];
 
-		for (int iEqu = 0; iEqu < this->nEqu; ++iEqu)
-		{
-			Real tmp = half * ((*this->q)[iEqu][ug.lc] + (*this->q)[iEqu][ug.rc]);
+		Real tmp1 = half * ((*this->q)[IIDX::IIR][ug.lc] + (*this->q)[IIDX::IIR][ug.rc]);
+		Real tmp2 = half * ((*this->q)[IIDX::IIU][ug.lc] + (*this->q)[IIDX::IIU][ug.rc]);
+		Real tmp3 = half * ((*this->q)[IIDX::IIV][ug.lc] + (*this->q)[IIDX::IIV][ug.rc]);
+		Real tmp4 = half * ((*this->q)[IIDX::IIW][ug.lc] + (*this->q)[IIDX::IIW][ug.rc]);
+		Real tmp5 = half * ((*this->q)[IIDX::IIP][ug.lc] + (*this->q)[IIDX::IIP][ug.rc]);
 
-			(*this->qf1)[iEqu][ug.fId] = tmp;
-			(*this->qf2)[iEqu][ug.fId] = tmp;
+		(*this->qf1)[IIDX::IIR][ug.fId] = tmp1;
+		(*this->qf2)[IIDX::IIR][ug.fId] = tmp1;
+		(*this->qf1)[IIDX::IIP][ug.fId] = tmp5;
+		(*this->qf2)[IIDX::IIP][ug.fId] = tmp5;
+
+		if (ug.lc < ug.nCell)
+		{
+			(*this->q)[IIDX::IIU][ug.lc] += tmp2;
+			(*this->q)[IIDX::IIV][ug.lc] += tmp3;
+			(*this->q)[IIDX::IIW][ug.lc] += tmp4;
+
+			(*this->q)[IIDX::IIU][ug.rc] = tmp2;
+			(*this->q)[IIDX::IIV][ug.rc] = tmp3;
+			(*this->q)[IIDX::IIW][ug.rc] = tmp4;
 		}
+		else if (ug.rc < ug.nCell)
+		{
+			(*this->q)[IIDX::IIU][ug.rc] += tmp2;
+			(*this->q)[IIDX::IIV][ug.rc] += tmp3;
+			(*this->q)[IIDX::IIW][ug.rc] += tmp4;
+
+			(*this->q)[IIDX::IIU][ug.lc] = tmp2;
+			(*this->q)[IIDX::IIV][ug.lc] = tmp3;
+			(*this->q)[IIDX::IIW][ug.lc] = tmp4;
+		}
+
+	}
+
+	for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+
+		int bcType = ug.bcRecord->bcType[fId];
+		if (bcType == BC::INTERFACE) continue;
+		if (bcType == BC::PERIODIC) continue;
+
+		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
 
 		if (bcType == BC::SOLID_SURFACE)
 		{
-			for (int iEqu = 0; iEqu < this->nEqu; ++iEqu)
+			if (ug.lc < ug.nCell)
 			{
-				if (ug.rc < ug.nCell)
-				{
-					(*this->qf1)[iEqu][ug.fId] = (*uinsf.bc_q)[iEqu][ug.fId];
-				}
-				else
+				for (int iEqu = 0; iEqu < this->nEqu; ++iEqu)
 				{
 					(*this->qf2)[iEqu][ug.fId] = (*uinsf.bc_q)[iEqu][ug.fId];
+					(*this->q)[iEqu][ug.rc] = (*this->qf2)[iEqu][ug.fId];
+				}
+			}
+			else
+			{
+				for (int iEqu = 0; iEqu < this->nEqu; ++iEqu)
+				{
+					(*this->qf1)[iEqu][ug.fId] = (*uinsf.bc_q)[iEqu][ug.fId];
+					(*this->q)[iEqu][ug.lc] = (*this->qf1)[iEqu][ug.fId];
 				}
 			}
 		}
+
 	}
+
 }
 
 INsLimiter::INsLimiter()

@@ -122,7 +122,39 @@ void UINsVisterm::CmpFaceVisterm()
 
 
 	iinv.Fn = gcom.farea /(2+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz);   // μ / ( n * d ) 法向扩散项系数(改动)
-	iinv.Ft = ((visQ.dqdx[IIDX::IIU] * gcom.xfn + visQ.dqdy[IIDX::IIV] * gcom.yfn + visQ.dqdz[IIDX::IIW] * gcom.zfn) - ((visQ.dqdx[IIDX::IIU] * l2rdx + visQ.dqdy[IIDX::IIV] * l2rdy + visQ.dqdz[IIDX::IIW] * l2rdz) / (4+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)))* gcom.farea;//归入源项的扩散项(改动）
+
+	if (!l2rdx == 0)
+	{
+		iinv.Fu = (iinv.ur - iinv.ul)* gcom.xfn / l2rdx;
+	}
+	else
+	{
+		iinv.Fu = 0;
+	}
+
+	if (!l2rdy == 0)
+	{
+		iinv.Fv = (iinv.vr - iinv.vl) * gcom.yfn / l2rdy;
+	}
+	else
+	{
+		iinv.Fv = 0;
+	}
+	
+	if (!l2rdz == 0)
+	{
+		iinv.Fw = (iinv.wr - iinv.wl) * gcom.zfn / l2rdz;
+	}
+	else
+	{
+		iinv.Fw = 0;
+	}
+
+	//iinv.Ft = ((iinv.Fu + iinv.Fv + iinv.Fw) - (((iinv.ur - iinv.ul)* gcom.xfn + (iinv.vr - iinv.vl)* gcom.yfn + (iinv.wr - iinv.wl)* gcom.zfn) / (2+gcom.xfn * l2rdx + gcom.yfn * l2rdy + gcom.zfn * l2rdz)))* gcom.farea;//归入源项的扩散项(改动）
+
+	iinv.Fnu = ((iinv.ur - iinv.ul) + (iinv.vr - iinv.vl) + (iinv.wr - iinv.wl))*gcom.xfn*gcom.xfn / sqrt(l2rdx*l2rdx + l2rdy*l2rdy + l2rdz* l2rdz);
+	iinv.Fnv = ((iinv.ur - iinv.ul) + (iinv.vr - iinv.vl) + (iinv.wr - iinv.wl))*gcom.yfn*gcom.yfn / sqrt(l2rdx*l2rdx + l2rdy * l2rdy + l2rdz * l2rdz);
+	iinv.Fnw = ((iinv.ur - iinv.ul) + (iinv.vr - iinv.vl) + (iinv.wr - iinv.wl))*gcom.zfn*gcom.zfn / sqrt(l2rdx*l2rdx + l2rdy * l2rdy + l2rdz * l2rdz);
 
 	iinv.akk1[ug.lc] = iinv.Fn;    //该界面上的扩散流
 	iinv.akk2[ug.rc] = -iinv.Fn;   
@@ -130,8 +162,14 @@ void UINsVisterm::CmpFaceVisterm()
 	iinv.ak1[ug.lc] += iinv.akk1[ug.lc];   //归于动量方程中主对角线系数
 	iinv.ak2[ug.rc] += iinv.akk2[ug.rc];
 
-	iinv.bm1[ug.lc] += iinv.Ft;  //界面上归入源项的扩散项
-	iinv.bm2[ug.rc] += iinv.Ft;
+	iinv.bmu1[ug.lc] += iinv.Fu *gcom.farea+ iinv.Fnu*gcom.farea; //界面上归入源项的扩散项
+	iinv.bmu2[ug.rc] += iinv.Fu *gcom.farea + iinv.Fnu*gcom.farea;
+
+	iinv.bmv1[ug.lc] += iinv.Fv*gcom.farea + iinv.Fnv*gcom.farea; //界面上归入源项的扩散项
+	iinv.bmv2[ug.rc] += iinv.Fv*gcom.farea + iinv.Fnv*gcom.farea;
+
+	iinv.bmw1[ug.lc] += iinv.Fw*gcom.farea + iinv.Fnw*gcom.farea; //界面上归入源项的扩散项
+	iinv.bmw2[ug.rc] += iinv.Fw*gcom.farea + iinv.Fnw*gcom.farea;
 }
 
 void UINsVisterm::CmpUnsteadcoff()
@@ -150,7 +188,7 @@ void UINsVisterm::CmpUnsteadcoff()
 
 void UINsVisterm::CmpINsSrc()
 {
-	if (Iteration::innerSteps = 1)
+	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 	{
 		for (int cId = 0; cId < ug.nTCell; ++cId)
 		{
@@ -160,9 +198,9 @@ void UINsVisterm::CmpINsSrc()
 			iinv.spv[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId];
 			iinv.spw[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId];
 
-			iinv.buc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId]+ gcom.cvol * (*uinsf.dqdx)[IIDX::IIP][ug.cId];   //动量方程源项
-			iinv.bvc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId]+ gcom.cvol * (*uinsf.dqdy)[IIDX::IIP][ug.cId];
-			iinv.bwc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId]+ gcom.cvol * (*uinsf.dqdz)[IIDX::IIP][ug.cId];
+			iinv.buc[ug.cId] = iinv.bmu1[ug.cId] + iinv.bmu2[ug.cId]+ (*ug.cvol)[ug.cId] * (*uinsf.dqdx)[IIDX::IIP][ug.cId];   //动量方程源项
+			iinv.bvc[ug.cId] = iinv.bmv1[ug.cId] + iinv.bmv2[ug.cId]+ (*ug.cvol)[ug.cId] * (*uinsf.dqdy)[IIDX::IIP][ug.cId];
+			iinv.bwc[ug.cId] = iinv.bmw1[ug.cId] + iinv.bmw2[ug.cId]+ (*ug.cvol)[ug.cId] * (*uinsf.dqdz)[IIDX::IIP][ug.cId];
 
 			int fn = (*ug.c2f)[ug.cId].size();
 			for (int iFace = 0; iFace < fn; ++iFace)
@@ -197,13 +235,13 @@ void UINsVisterm::CmpINsSrc()
 		{
 			ug.cId = cId;
 
-			iinv.spu[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - gcom.cvol * (*uinsf.dqdx)[IIDX::IIP][ug.cId] + iinv.spt[ug.cId]; //矩阵主对角线系数，动量方程单元主系数
-			iinv.spv[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - gcom.cvol * (*uinsf.dqdy)[IIDX::IIP][ug.cId] + iinv.spt[ug.cId];
-			iinv.spw[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - gcom.cvol * (*uinsf.dqdz)[IIDX::IIP][ug.cId] + iinv.spt[ug.cId];
+			iinv.spu[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - (*ug.cvol)[ug.cId] * (*uinsf.dqdx)[IIDX::IIP][ug.cId] + iinv.spt[ug.cId]; //矩阵主对角线系数，动量方程单元主系数
+			iinv.spv[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - (*ug.cvol)[ug.cId] * (*uinsf.dqdy)[IIDX::IIP][ug.cId] + iinv.spt[ug.cId];
+			iinv.spw[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.ak1[ug.cId] + iinv.ak2[ug.cId] - (*ug.cvol)[ug.cId] * (*uinsf.dqdz)[IIDX::IIP][ug.cId] + iinv.spt[ug.cId];
 
-			iinv.buc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId] + gcom.cvol * (*uinsf.dqdx)[IIDX::IIP][ug.cId] + iinv.but[ug.cId];   //动量方程源项
-			iinv.bvc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId] + gcom.cvol * (*uinsf.dqdy)[IIDX::IIP][ug.cId] + iinv.bvt[ug.cId];
-			iinv.bwc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId] + gcom.cvol * (*uinsf.dqdz)[IIDX::IIP][ug.cId] +iinv.bwt[ug.cId];
+			iinv.buc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId] + (*ug.cvol)[ug.cId] * (*uinsf.dqdx)[IIDX::IIP][ug.cId] + iinv.but[ug.cId];   //动量方程源项
+			iinv.bvc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId] + (*ug.cvol)[ug.cId] * (*uinsf.dqdy)[IIDX::IIP][ug.cId] + iinv.bvt[ug.cId];
+			iinv.bwc[ug.cId] = iinv.bm1[ug.cId] + iinv.bm2[ug.cId] + (*ug.cvol)[ug.cId] * (*uinsf.dqdz)[IIDX::IIP][ug.cId] + iinv.bwt[ug.cId];
 
 			int fn = (*ug.c2f)[ug.cId].size();
 			for (int iFace = 0; iFace < fn; ++iFace)

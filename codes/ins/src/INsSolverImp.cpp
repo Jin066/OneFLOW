@@ -50,6 +50,9 @@ void RegisterINsFunc()
     REGISTER_DATA_CLASS( INsInitSolver );
     REGISTER_DATA_CLASS( INsCmpBoundary );
     REGISTER_DATA_CLASS( IDumpHeatFluxCoeff );
+
+	REGISTER_DATA_CLASS(INsCmpTurb);
+	REGISTER_DATA_CLASS(INsCmpHeat);
 }
 
 void INsInitFinal( StringField & data )
@@ -170,6 +173,15 @@ void IDumpHeatFluxCoeff( StringField & data )
     ;
 }
 
+void INsCmpTurb(StringField & data)
+{
+	;
+}
+
+void INsCmpHeat(StringField & data)
+{
+	;
+}
 
 SolverRegData insReg;
 SolverRegData * GetINsReg()

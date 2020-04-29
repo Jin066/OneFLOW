@@ -71,7 +71,7 @@ public:
 
     Real eig11, eig12, eig13;
     Real eig21, eig22, eig23;
-	Real vnrel, Vau, Vav, Vaw,Fn,Fu,Fv,Fw,Ft, timestep, res_u, res_v, res_w, res_p, maxu, maxv, maxw,Fnu,Fnv,Fnw;  // l2rdx, l2rdy, l2rdz,
+	Real vnrel, Vau, Vav, Vaw,Fn,Fu,Fv,Fw,Ft, timestep, res_u, res_v, res_w, res_p, maxu, maxv, maxw,Fnu,Fnv,Fnw,nxd;  // l2rdx, l2rdy, l2rdz,
     Real cl, cr, cm;
 public:
     Real rl, ul, vl, wl, pl, hl, el;

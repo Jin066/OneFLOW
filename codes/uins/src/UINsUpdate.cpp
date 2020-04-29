@@ -142,15 +142,15 @@ void UINsUpdate::SolutionFix()
 
 void UINsUpdate::UpdateFlowFieldValue()
 {
-	//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
-	//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
-	//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
-	//(*uinsf.q)[IIDX::IIP][ug.cId] = iinv.pc[ug.cId];
+	(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
+	(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
+	(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
+	(*uinsf.q)[IIDX::IIP][ug.cId] = iinv.pc[ug.cId];
 
-	for (int iEqu = 0; iEqu < inscom.nTEqu; ++iEqu)
-	{
-		(*uinsf.q)[iEqu][ug.cId] = inscom.prim[iEqu];
-	}
+	//for (int iEqu = 0; iEqu < inscom.nTEqu; ++iEqu)
+	//{
+		//(*uinsf.q)[iEqu][ug.cId] = inscom.prim[iEqu];
+	//}
 
 
     for ( int iEqu = 0; iEqu < inscom.nTModel; ++ iEqu )

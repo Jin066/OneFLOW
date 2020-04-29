@@ -205,28 +205,7 @@ void INSCmpGamaT(int flag)
 
 void INsCmpRHS()
 {
-	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
-	{
-		INsCmpInv(); //计算对流项
 
-		INsCmpVis(); //计算扩散项
-
-		INsCmpSrc(); //计算源项和动量方程系数
-
-		INsMomPre(); //求解动量方程
-
-		INsCmpFaceflux(); //计算界面流量
-
-		INsCorrectPresscoef(); //计算压力修正方程系数
-
-		INsCmpPressCorrectEquandUpdatePress();  //需要解压力修正方程组，增设单元修正压力未知量
-
-		INsCmpSpeedCorrectandUpdateSpeed();  //需要先增设界面修正速度未知量并进行求解,更新单元速度和压力
-
-		INsUpdateFaceflux();   //更新界面流量
-	}
-	else
-	{
 		INsCmpTimestep();
 
 		INsCmpInv(); //计算对流项
@@ -249,7 +228,6 @@ void INsCmpRHS()
 
 		INsUpdateFaceflux();   //更新界面流量
 
-	}
 }
 
 void INsCmpTimestep()

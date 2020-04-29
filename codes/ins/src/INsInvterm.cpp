@@ -91,9 +91,9 @@ void INsInvterm::CmpINsinvTerm()
 		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
 
 		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
-		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half + (iinv.pl + iinv.pr) * half * gcom.xfn;
-		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half + (iinv.pl + iinv.pr) * half * gcom.yfn;
-		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half + (iinv.pl + iinv.pr) * half * gcom.zfn;
+		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half; 
+		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half;
+		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half;
 
 		iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId]- gcom.vfn;  //初始界面上 V*n
 
@@ -103,8 +103,8 @@ void INsInvterm::CmpINsinvTerm()
 		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
 
-		iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
-		iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
+		iinv.aii1[ug.fId] = crl;   //该面流向左单元的流量
+		iinv.aii2[ug.fId] = clr;   //该面流向右单元的流量
 
 		iinv.ai1[ug.lc] += crl;   //流入单元的流量
 		iinv.ai2[ug.rc] += clr;   //流出单元的流量
@@ -115,8 +115,8 @@ void INsInvterm::CmpINsinvTerm()
 		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
 
-		iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
-		iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
+		iinv.aii1[ug.fId] = crl;   //该面流向左单元的流量
+		iinv.aii2[ug.fId] = clr;   //该面流向右单元的流量
 
 		iinv.ai1[ug.lc] += crl;   //流入单元的流量
 		iinv.ai2[ug.rc] += clr;   //流出单元的流量
@@ -148,14 +148,14 @@ void INsInvterm::CmpINsFaceflux()
 	Real Vaw = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] / (1+iinv.spw[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] / (1+iinv.spw[ug.rc]));
 
     iinv.dist[ug.fId] = gcom.xfn * ((*ug.xcc)[ug.rc] - (*ug.xcc)[ug.lc]) + gcom.yfn * ((*ug.ycc)[ug.rc] - (*ug.ycc)[ug.lc]) + gcom.zfn * ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]);
-	Real Pd1 = visQ.dqdx1[IIDX::IIP] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + visQ.dqdy1[IIDX::IIP] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + visQ.dqdz1[IIDX::IIP] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项
-	Real Pd2 = visQ.dqdx2[IIDX::IIP] * ((*ug.xcc)[ug.rc] - (*ug.xfc)[ug.fId]) + visQ.dqdy2[IIDX::IIP] * ((*ug.ycc)[ug.rc] - (*ug.yfc)[ug.fId]) + visQ.dqdz2[IIDX::IIP] * ((*ug.zcc)[ug.rc] - (*ug.zfc)[ug.fId]);
+	Real Pd1 = (*uinsf.dqdx)[IIDX::IIP][ug.lc] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + (*uinsf.dqdy)[IIDX::IIP][ug.lc] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + (*uinsf.dqdz)[IIDX::IIP][ug.lc] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);  //压力梯度项
+	Real Pd2 = (*uinsf.dqdx)[IIDX::IIP][ug.rc] * ((*ug.xcc)[ug.rc] - (*ug.xfc)[ug.fId]) + (*uinsf.dqdy)[IIDX::IIP][ug.rc] * ((*ug.ycc)[ug.rc] - (*ug.yfc)[ug.fId]) + (*uinsf.dqdz)[IIDX::IIP][ug.rc] * ((*ug.zcc)[ug.rc] - (*ug.zfc)[ug.fId]);
 	Real Pd = Pd1 + Pd2;
 
 	
-	iinv.uf[ug.fId] = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + (iinv.Vau*gcom.xfn / (1+iinv.dist[ug.fId]))*( Pd - (iinv.pr - iinv.pl));  //下一时刻的界面预测速度
-	iinv.vf[ug.fId] = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + (iinv.Vav*gcom.yfn / (1+iinv.dist[ug.fId]))*(Pd - (iinv.pr - iinv.pl));
-	iinv.wf[ug.fId] = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + (iinv.Vaw*gcom.zfn / (1+iinv.dist[ug.fId]))*(Pd - (iinv.pr - iinv.pl));
+	iinv.uf[ug.fId] = (iinv.f1[ug.fId] *iinv.ul + iinv.f2[ug.fId] *iinv.ur) + ( Vau*gcom.xfn / (iinv.dist[ug.fId]))*( Pd - (iinv.pr - iinv.pl));  //下一时刻的界面预测速度
+	iinv.vf[ug.fId] = (iinv.f1[ug.fId] *iinv.vl + iinv.f2[ug.fId] *iinv.vr) + ( Vav*gcom.yfn / (iinv.dist[ug.fId]))*(Pd - (iinv.pr - iinv.pl));
+	iinv.wf[ug.fId] = (iinv.f1[ug.fId] *iinv.wl + iinv.f2[ug.fId] *iinv.wr) + ( Vaw*gcom.zfn / (iinv.dist[ug.fId]))*(Pd - (iinv.pr - iinv.pl));
 
 	iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId];
 	

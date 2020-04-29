@@ -37,3 +37,5 @@ IMPLICIT_METHOD           , CINsImplicitMethod, 0
 CMP_UNSTEADY_CRITERION, CCmpUnsteadyCriterion, 0
 DUMP_PRESSURE_COEFF       , CDumpPressureCoeff, 0
 DUMP_HEATFLUX_COEFF       , CIDumpHeatFluxCoeff, 0
+SOL_TURB              , CINsCmpTurb, 0
+SOL_HEAT              , CINsCmpHeat, 0

@@ -562,7 +562,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 
 		iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
 
-		//(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId];
+		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId];
 	}
 	this->CmpINsPreRes();
 }
@@ -642,9 +642,9 @@ void UINsInvterm::UpdateSpeed()
 		iinv.vp[ug.cId]= iinv.vc[cId] + iinv.vv[ug.cId];
 		iinv.wp[ug.cId]= iinv.wc[cId] + iinv.ww[ug.cId];
 
-		//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
-		//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
-		//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
+		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
+		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
+		(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
 
 	}	
 }

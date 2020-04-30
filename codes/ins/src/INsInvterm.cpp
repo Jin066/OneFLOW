@@ -85,6 +85,47 @@ void INsInvterm::Solve()
 
 void INsInvterm::CmpINsinvTerm()
 { 
+	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
+	{
+
+		INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
+
+		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
+
+
+		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
+
+		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half + (iinv.pl + iinv.pr) * half * gcom.xfn;
+
+		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half + (iinv.pl + iinv.pr) * half * gcom.yfn;
+
+		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half + (iinv.pl + iinv.pr) * half * gcom.zfn;
+
+
+
+		iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId] - gcom.vfn;  //初始界面上 V*n
+
+
+
+		iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
+
+
+
+		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
+
+		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+
+		iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
+
+		iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
+
+		iinv.ai1[ug.lc] += crl;   //流入单元的流量
+
+		iinv.ai2[ug.rc] += clr;   //流出单元的流量
+
+	}
+	else
+	{
 		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
 		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
@@ -94,6 +135,7 @@ void INsInvterm::CmpINsinvTerm()
 
 		iinv.ai1[ug.lc] += crl;   //流入单元的流量
 		iinv.ai2[ug.rc] += clr;   //流出单元的流量
+	}
 }
 
 void INsInvterm::CmpINsFaceflux()

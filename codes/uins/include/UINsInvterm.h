@@ -50,6 +50,7 @@ public:
 	void CmpPressCorrectEqu();
 	void UpdateFaceflux();
 	void CmpUpdateINsFaceflux();
+	void CmpUpdateINsBcFaceflux();
 	void UpdateSpeed();
     void AddFlux();
     void PrepareFaceValue();

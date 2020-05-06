@@ -319,9 +319,9 @@ void MG::SolveMultigridFlowField( int gl )
 	{
 		//this->MWrap(&MG::PreprocessMultigridFlowField, gl);
 		this->MWrap(&MG::PreRelaxationCycle, gl);
-		this->FastSolveFlowFieldByMultigridMethod(gl);
-		this->MWrap(&MG::PostRelaxationCycle, gl);
-		this->MWrap(&MG::PostprocessMultigridFlowField, gl);
+		//this->FastSolveFlowFieldByMultigridMethod(gl);
+		//this->MWrap(&MG::PostRelaxationCycle, gl);
+		//this->MWrap(&MG::PostprocessMultigridFlowField, gl);
 	}
 	else
 	{

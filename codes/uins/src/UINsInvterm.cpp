@@ -696,6 +696,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	{
 		ug.cId = cId;
 		iinv.pp[ug.cId] = 0;
+		iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
 	}
 	this->CmpINsPreRes();
 }

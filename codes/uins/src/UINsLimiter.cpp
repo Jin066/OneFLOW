@@ -129,7 +129,7 @@ void INsLimField::BcQlQrFix()
 			if (ug.lc < ug.nCell)
 			{
 				for (int iEqu = 0; iEqu < this->nEqu; ++iEqu)
-				{
+			{
 					(*this->qf2)[iEqu][ug.fId] = (*uinsf.bc_q)[iEqu][ug.fId];
 					(*this->q)[iEqu][ug.rc] = (*this->qf2)[iEqu][ug.fId];
 				}

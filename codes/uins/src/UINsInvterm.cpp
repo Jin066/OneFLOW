@@ -254,7 +254,13 @@ void UINsInvterm::CmpInvMassFlux()
 		iinv.Fpu.resize(ug.nFace);
 		iinv.Fpv.resize(ug.nFace);
 		iinv.Fpw.resize(ug.nFace);
-
+		iinv.tux.resize(ug.nFace);
+		iinv.tvy.resize(ug.nFace);
+		iinv.twz.resize(ug.nFace);
+		iinv.Fqu.resize(ug.nFace);
+		iinv.Fqv.resize(ug.nFace);
+		iinv.Fqw.resize(ug.nFace);
+		
 		iinv.ai1 = 0;
 		iinv.ai2 = 0;
 		iinv.spu1 = 1;

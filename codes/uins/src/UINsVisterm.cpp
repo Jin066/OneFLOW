@@ -206,14 +206,14 @@ void UINsVisterm::CmpPreandVisGrad()
 		(*uinsf.dqdy)[IIDX::IIU][ug.rc] = (*uinsf.dqdy)[IIDX::IIU][ug.lc];
 		(*uinsf.dqdz)[IIDX::IIU][ug.rc] = (*uinsf.dqdz)[IIDX::IIU][ug.lc];
 		(*uinsf.dqdx)[IIDX::IIV][ug.rc] = (*uinsf.dqdx)[IIDX::IIV][ug.lc];
-		(*uinsf.dqdy)[IIDX::IIV][ug.rc] = (*uinsf.dqdy)[IIDX::IIV][ug.rc];
-		(*uinsf.dqdz)[IIDX::IIV][ug.rc] = (*uinsf.dqdz)[IIDX::IIV][ug.rc];
-		(*uinsf.dqdx)[IIDX::IIW][ug.rc] = (*uinsf.dqdx)[IIDX::IIW][ug.rc];
-		(*uinsf.dqdy)[IIDX::IIW][ug.rc] = (*uinsf.dqdy)[IIDX::IIW][ug.rc];
-		(*uinsf.dqdz)[IIDX::IIW][ug.rc] = (*uinsf.dqdz)[IIDX::IIW][ug.rc];
-		(*uinsf.dqdx)[IIDX::IIP][ug.rc] = (*uinsf.dqdx)[IIDX::IIP][ug.rc];
-		(*uinsf.dqdy)[IIDX::IIP][ug.rc] = (*uinsf.dqdy)[IIDX::IIP][ug.rc];
-		(*uinsf.dqdz)[IIDX::IIP][ug.rc] = (*uinsf.dqdz)[IIDX::IIP][ug.rc];
+		(*uinsf.dqdy)[IIDX::IIV][ug.rc] = (*uinsf.dqdy)[IIDX::IIV][ug.lc];
+		(*uinsf.dqdz)[IIDX::IIV][ug.rc] = (*uinsf.dqdz)[IIDX::IIV][ug.lc];
+		(*uinsf.dqdx)[IIDX::IIW][ug.rc] = (*uinsf.dqdx)[IIDX::IIW][ug.lc];
+		(*uinsf.dqdy)[IIDX::IIW][ug.rc] = (*uinsf.dqdy)[IIDX::IIW][ug.lc];
+		(*uinsf.dqdz)[IIDX::IIW][ug.rc] = (*uinsf.dqdz)[IIDX::IIW][ug.lc];
+		(*uinsf.dqdx)[IIDX::IIP][ug.rc] = (*uinsf.dqdx)[IIDX::IIP][ug.lc];
+		(*uinsf.dqdy)[IIDX::IIP][ug.rc] = (*uinsf.dqdy)[IIDX::IIP][ug.lc];
+		(*uinsf.dqdz)[IIDX::IIP][ug.rc] = (*uinsf.dqdz)[IIDX::IIP][ug.lc];
 	}
 }
 
@@ -251,9 +251,9 @@ void UINsVisterm::CmpFaceVisterm()
 
 	iinv.c2d = sqrt(l2rdx*l2rdx+ l2rdy * l2rdy+ l2rdz * l2rdz);
 
-	iinv.Fnu[ug.fId] = (*ug.farea)[ug.fId] *(*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] / iinv.c2d;//μ / (n * d) 法向扩散项系数(改动)
-	iinv.Fnv[ug.fId] = (*ug.farea)[ug.fId] *(*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] / iinv.c2d;
-	iinv.Fnw[ug.fId] = (*ug.farea)[ug.fId] *(*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId] / iinv.c2d;
+	iinv.Fnu[ug.fId] = (*ug.farea)[ug.fId] *((*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId]+ (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId]+ (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId])/ iinv.c2d;//μ / (n * d) 法向扩散项系数(改动)
+	iinv.Fnv[ug.fId] = (*ug.farea)[ug.fId] * ((*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId]) / iinv.c2d;
+	iinv.Fnw[ug.fId] = (*ug.farea)[ug.fId] * ((*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId]) / iinv.c2d;
 
 	Real dx1 = (*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc];
 	Real dy1 = (*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc];
@@ -271,60 +271,98 @@ void UINsVisterm::CmpFaceVisterm()
 	iinv.f2[ug.fId] = de1 * de;  //右单元权重
 
 	iinv.Puf[ug.fId] = (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc])*(*ug.xfn)[ug.fId] +
-		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.rc])*(*ug.yfn)[ug.fId] +
-		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.rc])*(*ug.zfn)[ug.fId];  //▽q*n
+		               (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.rc])*(*ug.yfn)[ug.fId] +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId];  //▽q*n
 
-	iinv.Pvf[ug.fId] = (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.rc])*(*ug.xfn)[ug.fId] +
+	iinv.Pvf[ug.fId] = (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.rc])*(*ug.xfn)[ug.fId] +
 		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc])*(*ug.yfn)[ug.fId] +
-		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.rc])*(*ug.zfn)[ug.fId];
+		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId];
 	
-	iinv.Pwf[ug.fId] = (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.rc])*(*ug.xfn)[ug.fId] +
-		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.rc])*(*ug.yfn)[ug.fId] +
+	iinv.Pwf[ug.fId] = (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.rc])*(*ug.xfn)[ug.fId] +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.rc])*(*ug.yfn)[ug.fId] +
 		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId];
 	
-	iinv.Pufd[ug.fId] = iinv.Puf[ug.fId] * (l2rdx * (*ug.xfn)[ug.fId] + l2rdy * (*ug.yfn)[ug.fId] + l2rdz * (*ug.zfn)[ug.fId])/ iinv.c2d;  //▽q*n*n*d
-	iinv.Pvfd[ug.fId] = iinv.Pvf[ug.fId] * (l2rdx * (*ug.xfn)[ug.fId] + l2rdy * (*ug.yfn)[ug.fId] + l2rdz * (*ug.zfn)[ug.fId]) / iinv.c2d;  //▽q*n*n*d
-	iinv.Pwfd[ug.fId] = iinv.Pwf[ug.fId] * (l2rdx * (*ug.xfn)[ug.fId] + l2rdy * (*ug.yfn)[ug.fId] + l2rdz * (*ug.zfn)[ug.fId]) / iinv.c2d;  //▽q*n*n*d
+
+	iinv.Pdx[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc])*l2rdx +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.rc])*l2rdy +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.rc])*l2rdz)/ iinv.c2d;
+
+	iinv.Pdy[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.rc])*l2rdx +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc])*l2rdy +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.rc])*l2rdz)/ iinv.c2d;
+	
+	iinv.Pdz[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.rc])*l2rdx +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.rc])*l2rdy +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*l2rdz)/ iinv.c2d;
+
+
+	iinv.Pufd[ug.fId] = iinv.Pdx[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + iinv.Pdx[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Pdx[ug.fId] * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId];
+	iinv.Pvfd[ug.fId] = iinv.Pdy[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + iinv.Pdy[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Pdy[ug.fId] * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId];
+	iinv.Pwfd[ug.fId] = iinv.Pdz[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + iinv.Pdz[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Pdz[ug.fId] * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId];
 
 	iinv.Ftu[ug.fId] = (iinv.Puf[ug.fId] + iinv.Pufd[ug.fId])*(*ug.farea)[ug.fId];   //扩散项中归入源项的部分
     iinv.Ftv[ug.fId] = (iinv.Pvf[ug.fId] + iinv.Pvfd[ug.fId])*(*ug.farea)[ug.fId];
 	iinv.Ftw[ug.fId] = (iinv.Pwf[ug.fId] + iinv.Pwfd[ug.fId])*(*ug.farea)[ug.fId];
 
-	iinv.Fpu[ug.fId] = -half* ((*uinsf.q)[IIDX::IIP][ug.lc]+ (*uinsf.q)[IIDX::IIP][ug.rc])*(*ug.xfn)[ug.fId] *(*ug.farea)[ug.fId];  //压力梯度项（归入源项）
-	iinv.Fpv[ug.fId] = -half* ((*uinsf.q)[IIDX::IIP][ug.lc] + (*uinsf.q)[IIDX::IIP][ug.rc])*(*ug.yfn)[ug.fId] *(*ug.farea)[ug.fId];
-	iinv.Fpw[ug.fId] = -half* ((*uinsf.q)[IIDX::IIP][ug.lc] + (*uinsf.q)[IIDX::IIP][ug.rc])*(*ug.zfn)[ug.fId] *(*ug.farea)[ug.fId];
+
+	iinv.FuT[ug.fId] = ((iinv.ukr[ug.fId]- iinv.ukl[ug.fId])*(*ug.xfn)[ug.fId]* (*ug.xfn)[ug.fId]+
+		               (iinv.vkr[ug.fId] - iinv.vkl[ug.fId])*(*ug.xfn)[ug.fId] * (*ug.yfn)[ug.fId]+
+		               (iinv.wkr[ug.fId] - iinv.wkl[ug.fId])*(*ug.xfn)[ug.fId] * (*ug.zfn)[ug.fId])/iinv.c2d*(*ug.farea)[ug.fId];
+
+	iinv.FvT[ug.fId] = ((iinv.ukr[ug.fId] - iinv.ukl[ug.fId])*(*ug.xfn)[ug.fId] * (*ug.yfn)[ug.fId] +
+		                (iinv.vkr[ug.fId] - iinv.vkl[ug.fId])*(*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] +
+		                (iinv.wkr[ug.fId] - iinv.wkl[ug.fId])*(*ug.yfn)[ug.fId] * (*ug.zfn)[ug.fId])/iinv.c2d*(*ug.farea)[ug.fId];
+
+	iinv.FwT[ug.fId] = ((iinv.ukr[ug.fId] - iinv.ukl[ug.fId])*(*ug.xfn)[ug.fId] * (*ug.zfn)[ug.fId] +
+		                (iinv.vkr[ug.fId] - iinv.vkl[ug.fId])*(*ug.yfn)[ug.fId] * (*ug.zfn)[ug.fId] +
+		                (iinv.wkr[ug.fId] - iinv.wkl[ug.fId])*(*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId])/iinv.c2d*(*ug.farea)[ug.fId];
 
 
-	iinv.tux[ug.fId] = 2 * (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc])*(*ug.xfn)[ug.fId] +    //剪切应力（源项）
-		              (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc] +
-			           iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc] +
-			           iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*(*ug.xfn)[ug.fId] +
-			          (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.rc] +
-				       iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.rc])*(*ug.xfn)[ug.fId] +
-				      (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.rc] +
-					   iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.rc])*(*ug.xfn)[ug.fId];
+	iinv.PufT[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc])*(*ug.xfn)[ug.fId] +
+		                 (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.rc])*(*ug.yfn)[ug.fId] +
+		                 (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.rc])*(*ug.zfn)[ug.fId]);
 
-	iinv.tvy[ug.fId] = 2 * (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc])*(*ug.yfn)[ug.fId] +
-		              (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc] +
-			           iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc] +
-			           iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*(*ug.yfn)[ug.fId] +
-			          (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.rc] +
-				       iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIU][ug.rc])*(*ug.yfn)[ug.fId] +
-				      (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.rc] +
-				   	   iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.rc])*(*ug.yfn)[ug.fId];
+	iinv.PvfT[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIV][ug.rc])*(*ug.xfn)[ug.fId] +
+		                 (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc])*(*ug.yfn)[ug.fId] +
+		                 (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.rc])*(*ug.zfn)[ug.fId]);
 
-	iinv.twz[ug.fId] = 2 * (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId] +
-		              (iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc] +
-			           iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc] +
-			           iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId] +
-			          (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIU][ug.rc] +
-				       iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId] +
-				      (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.rc] +
-					   iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIV][ug.rc])*(*ug.zfn)[ug.fId];
+	iinv.PwfT[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIW][ug.rc])*(*ug.xfn)[ug.fId] +
+		                 (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIW][ug.rc])*(*ug.yfn)[ug.fId] +
+		                 (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc])*(*ug.zfn)[ug.fId]);
 
-	iinv.Fqu[ug.fId] = iinv.tux[ug.fId] * (*ug.farea)[ug.fId];
-	iinv.Fqv[ug.fId] = iinv.tvy[ug.fId] * (*ug.farea)[ug.fId];
-	iinv.Fqw[ug.fId] = iinv.twz[ug.fId] * (*ug.farea)[ug.fId];
+
+	iinv.PufdT[ug.fId] = (iinv.Pdx[ug.fId]* (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId]+ iinv.Pdy[ug.fId]* (*ug.xfn)[ug.fId] * (*ug.yfn)[ug.fId] + 
+		                 iinv.Pdz[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.zfn)[ug.fId]);
+
+	iinv.PvfdT[ug.fId] = (iinv.Pdx[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Pdy[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] +
+		                  iinv.Pdz[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.zfn)[ug.fId]);
+
+	iinv.PwfdT[ug.fId] = (iinv.Pdx[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.zfn)[ug.fId] + iinv.Pdy[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.zfn)[ug.fId] +
+		                  iinv.Pdz[ug.fId] * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId]);
+
+	iinv.Pud[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc]) +
+		                (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc]) +
+		                (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc]))*(*ug.xfn)[ug.fId];
+
+    iinv.Pvd[ug.fId] = ((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc]) +
+		                (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc]) +
+		                (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc]))*(*ug.yfn)[ug.fId];
+
+	iinv.Pwd[ug.fId] =((iinv.f1[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdx)[IIDX::IIU][ug.rc]) +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdy)[IIDX::IIV][ug.rc]) +
+		               (iinv.f1[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.lc] + iinv.f2[ug.fId] * (*uinsf.dqdz)[IIDX::IIW][ug.rc]))*(*ug.zfn)[ug.fId];
+
+	iinv.FtuT[ug.fId] = (iinv.PufT[ug.fId] + iinv.PufdT[ug.fId]+ iinv.Pud[ug.fId])* (*ug.farea)[ug.fId];
+	iinv.FtvT[ug.fId] = (iinv.PvfT[ug.fId] + iinv.PvfdT[ug.fId]+ iinv.Pvd[ug.fId])* (*ug.farea)[ug.fId];
+	iinv.FtwT[ug.fId] = (iinv.PwfT[ug.fId] + iinv.PwfdT[ug.fId]+ iinv.Pwd[ug.fId])* (*ug.farea)[ug.fId];
+
+
+	iinv.Fpu[ug.fId] = -half * ((*uinsf.q)[IIDX::IIP][ug.lc] + (*uinsf.q)[IIDX::IIP][ug.rc])*(*ug.xfn)[ug.fId] * (*ug.farea)[ug.fId];  //压力梯度项（归入源项）
+	iinv.Fpv[ug.fId] = -half * ((*uinsf.q)[IIDX::IIP][ug.lc] + (*uinsf.q)[IIDX::IIP][ug.rc])*(*ug.yfn)[ug.fId] * (*ug.farea)[ug.fId];
+	iinv.Fpw[ug.fId] = -half * ((*uinsf.q)[IIDX::IIP][ug.lc] + (*uinsf.q)[IIDX::IIP][ug.rc])*(*ug.zfn)[ug.fId] * (*ug.farea)[ug.fId];
+
+
+
 	
 	iinv.akku1[ug.fId] = iinv.Fnu[ug.fId];    //该界面上的扩散流
 	iinv.akku2[ug.fId] = iinv.Fnu[ug.fId];
@@ -340,14 +378,17 @@ void UINsVisterm::CmpFaceVisterm()
 	iinv.akw1[ug.lc] += iinv.Fnw[ug.fId];   //归于动量方程中主对角线系数
 	iinv.akw2[ug.rc] += iinv.Fnw[ug.fId];
 
-	iinv.bmu1[ug.lc] += iinv.Ftu[ug.fId] + iinv.Fqu[ug.fId] + iinv.Fpu[ug.fId]; //界面上归入源项的扩散项
-	iinv.bmu2[ug.rc] += iinv.Ftu[ug.fId]+ iinv.Fqu[ug.fId]+ iinv.Fpu[ug.fId];
+	iinv.bmu1[ug.lc] += (iinv.Ftu[ug.fId] + iinv.Fpu[ug.fId] * ((*ug.xfc)[ug.fId]) + iinv.FtuT[ug.fId] - iinv.FuT[ug.fId]); //界面上归入源项的扩散项
+	iinv.bmu2[ug.rc] += (iinv.Ftu[ug.fId] + iinv.Fpu[ug.fId] * (-(*ug.xfc)[ug.fId]) + iinv.FtuT[ug.fId] + iinv.FuT[ug.fId]);
 
-	iinv.bmv1[ug.lc] += iinv.Ftv[ug.fId]+ iinv.Fqv[ug.fId]+ iinv.Fpv[ug.fId]; //界面上归入源项的扩散项
-	iinv.bmv2[ug.rc] += iinv.Ftv[ug.fId]+ iinv.Fqv[ug.fId]+ iinv.Fpv[ug.fId];
+	iinv.bmv1[ug.lc] += (iinv.Ftv[ug.fId] + iinv.Fpv[ug.fId] * ((*ug.yfc)[ug.fId]) + iinv.FtvT[ug.fId] - iinv.FvT[ug.fId]); //界面上归入源项的扩散项
+	iinv.bmv2[ug.rc] += (iinv.Ftv[ug.fId] + iinv.Fpv[ug.fId] * (-(*ug.yfc)[ug.fId]) + iinv.FtvT[ug.fId] + iinv.FvT[ug.fId]);
 
-	iinv.bmw1[ug.lc] += iinv.Ftw[ug.fId]+ iinv.Fqw[ug.fId]+ iinv.Fpw[ug.fId]; //界面上归入源项的扩散项
-	iinv.bmw2[ug.rc] += iinv.Ftw[ug.fId]+ iinv.Fqw[ug.fId]+ iinv.Fpw[ug.fId];
+	iinv.bmw1[ug.lc] += (iinv.Ftw[ug.fId] + iinv.Fpw[ug.fId] + iinv.FtwT[ug.fId] - iinv.FwT[ug.fId]); //界面上归入源项的扩散项
+	iinv.bmw2[ug.rc] += (iinv.Ftw[ug.fId] + iinv.Fpw[ug.fId] + iinv.FtwT[ug.fId] + iinv.FwT[ug.fId]);
+
+
+
 }
 
 void UINsVisterm::CmpUnsteadcoff()
@@ -369,17 +410,39 @@ void UINsVisterm::CmpUnsteadcoff()
 			iinv.bwt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId]* iinv.wp[ug.cId]/ iinv.timestep;
 		}
 		else
+		{
 			iinv.but[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.up[ug.cId] / iinv.timestep; //源项的非稳态项
-		    iinv.bvt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.vp[ug.cId] / iinv.timestep;
-		    iinv.bwt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.wp[ug.cId] / iinv.timestep;
+			iinv.bvt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.vp[ug.cId] / iinv.timestep;
+			iinv.bwt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.wp[ug.cId] / iinv.timestep;
+		}
 	}
 	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
-		iinv.spt[ug.cId] = 0;
-		iinv.but[ug.cId] = 0;
-		iinv.bvt[ug.cId] = 0;
-		iinv.bwt[ug.cId] = 0;
+
+		iinv.spt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] / iinv.timestep;  //矩阵对角线元素的非稳态项
+		
+		if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
+		{
+			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
+			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+
+			iinv.but[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.up[ug.cId] / iinv.timestep; //源项的非稳态项
+			iinv.bvt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.vp[ug.cId] / iinv.timestep;
+			iinv.bwt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.wp[ug.cId] / iinv.timestep;
+		}
+		else
+		{
+			iinv.but[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.up[ug.cId] / iinv.timestep; //源项的非稳态项
+			iinv.bvt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.vp[ug.cId] / iinv.timestep;
+			iinv.bwt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.wp[ug.cId] / iinv.timestep;
+		}
+
+		//iinv.spt[ug.cId] = 0;
+		//iinv.but[ug.cId] = 0;
+		//iinv.bvt[ug.cId] = 0;
+		//iinv.bwt[ug.cId] = 0;
 	}
 }
 
@@ -397,8 +460,8 @@ void UINsVisterm::CmpINsSrc()
 
 
 			iinv.buc[ug.cId] = iinv.bmu1[ug.cId] + iinv.bmu2[ug.cId]+ iinv.but[ug.cId];   //动量方程源项
-				iinv.bvc[ug.cId] = iinv.bmv1[ug.cId] + iinv.bmv2[ug.cId]+iinv.bvt[ug.cId];
-				iinv.bwc[ug.cId] = iinv.bmw1[ug.cId] + iinv.bmw2[ug.cId]+ iinv.bwt[ug.cId];
+			iinv.bvc[ug.cId] = iinv.bmv1[ug.cId] + iinv.bmv2[ug.cId]+iinv.bvt[ug.cId];
+			iinv.bwc[ug.cId] = iinv.bmw1[ug.cId] + iinv.bmw2[ug.cId]+ iinv.bwt[ug.cId];
 
 
 			int fn = (*ug.c2f)[ug.cId].size();
@@ -438,17 +501,63 @@ void UINsVisterm::CmpINsSrc()
 		for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
 		{
 			ug.cId = cId;
-			iinv.spu[ug.cId] = 1; //矩阵主对角线系数，动量方程单元主系数
-			iinv.spv[ug.cId] = 1;
-			iinv.spw[ug.cId] = 1;
 
-			iinv.buc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];   //动量方程源项
-			iinv.bvc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
-			iinv.bwc[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+			ug.cId = cId;
 
-			iinv.spuj[ug.cId] = 0;
-			iinv.spvj[ug.cId] = 0;
-			iinv.spwj[ug.cId] = 0;
+			iinv.spu[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.aku1[ug.cId] + iinv.aku2[ug.cId] + iinv.spt[ug.cId]; //矩阵主对角线系数，动量方程单元主系数
+			iinv.spv[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.akv1[ug.cId] + iinv.akv2[ug.cId] + iinv.spt[ug.cId];
+			iinv.spw[ug.cId] = iinv.ai1[ug.cId] + iinv.ai2[ug.cId] + iinv.akw1[ug.cId] + iinv.akw2[ug.cId] + iinv.spt[ug.cId];
+
+
+			iinv.buc[ug.cId] = iinv.bmu1[ug.cId] + iinv.bmu2[ug.cId] + iinv.but[ug.cId];   //动量方程源项
+			iinv.bvc[ug.cId] = iinv.bmv1[ug.cId] + iinv.bmv2[ug.cId] + iinv.bvt[ug.cId];
+			iinv.bwc[ug.cId] = iinv.bmw1[ug.cId] + iinv.bmw2[ug.cId] + iinv.bwt[ug.cId];
+
+
+			int fn = (*ug.c2f)[ug.cId].size();
+			for (int iFace = 0; iFace < fn; ++iFace)
+			{
+				int fId = (*ug.c2f)[ug.cId][iFace];
+				ug.fId = fId;
+				ug.lc = (*ug.lcf)[ug.fId];
+				ug.rc = (*ug.rcf)[ug.fId];
+				if (ug.cId == ug.lc)
+				{
+					iinv.spuj[ug.cId][ug.rc] = (iinv.aii2[ug.fId] + iinv.akku2[ug.fId]);  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
+					iinv.spvj[ug.cId][ug.rc] = (iinv.aii2[ug.fId] + iinv.akkv2[ug.fId]);
+					iinv.spwj[ug.cId][ug.rc] = (iinv.aii2[ug.fId] + iinv.akkw2[ug.fId]);
+
+
+					iinv.sju[ug.cId] += iinv.aii2[ug.fId] + iinv.akku2[ug.fId]; //矩阵非零系数相加，用于求压力修正方程
+					iinv.sjv[ug.cId] += iinv.aii2[ug.fId] + iinv.akkv2[ug.fId];
+					iinv.sjw[ug.cId] += iinv.aii2[ug.fId] + iinv.akkw2[ug.fId];
+
+
+				}
+				else if (ug.cId == ug.rc)
+				{
+					iinv.spuj[ug.cId][ug.lc] = (iinv.aii1[ug.fId] + iinv.akku1[ug.fId]);
+					iinv.spvj[ug.cId][ug.lc] = (iinv.aii1[ug.fId] + iinv.akkv1[ug.fId]);
+					iinv.spwj[ug.cId][ug.lc] = (iinv.aii1[ug.fId] + iinv.akkw1[ug.fId]);
+
+					iinv.sju[ug.cId] += iinv.aii1[ug.fId] + iinv.akku1[ug.fId];
+					iinv.sjv[ug.cId] += iinv.aii1[ug.fId] + iinv.akkv1[ug.fId];
+					iinv.sjw[ug.cId] += iinv.aii1[ug.fId] + iinv.akkw1[ug.fId];
+
+				}
+			}
+
+			//iinv.spu[ug.cId] = 1; //矩阵主对角线系数，动量方程单元主系数
+			//iinv.spv[ug.cId] = 1;
+			//iinv.spw[ug.cId] = 1;
+
+			//iinv.buc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];   //动量方程源项
+			//iinv.bvc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+			//iinv.bwc[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+
+			//iinv.spuj[ug.cId] = 0;
+			//iinv.spvj[ug.cId] = 0;
+			//iinv.spwj[ug.cId] = 0;
 		}
 
 }

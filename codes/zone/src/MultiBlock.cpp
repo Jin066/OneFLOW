@@ -131,6 +131,7 @@ void MultiBlock::InitMultiZoneTopo()
 
 void MultiBlock::InitOversetTopo()
 {
+	;
 }
 
 string GetGridFileName()

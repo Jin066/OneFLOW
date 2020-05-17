@@ -112,7 +112,7 @@ void UNsBcSolver::UpdateBc()
 
     for ( int iEqu = 0; iEqu < nscom.nTEqu; ++ iEqu )
     {
-        ( * unsf.q )[ iEqu ][ ug.rc ] = nscom.primt1[ iEqu ];
+		(*unsf.q)[iEqu][ug.rc] = nscom.primt1[iEqu];
     }
 
     for ( int iEqu = 0; iEqu < nscom.nTEqu; ++ iEqu )

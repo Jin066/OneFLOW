@@ -208,6 +208,8 @@ void INsCmpRHS()
 
 		INsCmpTimestep();
 
+		INsPreflux();
+
 		INsCmpInv(); //计算对流项
 
 		INsCmpVis(); //计算扩散项
@@ -234,6 +236,13 @@ void INsCmpTimestep()
 {
 	UINsInvterm * uINsInvterm = new UINsInvterm();
 	uINsInvterm->CmpINsTimestep();
+	delete uINsInvterm;
+}
+
+void INsPreflux()
+{
+	UINsInvterm * uINsInvterm = new UINsInvterm();
+	uINsInvterm->CmpINsPreflux();
 	delete uINsInvterm;
 }
 

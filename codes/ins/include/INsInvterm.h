@@ -95,6 +95,8 @@ public:
     //void SetPointer( int schemeIndex );
 	//InvtermPointer InvtermPointer;
 public:
+	void CmpINsinvFlux();
+	void CmpINsBcinvFlux();
 	void CmpINsinvTerm();
 	void CmpINsBcinvTerm();
 	void CmpINsFaceflux();

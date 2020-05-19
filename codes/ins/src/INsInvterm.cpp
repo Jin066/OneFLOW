@@ -85,70 +85,12 @@ void INsInvterm::Solve()
 {
 }
 
-void INsInvterm::CmpINsinvTerm()
-{ 
-	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
-	{
-
-		INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
-
-		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
-
-
-		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
-
-		iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half ;
-
-		iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half ;
-
-		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half ;
-
-
-
-		iinv.vnflow[ug.fId] = (*ug.xfn)[ug.fId] * iinv.uf[ug.fId] + (*ug.yfn)[ug.fId] * iinv.vf[ug.fId] + (*ug.zfn)[ug.fId] * iinv.wf[ug.fId] - gcom.vfn;  //初始界面上 V*n
-
-
-
-		iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
-
-
-		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
-
-		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
-
-		iinv.aii1[ug.fId] = crl;   //该面流向左单元的流量
-
-		iinv.aii2[ug.fId] = clr;   //该面流向右单元的流量
-
-		iinv.ai1[ug.lc] += crl;   //流入单元的流量
-
-		iinv.ai2[ug.rc] += clr;   //流出单元的流量
-
-	}
-	else
-	{
-		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
-		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
-
-
-		iinv.aii1[ug.fId] = crl;   //该面流向左单元的流量
-		iinv.aii2[ug.fId] = clr;   //该面流向右单元的流量
-
-		iinv.ai1[ug.lc] += crl;   //流入单元的流量
-		iinv.ai2[ug.rc] += clr;   //流出单元的流量
-	}
-}
-
-void INsInvterm::CmpINsBcinvTerm()
+void INsInvterm::CmpINsinvFlux()
 {
-	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
-	{
 
 		INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
 
 		INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
-
-		int bcType = ug.bcRecord->bcType[ug.fId];
 
 
 		iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
@@ -159,36 +101,54 @@ void INsInvterm::CmpINsBcinvTerm()
 
 		iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half;
 
-		iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId] - gcom.vfn;  //初始界面上 V*n
+		iinv.vnflow[ug.fId] = (*ug.xfn)[ug.fId] * iinv.uf[ug.fId] + (*ug.yfn)[ug.fId] * iinv.vf[ug.fId] + (*ug.zfn)[ug.fId] * iinv.wf[ug.fId] - gcom.vfn;  //初始界面上 V*n
 
 		iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
 
-		//if (bcType == BC::SOLID_SURFACE)
-		//{
-		//	iinv.uf[ug.fId] = 0;
+}
 
-		//	iinv.vf[ug.fId] = 0;
+void INsInvterm::CmpINsBcinvFlux()
+{
 
-		//	iinv.wf[ug.fId] = 0;
+	INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
 
-		//	iinv.fq[ug.fId] = 0;
-		//}
+	INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
 
+	int bcType = ug.bcRecord->bcType[ug.fId];
+
+
+	iinv.rf[ug.fId] = (iinv.rl + iinv.rr) * half;    //初始界面上的值（u、v、w ）
+
+	iinv.uf[ug.fId] = (iinv.ul + iinv.ur) * half;
+
+	iinv.vf[ug.fId] = (iinv.vl + iinv.vr) * half;
+
+	iinv.wf[ug.fId] = (iinv.wl + iinv.wr) * half;
+
+	iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId] - gcom.vfn;  //初始界面上 V*n
+
+	iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
+
+}
+
+void INsInvterm::CmpINsinvTerm()
+{ 
 		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
 
 		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
-		iinv.aii1[ug.lc] = crl;   //该面流向左单元的流量
+		iinv.aii1[ug.fId] = crl;   //该面流向左单元的流量
 
-		iinv.aii2[ug.rc] = clr;   //该面流向右单元的流量
+		iinv.aii2[ug.fId] = clr;   //该面流向右单元的流量
 
 		iinv.ai1[ug.lc] += crl;   //流入单元的流量
 
 		iinv.ai2[ug.rc] += clr;   //流出单元的流量
+}
 
-	}
-	else
-	{
+void INsInvterm::CmpINsBcinvTerm()
+{
+	
 		Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
 		Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
@@ -198,7 +158,6 @@ void INsInvterm::CmpINsBcinvTerm()
 
 		iinv.ai1[ug.lc] += crl;   //流入单元的流量
 		iinv.ai2[ug.rc] += clr;   //流出单元的流量
-	}
 }
 
 void INsInvterm::CmpINsFaceflux()
@@ -292,7 +251,7 @@ void INsInvterm::CmpINsFaceCorrectPresscoef()
 
 
 	//iinv.ajp[ug.fId] = iinv.aju[ug.fId] * gcom.xfn + iinv.ajv[ug.fId] * gcom.yfn + iinv.ajw[ug.fId] * gcom.zfn;  //压力修正方程中，矩阵中非零系数
-	iinv.ajp[ug.fId] = iinv.rf[ug.fId] * (iinv.Vdvu[ug.fId]* (*ug.xfn)[ug.fId] + iinv.Vdvv[ug.fId]* (*ug.yfn)[ug.fId] + iinv.Vdvw[ug.fId]* (*ug.zfn)[ug.fId]) * (*ug.farea)[ug.fId] / iinv.elrn[ug.fId]; //压力修正方程中，矩阵中非零系数
+	iinv.ajp[ug.fId] = iinv.rf[ug.fId] * (iinv.Vdvu[ug.fId]* (*ug.xfn)[ug.fId] + iinv.Vdvv[ug.fId]* (*ug.yfn)[ug.fId] + iinv.Vdvw[ug.fId]* (*ug.zfn)[ug.fId]) * (*ug.farea)[ug.fId] / iinv.elrn[ug.fId]-half* iinv.fq[ug.fId]; //压力修正方程中，矩阵中非零系数
 }
 
 void INsInvterm::CmpINsBcFaceCorrectPresscoef()

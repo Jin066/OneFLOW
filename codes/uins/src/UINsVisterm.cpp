@@ -378,14 +378,14 @@ void UINsVisterm::CmpFaceVisterm()
 	iinv.akw1[ug.lc] += iinv.Fnw[ug.fId];   //归于动量方程中主对角线系数
 	iinv.akw2[ug.rc] += iinv.Fnw[ug.fId];
 
-	iinv.bmu1[ug.lc] += (iinv.Ftu[ug.fId] + iinv.Fpu[ug.fId] * ((*ug.xfc)[ug.fId]) + iinv.FtuT[ug.fId] - iinv.FuT[ug.fId]); //界面上归入源项的扩散项
-	iinv.bmu2[ug.rc] += (iinv.Ftu[ug.fId] + iinv.Fpu[ug.fId] * (-(*ug.xfc)[ug.fId]) + iinv.FtuT[ug.fId] + iinv.FuT[ug.fId]);
+	iinv.bmu1[ug.lc] += (iinv.Ftu[ug.fId] + iinv.Fpu[ug.fId]*((*ug.xfc)[ug.fId]) + iinv.FtuT[ug.fId] - iinv.FuT[ug.fId]); //界面上归入源项的扩散项
+	iinv.bmu2[ug.rc] += (iinv.Ftu[ug.fId] + iinv.Fpu[ug.fId]*(-(*ug.xfc)[ug.fId]) + iinv.FtuT[ug.fId] + iinv.FuT[ug.fId]);
 
-	iinv.bmv1[ug.lc] += (iinv.Ftv[ug.fId] + iinv.Fpv[ug.fId] * ((*ug.yfc)[ug.fId]) + iinv.FtvT[ug.fId] - iinv.FvT[ug.fId]); //界面上归入源项的扩散项
-	iinv.bmv2[ug.rc] += (iinv.Ftv[ug.fId] + iinv.Fpv[ug.fId] * (-(*ug.yfc)[ug.fId]) + iinv.FtvT[ug.fId] + iinv.FvT[ug.fId]);
+	iinv.bmv1[ug.lc] += (iinv.Ftv[ug.fId] + iinv.Fpv[ug.fId]* ((*ug.yfc)[ug.fId]) + iinv.FtvT[ug.fId] - iinv.FvT[ug.fId]); //界面上归入源项的扩散项
+	iinv.bmv2[ug.rc] += (iinv.Ftv[ug.fId] + iinv.Fpv[ug.fId]* (-(*ug.yfc)[ug.fId]) + iinv.FtvT[ug.fId] + iinv.FvT[ug.fId]);
 
-	iinv.bmw1[ug.lc] += (iinv.Ftw[ug.fId] + iinv.Fpw[ug.fId] + iinv.FtwT[ug.fId] - iinv.FwT[ug.fId]); //界面上归入源项的扩散项
-	iinv.bmw2[ug.rc] += (iinv.Ftw[ug.fId] + iinv.Fpw[ug.fId] + iinv.FtwT[ug.fId] + iinv.FwT[ug.fId]);
+	iinv.bmw1[ug.lc] += (iinv.Ftw[ug.fId] + iinv.Fpw[ug.fId]*((*ug.zcc)[ug.lc]- (*ug.zcc)[ug.rc]) + iinv.FtwT[ug.fId] - iinv.FwT[ug.fId]); //界面上归入源项的扩散项
+	iinv.bmw2[ug.rc] += (iinv.Ftw[ug.fId] + iinv.Fpw[ug.fId]* ((*ug.zcc)[ug.rc] - (*ug.zcc)[ug.lc]) + iinv.FtwT[ug.fId] + iinv.FwT[ug.fId]);
 
 
 

@@ -102,7 +102,7 @@ void UINsInvterm::CmpInvcoff()
     uinsf.Init();
     //Alloc();
 
-    this->CmpInvFace();
+    //this->CmpInvFace();
     this->CmpInvMassFlux();  //需要改动
 
    //DeAlloc();
@@ -112,225 +112,270 @@ void UINsInvterm::CmpINsTimestep()
 {
 	iinv.timestep = 0.0002;
 }
-
-void UINsInvterm::CmpInvMassFlux()
+void UINsInvterm::CmpINsPreflux()
 {
 	if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 	{
-		iinv.ai1.resize(ug.nTCell);
-		iinv.ai2.resize(ug.nTCell);
-		iinv.aii1.resize(ug.nFace);
-		iinv.aii2.resize(ug.nFace);
-		iinv.akku1.resize(ug.nFace);
-		iinv.akku2.resize(ug.nFace);
-		iinv.akkv1.resize(ug.nFace);
-		iinv.akkv2.resize(ug.nFace);
-		iinv.akkw1.resize(ug.nFace);
-		iinv.akkw2.resize(ug.nFace);
-		iinv.aku1.resize(ug.nTCell);
-		iinv.aku2.resize(ug.nTCell);
-		iinv.akv1.resize(ug.nTCell);
-		iinv.akv2.resize(ug.nTCell);
-		iinv.akw1.resize(ug.nTCell);
-		iinv.akw2.resize(ug.nTCell);
-		iinv.vnflow.resize(ug.nFace);
-		//iinv.aji.resize(ug.nFace);
-		//iinv.fq0.resize(ug.nFace);
-		iinv.bm1.resize(ug.nTCell);
-		iinv.bm2.resize(ug.nTCell);
-		iinv.bmu1.resize(ug.nTCell);
-		iinv.bmu2.resize(ug.nTCell);
-		iinv.bmv1.resize(ug.nTCell);
-		iinv.bmv2.resize(ug.nTCell);
-		iinv.bmw1.resize(ug.nTCell);
-		iinv.bmw2.resize(ug.nTCell);
-		iinv.dist.resize(ug.nFace);
-		iinv.f1.resize(ug.nFace);
-		iinv.f2.resize(ug.nFace);
-		iinv.rf.resize(ug.nFace);
-		iinv.uf.resize(ug.nFace);
-		iinv.vf.resize(ug.nFace);
-		iinv.wf.resize(ug.nFace);
-		//iinv.Vdvj.resize(ug.nFace);
-		//iinv.Vdv.resize(ug.nFace);
-		iinv.Vdvu.resize(ug.nFace);
-		iinv.Vdvv.resize(ug.nFace);
-		iinv.Vdvw.resize(ug.nFace);
-		iinv.aju.resize(ug.nFace);
-		iinv.ajv.resize(ug.nFace);
-		iinv.ajw.resize(ug.nFace);
-		iinv.VdU.resize(ug.nTCell);
-		iinv.VdV.resize(ug.nTCell);
-		iinv.VdW.resize(ug.nTCell);
-		iinv.buc.resize(ug.nTCell);
-		iinv.bvc.resize(ug.nTCell);
-		iinv.bwc.resize(ug.nTCell);
-		//iinv.bc.resize(ug.nCell);
-		//iinv.sp.resize(ug.nFace);
-		iinv.sp1.resize(ug.nFace);
-		iinv.sp2.resize(ug.nFace);
-		//iinv.spj.resize(ug.nFace);
-		iinv.spu1.resize(ug.nFace);
-		iinv.spv1.resize(ug.nFace);
-		iinv.spw1.resize(ug.nFace);
-		iinv.spu2.resize(ug.nFace);
-		iinv.spv2.resize(ug.nFace);
-		iinv.spw2.resize(ug.nFace);
-		iinv.bpu.resize(ug.nFace);
-		iinv.bpv.resize(ug.nFace);
-		iinv.bpw.resize(ug.nFace);
-		iinv.bp.resize(ug.nTCell);
-		iinv.ajp.resize(ug.nFace);
-		iinv.sppu.resize(ug.nFace);
-		iinv.sppv.resize(ug.nFace);
-		iinv.sppw.resize(ug.nFace);
-		iinv.sju.resize(ug.nTCell);
-		iinv.sjv.resize(ug.nTCell);
-		iinv.sjw.resize(ug.nTCell);
-		iinv.fq.resize(ug.nFace);
-		iinv.spu.resize(ug.nTCell);
-		iinv.spv.resize(ug.nTCell);
-		iinv.spw.resize(ug.nTCell);
-		iinv.spuj.resize(ug.nTCell, ug.nTCell);
-		iinv.spvj.resize(ug.nTCell, ug.nTCell);
-		iinv.spwj.resize(ug.nTCell, ug.nTCell);
-		iinv.sjp.resize(ug.nTCell, ug.nTCell);
-		//iinv.ajp.resize(ug.nFace);
-		//iinv.app.resize(ug.nCell);
-		iinv.spp.resize(ug.nTCell);
-		iinv.pp.resize(ug.nTCell);
-		iinv.pp0.resize(ug.nTCell);
-		iinv.pc.resize(ug.nTCell);
-		iinv.pp1.resize(ug.nTCell);
-		iinv.uu.resize(ug.nTCell);
-		iinv.vv.resize(ug.nTCell);
-		iinv.ww.resize(ug.nTCell);
-		iinv.uuj.resize(ug.nFace);
-		iinv.vvj.resize(ug.nFace);
-		iinv.wwj.resize(ug.nFace);
-		iinv.muc.resize(ug.nTCell);
-		iinv.mvc.resize(ug.nTCell);
-		iinv.mwc.resize(ug.nTCell);
-		iinv.mp.resize(ug.nTCell);
-		iinv.uc.resize(ug.nTCell);
-		iinv.vc.resize(ug.nTCell);
-		iinv.wc.resize(ug.nTCell);
-		iinv.up.resize(ug.nTCell);
-		iinv.vp.resize(ug.nTCell);
-		iinv.wp.resize(ug.nTCell);
-		iinv.spt.resize(ug.nTCell);
-		iinv.but.resize(ug.nTCell);
-		iinv.bvt.resize(ug.nTCell);
-		iinv.bwt.resize(ug.nTCell);
-		iinv.ppr.resize(ug.nFace);
-		iinv.dqqdx.resize(ug.nTCell);
-		iinv.dqqdy.resize(ug.nTCell);
-		iinv.dqqdz.resize(ug.nTCell);
-		iinv.fux.resize(ug.nFace);
-		iinv.Fnu.resize(ug.nFace);
-		iinv.Fnv.resize(ug.nFace);
-		iinv.Fnw.resize(ug.nFace);
-		iinv.Ftu.resize(ug.nFace);
-		iinv.Ftv.resize(ug.nFace);
-		iinv.Ftw.resize(ug.nFace);
-		iinv.ukl.resize(ug.nFace);
-		iinv.ukr.resize(ug.nFace);
-		iinv.vkl.resize(ug.nFace);
-		iinv.vkr.resize(ug.nFace);
-		iinv.wkl.resize(ug.nFace);
-		iinv.wkr.resize(ug.nFace);
-		iinv.uml.resize(ug.nFace);
-		iinv.umr.resize(ug.nFace);
-		iinv.vml.resize(ug.nFace);
-		iinv.vmr.resize(ug.nFace);
-		iinv.wml.resize(ug.nFace);
-		iinv.wmr.resize(ug.nFace);
-		iinv.Puf.resize(ug.nFace);
-		iinv.Pvf.resize(ug.nFace);
-		iinv.Pwf.resize(ug.nFace);
-		iinv.Pufd.resize(ug.nFace);
-		iinv.Pvfd.resize(ug.nFace);
-		iinv.Pwfd.resize(ug.nFace);
-		iinv.Fpu.resize(ug.nFace);
-		iinv.Fpv.resize(ug.nFace);
-		iinv.Fpw.resize(ug.nFace);
-		iinv.tux.resize(ug.nFace);
-		iinv.tvy.resize(ug.nFace);
-		iinv.twz.resize(ug.nFace);
-		iinv.Fqu.resize(ug.nFace);
-		iinv.Fqv.resize(ug.nFace);
-		iinv.Fqw.resize(ug.nFace);
-		iinv.Pdx.resize(ug.nFace);
-		iinv.Pdy.resize(ug.nFace);
-		iinv.Pdz.resize(ug.nFace);
-		iinv.FuT.resize(ug.nFace);
-		iinv.FvT.resize(ug.nFace);
-		iinv.FwT.resize(ug.nFace);
-		iinv.PufT.resize(ug.nFace);
-		iinv.PvfT.resize(ug.nFace);
-		iinv.PwfT.resize(ug.nFace);
-		iinv.PufdT.resize(ug.nFace);
-		iinv.PvfdT.resize(ug.nFace);
-		iinv.PwfdT.resize(ug.nFace);
-		iinv.FtuT.resize(ug.nFace);
-		iinv.FtvT.resize(ug.nFace);
-		iinv.FtwT.resize(ug.nFace);
-		iinv.Pud.resize(ug.nFace);
-		iinv.Pvd.resize(ug.nFace);
-		iinv.Pwd.resize(ug.nFace);
-		iinv.dsrl.resize(ug.nFace);
-		iinv.elrn.resize(ug.nFace);
-		iinv.Deun.resize(ug.nFace);
-		iinv.Devn.resize(ug.nFace);
-		iinv.Dewn.resize(ug.nFace);
-		iinv.dlf.resize(ug.nFace);
-		iinv.dfr.resize(ug.nFace);
-		iinv.Bpe.resize(ug.nFace);
-		iinv.Vau.resize(ug.nFace);
-		iinv.Vav.resize(ug.nFace);
-		iinv.Vaw.resize(ug.nFace);
-		iinv.value.resize(ug.nFace);
+		if (inscom.icmpInv == 0) return;
+		iinv.Init();
+		ug.Init();
+		uinsf.Init();
+		//Alloc();
 
-		iinv.ai1 = 0;
-		iinv.ai2 = 0;
-		iinv.spu1 = 1;
-		iinv.spv1 = 1;
-		iinv.spw1 = 1;
-		iinv.spu2 = 1;
-		iinv.spv2 = 1;
-		iinv.spw2 = 1;
-		
-		//iinv.bm = 0;
-		iinv.buc = 0;
-		iinv.bvc = 0;
-		iinv.bwc = 0;
-		iinv.sp1 = 0;
-		iinv.sp2 = 0;
-		iinv.spj = 0;
-		iinv.spp = 0;
-		iinv.sppu = 0;
-		iinv.sppv = 0;
-		iinv.sppw = 0;
+		this->CmpInvFace();
+		this->INsPreflux();
+	}
 
-		iinv.bpu = 0;
-		iinv.bpv = 0;
-		iinv.bpw = 0;
-		iinv.bp = 0;
-		iinv.pp = 0;
-		iinv.pp0 = 0;
+}
 
-		iinv.muc = 0;
-		iinv.mvc = 0;
-		iinv.mwc = 0;
+void UINsInvterm::INsPreflux()
+{
+	this->Initflux();
+	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
+	{
+		ug.fId = fId;
 
-		iinv.uc = 0;
-		iinv.vc = 0;
-		iinv.wc = 0;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
 
-		iinv.uu = 0;
-		iinv.vv = 0;
-		iinv.ww = 0;
+		this->PrepareFaceValue();
 
+		this->CmpINsinvFlux();
+
+	}
+
+	for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+		ug.fId = fId;
+
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		this->PrepareFaceValue();
+
+		this->CmpINsBcinvFlux();
+	}
+
+}
+void UINsInvterm::Initflux()
+{
+	iinv.ai1.resize(ug.nTCell);
+	iinv.ai2.resize(ug.nTCell);
+	iinv.aii1.resize(ug.nFace);
+	iinv.aii2.resize(ug.nFace);
+	iinv.akku1.resize(ug.nFace);
+	iinv.akku2.resize(ug.nFace);
+	iinv.akkv1.resize(ug.nFace);
+	iinv.akkv2.resize(ug.nFace);
+	iinv.akkw1.resize(ug.nFace);
+	iinv.akkw2.resize(ug.nFace);
+	iinv.aku1.resize(ug.nTCell);
+	iinv.aku2.resize(ug.nTCell);
+	iinv.akv1.resize(ug.nTCell);
+	iinv.akv2.resize(ug.nTCell);
+	iinv.akw1.resize(ug.nTCell);
+	iinv.akw2.resize(ug.nTCell);
+	iinv.vnflow.resize(ug.nFace);
+	//iinv.aji.resize(ug.nFace);
+	//iinv.fq0.resize(ug.nFace);
+	iinv.bm1.resize(ug.nTCell);
+	iinv.bm2.resize(ug.nTCell);
+	iinv.bmu1.resize(ug.nTCell);
+	iinv.bmu2.resize(ug.nTCell);
+	iinv.bmv1.resize(ug.nTCell);
+	iinv.bmv2.resize(ug.nTCell);
+	iinv.bmw1.resize(ug.nTCell);
+	iinv.bmw2.resize(ug.nTCell);
+	iinv.dist.resize(ug.nFace);
+	iinv.f1.resize(ug.nFace);
+	iinv.f2.resize(ug.nFace);
+	iinv.rf.resize(ug.nFace);
+	iinv.uf.resize(ug.nFace);
+	iinv.vf.resize(ug.nFace);
+	iinv.wf.resize(ug.nFace);
+	//iinv.Vdvj.resize(ug.nFace);
+	//iinv.Vdv.resize(ug.nFace);
+	iinv.Vdvu.resize(ug.nFace);
+	iinv.Vdvv.resize(ug.nFace);
+	iinv.Vdvw.resize(ug.nFace);
+	iinv.aju.resize(ug.nFace);
+	iinv.ajv.resize(ug.nFace);
+	iinv.ajw.resize(ug.nFace);
+	iinv.VdU.resize(ug.nTCell);
+	iinv.VdV.resize(ug.nTCell);
+	iinv.VdW.resize(ug.nTCell);
+	iinv.buc.resize(ug.nTCell);
+	iinv.bvc.resize(ug.nTCell);
+	iinv.bwc.resize(ug.nTCell);
+	//iinv.bc.resize(ug.nCell);
+	//iinv.sp.resize(ug.nFace);
+	iinv.sp1.resize(ug.nFace);
+	iinv.sp2.resize(ug.nFace);
+	//iinv.spj.resize(ug.nFace);
+	iinv.spu1.resize(ug.nFace);
+	iinv.spv1.resize(ug.nFace);
+	iinv.spw1.resize(ug.nFace);
+	iinv.spu2.resize(ug.nFace);
+	iinv.spv2.resize(ug.nFace);
+	iinv.spw2.resize(ug.nFace);
+	iinv.bpu.resize(ug.nFace);
+	iinv.bpv.resize(ug.nFace);
+	iinv.bpw.resize(ug.nFace);
+	iinv.bp.resize(ug.nTCell);
+	iinv.ajp.resize(ug.nFace);
+	iinv.sppu.resize(ug.nFace);
+	iinv.sppv.resize(ug.nFace);
+	iinv.sppw.resize(ug.nFace);
+	iinv.sju.resize(ug.nTCell);
+	iinv.sjv.resize(ug.nTCell);
+	iinv.sjw.resize(ug.nTCell);
+	iinv.fq.resize(ug.nFace);
+	iinv.spu.resize(ug.nTCell);
+	iinv.spv.resize(ug.nTCell);
+	iinv.spw.resize(ug.nTCell);
+	iinv.spuj.resize(ug.nTCell, ug.nTCell);
+	iinv.spvj.resize(ug.nTCell, ug.nTCell);
+	iinv.spwj.resize(ug.nTCell, ug.nTCell);
+	iinv.sjp.resize(ug.nTCell, ug.nTCell);
+	//iinv.ajp.resize(ug.nFace);
+	//iinv.app.resize(ug.nCell);
+	iinv.spp.resize(ug.nTCell);
+	iinv.pp.resize(ug.nTCell);
+	iinv.pp0.resize(ug.nTCell);
+	iinv.pc.resize(ug.nTCell);
+	iinv.pp1.resize(ug.nTCell);
+	iinv.uu.resize(ug.nTCell);
+	iinv.vv.resize(ug.nTCell);
+	iinv.ww.resize(ug.nTCell);
+	iinv.uuj.resize(ug.nFace);
+	iinv.vvj.resize(ug.nFace);
+	iinv.wwj.resize(ug.nFace);
+	iinv.muc.resize(ug.nTCell);
+	iinv.mvc.resize(ug.nTCell);
+	iinv.mwc.resize(ug.nTCell);
+	iinv.mp.resize(ug.nTCell);
+	iinv.uc.resize(ug.nTCell);
+	iinv.vc.resize(ug.nTCell);
+	iinv.wc.resize(ug.nTCell);
+	iinv.up.resize(ug.nTCell);
+	iinv.vp.resize(ug.nTCell);
+	iinv.wp.resize(ug.nTCell);
+	iinv.spt.resize(ug.nTCell);
+	iinv.but.resize(ug.nTCell);
+	iinv.bvt.resize(ug.nTCell);
+	iinv.bwt.resize(ug.nTCell);
+	iinv.ppr.resize(ug.nFace);
+	iinv.dqqdx.resize(ug.nTCell);
+	iinv.dqqdy.resize(ug.nTCell);
+	iinv.dqqdz.resize(ug.nTCell);
+	iinv.fux.resize(ug.nFace);
+	iinv.Fnu.resize(ug.nFace);
+	iinv.Fnv.resize(ug.nFace);
+	iinv.Fnw.resize(ug.nFace);
+	iinv.Ftu.resize(ug.nFace);
+	iinv.Ftv.resize(ug.nFace);
+	iinv.Ftw.resize(ug.nFace);
+	iinv.ukl.resize(ug.nFace);
+	iinv.ukr.resize(ug.nFace);
+	iinv.vkl.resize(ug.nFace);
+	iinv.vkr.resize(ug.nFace);
+	iinv.wkl.resize(ug.nFace);
+	iinv.wkr.resize(ug.nFace);
+	iinv.uml.resize(ug.nFace);
+	iinv.umr.resize(ug.nFace);
+	iinv.vml.resize(ug.nFace);
+	iinv.vmr.resize(ug.nFace);
+	iinv.wml.resize(ug.nFace);
+	iinv.wmr.resize(ug.nFace);
+	iinv.Puf.resize(ug.nFace);
+	iinv.Pvf.resize(ug.nFace);
+	iinv.Pwf.resize(ug.nFace);
+	iinv.Pufd.resize(ug.nFace);
+	iinv.Pvfd.resize(ug.nFace);
+	iinv.Pwfd.resize(ug.nFace);
+	iinv.Fpu.resize(ug.nFace);
+	iinv.Fpv.resize(ug.nFace);
+	iinv.Fpw.resize(ug.nFace);
+	iinv.tux.resize(ug.nFace);
+	iinv.tvy.resize(ug.nFace);
+	iinv.twz.resize(ug.nFace);
+	iinv.Fqu.resize(ug.nFace);
+	iinv.Fqv.resize(ug.nFace);
+	iinv.Fqw.resize(ug.nFace);
+	iinv.Pdx.resize(ug.nFace);
+	iinv.Pdy.resize(ug.nFace);
+	iinv.Pdz.resize(ug.nFace);
+	iinv.FuT.resize(ug.nFace);
+	iinv.FvT.resize(ug.nFace);
+	iinv.FwT.resize(ug.nFace);
+	iinv.PufT.resize(ug.nFace);
+	iinv.PvfT.resize(ug.nFace);
+	iinv.PwfT.resize(ug.nFace);
+	iinv.PufdT.resize(ug.nFace);
+	iinv.PvfdT.resize(ug.nFace);
+	iinv.PwfdT.resize(ug.nFace);
+	iinv.FtuT.resize(ug.nFace);
+	iinv.FtvT.resize(ug.nFace);
+	iinv.FtwT.resize(ug.nFace);
+	iinv.Pud.resize(ug.nFace);
+	iinv.Pvd.resize(ug.nFace);
+	iinv.Pwd.resize(ug.nFace);
+	iinv.dsrl.resize(ug.nFace);
+	iinv.elrn.resize(ug.nFace);
+	iinv.Deun.resize(ug.nFace);
+	iinv.Devn.resize(ug.nFace);
+	iinv.Dewn.resize(ug.nFace);
+	iinv.dlf.resize(ug.nFace);
+	iinv.dfr.resize(ug.nFace);
+	iinv.Bpe.resize(ug.nFace);
+	iinv.Vau.resize(ug.nFace);
+	iinv.Vav.resize(ug.nFace);
+	iinv.Vaw.resize(ug.nFace);
+	iinv.value.resize(ug.nFace);
+
+	iinv.ai1 = 0;
+	iinv.ai2 = 0;
+	iinv.spu1 = 1;
+	iinv.spv1 = 1;
+	iinv.spw1 = 1;
+	iinv.spu2 = 1;
+	iinv.spv2 = 1;
+	iinv.spw2 = 1;
+
+	//iinv.bm = 0;
+	iinv.buc = 0;
+	iinv.bvc = 0;
+	iinv.bwc = 0;
+	iinv.sp1 = 0;
+	iinv.sp2 = 0;
+	iinv.spj = 0;
+	iinv.spp = 0;
+	iinv.sppu = 0;
+	iinv.sppv = 0;
+	iinv.sppw = 0;
+
+	iinv.bpu = 0;
+	iinv.bpv = 0;
+	iinv.bpw = 0;
+	iinv.bp = 0;
+	iinv.pp = 0;
+	iinv.pp0 = 0;
+
+	iinv.muc = 0;
+	iinv.mvc = 0;
+	iinv.mwc = 0;
+
+	iinv.uc = 0;
+	iinv.vc = 0;
+	iinv.wc = 0;
+
+	iinv.uu = 0;
+	iinv.vv = 0;
+	iinv.ww = 0;
+}
+
+void UINsInvterm::CmpInvMassFlux()
+{
 
 		for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
 		{
@@ -339,7 +384,7 @@ void UINsInvterm::CmpInvMassFlux()
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
 
-			this->PrepareFaceValue();
+			//this->PrepareFaceValue();
 
 			this->CmpINsinvTerm();
 
@@ -352,39 +397,11 @@ void UINsInvterm::CmpInvMassFlux()
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
 
-			this->PrepareFaceValue();
+			//this->PrepareFaceValue();
 
 			this->CmpINsBcinvTerm();
 		}
-	}
-
-	else
-	{
-	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
-	{
-		ug.fId = fId;
-
-		ug.lc = (*ug.lcf)[ug.fId];
-		ug.rc = (*ug.rcf)[ug.fId];
-
-		this->PrepareFaceValue();
-
-		this->CmpINsinvTerm();
-	}
-
-	for (int fId = 0; fId < ug.nBFace; ++fId)
-	{
-		ug.fId = fId;
-
-		ug.lc = (*ug.lcf)[ug.fId];
-		ug.rc = (*ug.rcf)[ug.fId];
-
-		this->PrepareFaceValue();
-
-		this->CmpINsBcinvTerm();
-	}
-
-	}
+	
 }
 
 void UINsInvterm::PrepareFaceValue()
@@ -750,7 +767,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 				iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp0[ug.lc];
 			}
 		}
-		iinv.pp0[ug.cId] = (iinv.bp[ug.cId]+iinv.mp[ug.cId])*1e-4/(iinv.spp[ug.cId]); //压力修正值
+		iinv.pp0[ug.cId] = (-iinv.bp[ug.cId]+iinv.mp[ug.cId])/(iinv.spp[ug.cId]); //压力修正值
 		iinv.pp[ug.cId] = iinv.pp0[ug.cId]; //当前时刻的压力修正值
 
 		iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
@@ -871,9 +888,9 @@ void UINsInvterm::UpdateSpeed()
 		iinv.vv[ug.cId] = iinv.VdV[ug.cId] * iinv.dqqdy[ug.cId];
 		iinv.ww[ug.cId] = iinv.VdW[ug.cId] * iinv.dqqdz[ug.cId];
 
-		iinv.up[ug.cId] = iinv.uc[cId];//+iinv.uu[ug.cId];  //下一时刻的速度值
-			iinv.vp[ug.cId] = iinv.vc[cId];//+iinv.vv[ug.cId];
-			iinv.wp[ug.cId] = iinv.wc[cId];//+iinv.ww[ug.cId];
+		iinv.up[ug.cId] = iinv.uc[cId]+iinv.uu[ug.cId];  //下一时刻的速度值
+		iinv.vp[ug.cId] = iinv.vc[cId]+iinv.vv[ug.cId];
+		iinv.wp[ug.cId] = iinv.wc[cId]+iinv.ww[ug.cId];
 
 		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
 		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];

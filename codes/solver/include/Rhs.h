@@ -58,6 +58,7 @@ void INsCmpTurbEnergy();
 void INsCorrectPresscoef();
 //void INsCorrectSpeed();
 void INsCmpTimestep();
+void INsPreflux();
 void INsCmpInv();
 void INsCmpVis();
 void INsCmpUnstead();

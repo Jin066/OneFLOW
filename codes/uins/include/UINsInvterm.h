@@ -39,6 +39,9 @@ public:
     void Alloc();
     void DeAlloc();
 	void CmpINsTimestep();
+	void CmpINsPreflux();
+	void INsPreflux();
+	void Initflux();
     void CmpInvcoff();
     void CmpInvMassFlux();
     void CmpInvFace();

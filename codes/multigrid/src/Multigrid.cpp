@@ -119,10 +119,13 @@ void MG::Run()
 		double rhs_p = 1e-8;
 
 
-	   TimeSpan * timeSpan = new TimeSpan();
+		TimeSpan * timeSpan = new TimeSpan();
+		int maxIterSteps = GetDataValue< int >("maxIterSteps");
+
 		while (SimuIterState::Running())
 		{
 			Iteration::outerSteps++;
+
 			ctrl.currTime += ctrl.pdt;
 
 			//Inner loop
@@ -132,17 +135,23 @@ void MG::Run()
 			iinv.res_v = 1;
 			iinv.res_w = 1;
 			iinv.res_p = 1;
-			
-			while (iinv.res_u > rhs_u || iinv.res_v > rhs_v|| iinv.res_w > rhs_w|| iinv.res_p > rhs_p)
-			{
-				Iteration::innerSteps++;
 
-				this->SolveInnerIter();
+			while (iinv.res_u > rhs_u || iinv.res_v > rhs_v || iinv.res_w > rhs_w || iinv.res_p > rhs_p)
+			{
+				if (Iteration::innerSteps > maxIterSteps) continue;
+					
+					Iteration::innerSteps++;
+
+					this->SolveInnerIter();
+
 			}
+
 			this->OuterProcess(timeSpan);
+
 		}
 		delete timeSpan;
 	}
+
 	else
 	{
 		TimeSpan * timeSpan = new TimeSpan();

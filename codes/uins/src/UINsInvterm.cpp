@@ -110,7 +110,7 @@ void UINsInvterm::CmpInvcoff()
 
 void UINsInvterm::CmpINsTimestep()
 {
-	iinv.timestep = 0.0002;
+	iinv.timestep = GetDataValue< Real >("global_dt");
 }
 void UINsInvterm::CmpINsPreflux()
 {
@@ -302,9 +302,9 @@ void UINsInvterm::Initflux()
 	iinv.Fqu.resize(ug.nFace);
 	iinv.Fqv.resize(ug.nFace);
 	iinv.Fqw.resize(ug.nFace);
-	iinv.Pdx.resize(ug.nFace);
-	iinv.Pdy.resize(ug.nFace);
-	iinv.Pdz.resize(ug.nFace);
+	iinv.Pdu.resize(ug.nFace);
+	iinv.Pdv.resize(ug.nFace);
+	iinv.Pdw.resize(ug.nFace);
 	iinv.FuT.resize(ug.nFace);
 	iinv.FvT.resize(ug.nFace);
 	iinv.FwT.resize(ug.nFace);
@@ -332,6 +332,7 @@ void UINsInvterm::Initflux()
 	iinv.Vav.resize(ug.nFace);
 	iinv.Vaw.resize(ug.nFace);
 	iinv.value.resize(ug.nFace);
+	iinv.vis.resize(ug.nFace);
 
 	iinv.ai1 = 0;
 	iinv.ai2 = 0;
@@ -377,7 +378,7 @@ void UINsInvterm::Initflux()
 void UINsInvterm::CmpInvMassFlux()
 {
 
-		for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
+		for (int fId = 0; fId < ug.nFace; ++fId)
 		{
 			ug.fId = fId;
 
@@ -387,21 +388,7 @@ void UINsInvterm::CmpInvMassFlux()
 			//this->PrepareFaceValue();
 
 			this->CmpINsinvTerm();
-
 		}
-
-		for (int fId = 0; fId < ug.nBFace; ++fId)
-		{
-			ug.fId = fId;
-
-			ug.lc = (*ug.lcf)[ug.fId];
-			ug.rc = (*ug.rcf)[ug.fId];
-
-			//this->PrepareFaceValue();
-
-			this->CmpINsBcinvTerm();
-		}
-	
 }
 
 void UINsInvterm::PrepareFaceValue()
@@ -479,42 +466,16 @@ void UINsInvterm::MomPre()
 			}
 		}
 
-		//if (!iinv.spu[ug.cId] == 0)
-		//{
+		
 			iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
 			(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
-		//}
-		//else
-		//{
-			//iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (0.01+iinv.spu[ug.cId]);
-			//iinv.uc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
-		//}
-
-		//if (!iinv.spv[ug.cId] == 0)
-		//{
+		
 			iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
 			(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
-		//}
-		//else
-		//{
-			//iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (0.01+iinv.spv[ug.cId]);
-			//iinv.vc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
-		//}
-		//if (!iinv.spv[ug.cId] == 0)
-		//{
+		
 			iinv.wc[ug.cId] = (iinv.mwc[ug.cId] - iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
 			(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
-		//}
-		//else
-		//{
-			//iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (0.01+iinv.spw[ug.cId]);
-		//	 iinv.wc[ug.cId]=(*uinsf.q)[IIDX::IIW][ug.cId];
-		//}
-
-		//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
-		//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
-		//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
-
+		
     }
 
 	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
@@ -585,9 +546,9 @@ void UINsInvterm::CmpINsMomRes()
 	{
 		ug.cId = cId;
 
-		iinv.res_u += (iinv.buc[ug.cId]+ iinv.muc[ug.cId]- iinv.uc[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId] + iinv.muc[ug.cId] - iinv.uc[ug.cId] * (iinv.spu[ug.cId]));
-		iinv.res_v += (iinv.bvc[ug.cId] + iinv.mvc[ug.cId] - iinv.vc[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId] + iinv.mvc[ug.cId] - iinv.vc[ug.cId] * (iinv.spv[ug.cId]));
-		iinv.res_w += (iinv.bwc[ug.cId] + iinv.mwc[ug.cId] - iinv.wc[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId] + iinv.mwc[ug.cId] - iinv.wc[ug.cId] * (iinv.spw[ug.cId]));
+		iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId]- iinv.uc[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.uc[ug.cId] * (iinv.spu[ug.cId]));
+		iinv.res_v += (iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vc[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vc[ug.cId] * (iinv.spv[ug.cId]));
+		iinv.res_w += (iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wc[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wc[ug.cId] * (iinv.spw[ug.cId]));
 
 	}
 
@@ -767,7 +728,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 				iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp0[ug.lc];
 			}
 		}
-		iinv.pp0[ug.cId] = (-iinv.bp[ug.cId]+iinv.mp[ug.cId])/(iinv.spp[ug.cId]); //压力修正值
+		iinv.pp0[ug.cId] = (iinv.bp[ug.cId]+iinv.mp[ug.cId])/(iinv.spp[ug.cId]); //压力修正值
 		iinv.pp[ug.cId] = iinv.pp0[ug.cId]; //当前时刻的压力修正值
 
 		iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
@@ -794,11 +755,11 @@ void UINsInvterm::CmpINsPreRes()
 	{
 		ug.cId = cId;
 
-		iinv.res_p += (iinv.bp[ug.cId] + iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]))*(iinv.bp[ug.cId] + iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]));
+		iinv.res_p += (iinv.bp[ug.cId]+iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]))*(iinv.bp[ug.cId]+iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]));
 	}
 
 	iinv.res_p = sqrt(iinv.res_p);
-	iinv.res_p = 0;
+	//iinv.res_p = 0;
 }
 
 
@@ -888,9 +849,9 @@ void UINsInvterm::UpdateSpeed()
 		iinv.vv[ug.cId] = iinv.VdV[ug.cId] * iinv.dqqdy[ug.cId];
 		iinv.ww[ug.cId] = iinv.VdW[ug.cId] * iinv.dqqdz[ug.cId];
 
-		iinv.up[ug.cId] = iinv.uc[cId]+iinv.uu[ug.cId];  //下一时刻的速度值
-		iinv.vp[ug.cId] = iinv.vc[cId]+iinv.vv[ug.cId];
-		iinv.wp[ug.cId] = iinv.wc[cId]+iinv.ww[ug.cId];
+		iinv.up[ug.cId] = iinv.uc[cId] +iinv.uu[ug.cId];  //下一时刻的速度值
+		iinv.vp[ug.cId] = iinv.vc[cId] +iinv.vv[ug.cId];
+		iinv.wp[ug.cId] = iinv.wc[cId] +iinv.ww[ug.cId];
 
 		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
 		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
@@ -962,9 +923,9 @@ void UINsInvterm::CmpPreGrad()
 
 		if (ug.fId < ug.nBFace) continue;
 
-		iinv.dqqdx[ug.rc] -= fnxa * iinv.value[ug.fId];
-		iinv.dqqdy[ug.rc] -= fnya * iinv.value[ug.fId];
-		iinv.dqqdz[ug.rc] -= fnza * iinv.value[ug.fId];
+		iinv.dqqdx[ug.rc] += fnxa * iinv.value[ug.fId];
+		iinv.dqqdy[ug.rc] += fnya * iinv.value[ug.fId];
+		iinv.dqqdz[ug.rc] += fnza * iinv.value[ug.fId];
 	}
 
 	for (int cId = 0; cId < ug.nCell; ++cId)

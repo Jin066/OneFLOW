@@ -127,8 +127,14 @@ void INsInvterm::CmpINsBcinvFlux()
 
 	iinv.vnflow[ug.fId] = gcom.xfn * iinv.uf[ug.fId] + gcom.yfn * iinv.vf[ug.fId] + gcom.zfn * iinv.wf[ug.fId] - gcom.vfn;  //初始界面上 V*n
 
-	iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
-
+	if(bcType == BC::SOLID_SURFACE)
+	{
+		iinv.fq[ug.fId] = 0;
+	}
+	else
+	{
+		iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * gcom.farea; //初始界面上的质量通量
+	}
 }
 
 void INsInvterm::CmpINsinvTerm()

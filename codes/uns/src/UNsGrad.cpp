@@ -82,21 +82,23 @@ UTGrad::~UTGrad()
 
 void UTGrad::Init()
 {
-    UnsGrid * grid = Zone::GetUnsGrid();
 
-    name  = "tempr";
-    namex = "dtdx";
-    namey = "dtdy";
-    namez = "dtdz";
+		UnsGrid * grid = Zone::GetUnsGrid();
 
-    q    = GetFieldPointer< MRField > ( grid, name  );
-    dqdx = GetFieldPointer< MRField > ( grid, namex );
-    dqdy = GetFieldPointer< MRField > ( grid, namey );
-    dqdz = GetFieldPointer< MRField > ( grid, namez );
+		name = "tempr";
+		namex = "dtdx";
+		namey = "dtdy";
+		namez = "dtdz";
 
-    this->nEqu = nscom.nTModel;
+		q = GetFieldPointer< MRField >(grid, name);
+		dqdx = GetFieldPointer< MRField >(grid, namex);
+		dqdy = GetFieldPointer< MRField >(grid, namey);
+		dqdz = GetFieldPointer< MRField >(grid, namez);
 
-    this->istore = 0;
+		this->nEqu = nscom.nTModel;
+
+		this->istore = 0;
+
 }
 
 EndNameSpace

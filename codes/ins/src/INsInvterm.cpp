@@ -202,9 +202,9 @@ void INsInvterm::CmpINsFaceflux()
 					   (iinv.pr - iinv.pl);
 
 
-	iinv.uf[ug.fId] = (iinv.f1[ug.fId] * iinv.ul + iinv.f2[ug.fId] * iinv.ur);//iinv.Deun[ug.fId]* iinv.Bpe[ug.fId];  //下一时刻的界面预测速度
-		iinv.vf[ug.fId] = (iinv.f1[ug.fId] * iinv.vl + iinv.f2[ug.fId] * iinv.vr);// iinv.Devn[ug.fId] * iinv.Bpe[ug.fId];
-		iinv.wf[ug.fId] = (iinv.f1[ug.fId] * iinv.wl + iinv.f2[ug.fId] * iinv.wr);//iinv.Dewn[ug.fId] * iinv.Bpe[ug.fId];
+	iinv.uf[ug.fId] = (iinv.f1[ug.fId] * iinv.ul + iinv.f2[ug.fId] * iinv.ur)+iinv.Deun[ug.fId] * iinv.Bpe[ug.fId];  //下一时刻的界面预测速度
+	iinv.vf[ug.fId] = (iinv.f1[ug.fId] * iinv.vl + iinv.f2[ug.fId] * iinv.vr)+iinv.Devn[ug.fId] * iinv.Bpe[ug.fId];
+	iinv.wf[ug.fId] = (iinv.f1[ug.fId] * iinv.wl + iinv.f2[ug.fId] * iinv.wr)+iinv.Dewn[ug.fId] * iinv.Bpe[ug.fId];
 
 	iinv.vnflow[ug.fId] = (*ug.xfn)[ug.fId] * iinv.uf[ug.fId] + (*ug.yfn)[ug.fId] * iinv.vf[ug.fId] + (*ug.zfn)[ug.fId] * iinv.wf[ug.fId];
 
@@ -231,16 +231,16 @@ void INsInvterm::CmpINsBcFaceflux()
 
 
 
-	//if (bcType == BC::SOLID_SURFACE)
-	//{
+	if (bcType == BC::SOLID_SURFACE)
+	{
 	//	iinv.uf[ug.fId] = 0;
 
 	//	iinv.vf[ug.fId] = 0;
 
 	//	iinv.wf[ug.fId] = 0;
 
-	//	iinv.fq[ug.fId] = 0;
-	//}
+    	iinv.fq[ug.fId] = 0;
+	}
 
 }
 

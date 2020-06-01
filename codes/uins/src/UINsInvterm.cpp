@@ -71,7 +71,7 @@ void UINsInvterm::CmpInvFace()  //单元数据重构
 
     this->CmpLimiter();   //不改
 
-    //this->GetQlQrField();  //不改
+    this->GetQlQrField();  //不改
 
     //this->ReconstructFaceValueField();  //不改
 
@@ -332,7 +332,15 @@ void UINsInvterm::Initflux()
 	iinv.Vav.resize(ug.nFace);
 	iinv.Vaw.resize(ug.nFace);
 	iinv.value.resize(ug.nFace);
-	iinv.vis.resize(ug.nFace);
+	iinv.visu.resize(ug.nFace);
+	iinv.visv.resize(ug.nFace);
+	iinv.visw.resize(ug.nFace);
+	iinv.Fu1.resize(ug.nFace);
+	iinv.Fv1.resize(ug.nFace);
+	iinv.Fw1.resize(ug.nFace);
+	iinv.bppu.resize(ug.nTCell);
+	iinv.bppv.resize(ug.nTCell);
+	iinv.bppw.resize(ug.nTCell);
 
 	iinv.ai1 = 0;
 	iinv.ai2 = 0;
@@ -407,8 +415,8 @@ void UINsInvterm::PrepareFaceValue()
 
     for ( int iEqu = 0; iEqu < limf->nEqu; ++ iEqu )
     {
-        iinv.prim1[ iEqu ] = (*limf->q)[iEqu][ug.lc];
-        iinv.prim2[ iEqu ] = (*limf->q)[iEqu][ug.rc];
+        iinv.prim1[ iEqu ] = (*limf->qf1)[iEqu][ug.fId];
+        iinv.prim2[ iEqu ] = (*limf->qf2)[iEqu][ug.fId];
     }
 }
 
@@ -451,44 +459,96 @@ void UINsInvterm::MomPre()
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
 
+			//iinv.bppu[ug.cId] += ((*uinsf.q)[IIDX::IIU][ug.rc]- (*uinsf.q)[IIDX::IIU][ug.lc]) * (*ug.xfn)[ug.fId] * (*ug.farea)[ug.fId];
+			//iinv.bppv[ug.cId] += ((*uinsf.q)[IIDX::IIU][ug.rc] - (*uinsf.q)[IIDX::IIU][ug.lc]) * (*ug.yfn)[ug.fId] * (*ug.farea)[ug.fId];
+			//iinv.bppw[ug.cId] += ((*uinsf.q)[IIDX::IIU][ug.rc] - (*uinsf.q)[IIDX::IIU][ug.lc]) * (*ug.zfn)[ug.fId] * (*ug.farea)[ug.fId];
 
 			if (ug.cId == ug.lc)
 			{
-				iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.rc]* (*uinsf.q)[IIDX::IIU][ug.rc];   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-				iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.rc]* (*uinsf.q)[IIDX::IIV][ug.rc];
-				iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.rc]* (*uinsf.q)[IIDX::IIW][ug.rc];
+					iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.rc] * (*uinsf.q)[IIDX::IIU][ug.rc];   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+					iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.rc] * (*uinsf.q)[IIDX::IIV][ug.rc];
+					iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.rc] * (*uinsf.q)[IIDX::IIW][ug.rc];
+
 			}
 			else if (ug.cId == ug.rc)
 			{
-				iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.lc]* (*uinsf.q)[IIDX::IIU][ug.lc]; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-				iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.lc]* (*uinsf.q)[IIDX::IIV][ug.lc];
-				iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.lc]* (*uinsf.q)[IIDX::IIW][ug.lc];
+
+					iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.lc] * (*uinsf.q)[IIDX::IIU][ug.lc]; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+					iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.lc] * (*uinsf.q)[IIDX::IIV][ug.lc];
+					iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.lc] * (*uinsf.q)[IIDX::IIW][ug.lc];
+
 			}
 		}
 
-		
-			iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
-			(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
-		
-			iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
-			(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
-		
-			iinv.wc[ug.cId] = (iinv.mwc[ug.cId] - iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
-			(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
-		
-    }
+
+		iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
+		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
+
+		iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
+		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
+
+		iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
+		(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
+
+		//iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId] - iinv.bppu[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
+		//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
+
+		//iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId] - iinv.bppv[ug.cId]) / (iinv.spv[ug.cId]);
+		//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
+
+		//iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId] - iinv.bppw[ug.cId]) / (iinv.spw[ug.cId]);
+		//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
+
+	}
 
 	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
 	{
-		 ug.cId = cId;
+		ug.cId = cId;
 
-		 iinv.uc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
-		 iinv.wc[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
-		 iinv.vc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+		int fn = (*ug.c2f)[ug.cId].size();
+		for (int iFace = 0; iFace < fn; ++iFace)
+		{
+			int fId = (*ug.c2f)[ug.cId][iFace];
+			ug.fId = fId;
+			ug.lc = (*ug.lcf)[ug.fId];
+			ug.rc = (*ug.rcf)[ug.fId];
+
+
+			if (ug.cId == ug.lc)
+			{
+				iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.rc] * (*uinsf.q)[IIDX::IIU][ug.rc];   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+				iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.rc] * (*uinsf.q)[IIDX::IIV][ug.rc];
+				iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.rc] * (*uinsf.q)[IIDX::IIW][ug.rc];
+
+			}
+			else if (ug.cId == ug.rc)
+			{
+
+				iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.lc] * (*uinsf.q)[IIDX::IIU][ug.lc]; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+				iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.lc] * (*uinsf.q)[IIDX::IIV][ug.lc];
+				iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.lc] * (*uinsf.q)[IIDX::IIW][ug.lc];
+
+			}
+		}
+
+
+		iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
+		//iinv.uc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
+		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
+
+		iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
+		//iinv.vc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
+
+		iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
+		//iinv.wc[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+		(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
+
 	}
 
-	    this->CmpINsMomRes();
+	this->CmpINsMomRes();
 }
+
 
 
 
@@ -546,7 +606,7 @@ void UINsInvterm::CmpINsMomRes()
 	{
 		ug.cId = cId;
 
-		iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId]- iinv.uc[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.uc[ug.cId] * (iinv.spu[ug.cId]));
+		iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.uc[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId]  - iinv.uc[ug.cId] * (iinv.spu[ug.cId]));
 		iinv.res_v += (iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vc[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vc[ug.cId] * (iinv.spv[ug.cId]));
 		iinv.res_w += (iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wc[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wc[ug.cId] * (iinv.spw[ug.cId]));
 
@@ -740,25 +800,39 @@ void UINsInvterm::CmpPressCorrectEqu()
 	{
 		ug.cId = cId;
 
-		iinv.pp[ug.cId] = 0;
-		iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
+		for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
+		{
+			ug.cId = cId;
+
+			iinv.pp[ug.cId] = 0;
+			iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
+		}
 	}
 	this->CmpINsPreRes();
 }
 
 void UINsInvterm::CmpINsPreRes()
 {
-	iinv.res_p = 0;
+	//iinv.res_p = 0;
 
 
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
 
-		iinv.res_p += (iinv.bp[ug.cId]+iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]))*(iinv.bp[ug.cId]+iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]));
+		if (ug.cId == 0)
+		{
+			iinv.res_p = abs(iinv.bp[ug.cId]);
+		}
+		else
+		{
+			iinv.res_p = MAX(abs(iinv.bp[ug.cId]), abs(iinv.bp[ug.cId - 1]));
+		}
+
+		//iinv.res_p += (iinv.bp[ug.cId]+iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]))*(iinv.bp[ug.cId]+iinv.mp[ug.cId] - iinv.pp1[ug.cId]* (0.01+iinv.spp[ug.cId]));
 	}
 
-	iinv.res_p = sqrt(iinv.res_p);
+	//iinv.res_p = sqrt(iinv.res_p);
 	//iinv.res_p = 0;
 }
 
@@ -874,7 +948,6 @@ void UINsInvterm::UpdateSpeed()
 		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
 		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
 		(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
-
 	}
 }
 
@@ -943,9 +1016,12 @@ void UINsInvterm::CmpPreGrad()
 		ug.lc = (*ug.lcf)[ug.fId];
 		ug.rc = (*ug.rcf)[ug.fId];
 
-		iinv.dqqdx[ug.rc] = iinv.dqqdx[ug.lc];
-		iinv.dqqdy[ug.rc] = iinv.dqqdy[ug.lc];
-		iinv.dqqdz[ug.rc] = iinv.dqqdz[ug.lc];
+		//if (ug.rc > ug.nCell)
+		//{
+			iinv.dqqdx[ug.rc] = iinv.dqqdx[ug.lc];
+			iinv.dqqdy[ug.rc] = iinv.dqqdy[ug.lc];
+			iinv.dqqdz[ug.rc] = iinv.dqqdz[ug.lc];
+		//}
 
 	}
 

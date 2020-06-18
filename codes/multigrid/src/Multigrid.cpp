@@ -116,7 +116,7 @@ void MG::Run()
 		double rhs_u = 1e-8;
 		double rhs_v = 1e-8;
 		double rhs_w = 1e-8;
-		double rhs_p = 1e-8;
+		//double rhs_p = 1e-8;
 
 
 		TimeSpan * timeSpan = new TimeSpan();
@@ -136,7 +136,7 @@ void MG::Run()
 			iinv.res_w = 1;
 			iinv.res_p = 1;
 
-			while (iinv.res_u > rhs_u || iinv.res_v > rhs_v || iinv.res_w > rhs_w || iinv.res_p > rhs_p)
+			while (iinv.res_u > rhs_u || iinv.res_v > rhs_v || iinv.res_w > rhs_w)
 			{
 				if (Iteration::innerSteps > maxIterSteps) continue;
 					

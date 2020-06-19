@@ -61,8 +61,8 @@ public:
     RealField q, q1, q2;
     RealField dq;
     RealField flux, flux1, flux2;
-	RealField bc,aji, spj,Vdv, spp,  ajp, app, idx,spu,spv,spw,spu1, spv1, spw1, spu2, spv2, spw2, sp1, sp2, bm1,bm2, buc, bvc, bwc,  dist, Vdvu, Vdvv, Vdvw, aju, ajv, ajw, VdU, VdV, VdW,bpu, bpv, bpw, sppu, sppv, sppw, pp1, uu, vv, ww, ai1, ai2, aii1,aii2, akku1, akku2, akkv1, akkv2, akkw1, akkw2,aku1,aku2,akv1,akv2,akw1,akw2,f1, f2, pp, uuj, vvj, wwj,uc,vc,wc, mp,ppr,ppl, bp, dqqdx, dqqdy, dqqdz,muc,mvc,mwc,sju,sjv,sjw,pp0,pc, rf,uf,vf,wf,fq, vnflow,fux,up,vp,wp,spt, but, bvt,bwt,bmu1,bmu2,bmv1,bmv2,bmw1,bmw2, Fnu, Fnv, Fnw, Ftu1, Ftv1, Ftw1, Ftu2, Ftv2, Ftw2, ukl, ukr, vkl, vkr, wkl,wkr, uml, umr, vml, vmr, wml, wmr, Puf, Pvf, Pwf, Pufd,Pvfd,Pwfd,Fpu,Fpv,Fpw,tux, tvy, twz, Fqu, Fqv, Fqw, Pdu, Pdv, Pdw, FuT, FvT, FwT, PufT, PvfT, PwfT, PufdT, PvfdT, PwfdT, FtuT, FtvT, FtwT, Pud, Pvd, Pwd, Vau, Vav, Vaw, dsrl, elrn, dlf, dfr, Bpe, Deun, Devn, Dewn, value,visu,visv,visw, Fu1, Fv1, Fw1, bppu, bppv, bppw,ump,vmp,wmp, l2rdx, l2rdy, l2rdz, fqr,bi1,bi2;
-	RealField2D  spuj, spvj, spwj, sjp;
+	RealField bc,aji, spj,Vdv, spp,  app, ajp,idx,spu,spv,spw,spu1, spv1, spw1, spu2, spv2, spw2, sp1, sp2, bm1,bm2, buc, bvc, bwc,  dist, Vdvu, Vdvv, Vdvw, aju, ajv, ajw, VdU, VdV, VdW,bpu, bpv, bpw, sppu, sppv, sppw, pp1, uu, vv, ww, ai1, ai2, aii1,aii2, akku1, akku2, akkv1, akkv2, akkw1, akkw2,aku1,aku2,akv1,akv2,akw1,akw2,f1, f2, pp, uuj, vvj, wwj,uc,vc,wc, mp,ppr,ppl, bp, dqqdx, dqqdy, dqqdz,muc,mvc,mwc,sju,sjv,sjw,pp0,pc, rf,uf,vf,wf,fq, vnflow,fux,up,vp,wp,spt, but, bvt,bwt,bmu1,bmu2,bmv1,bmv2,bmw1,bmw2, Fnu, Fnv, Fnw, Ftu1, Ftv1, Ftw1, Ftu2, Ftv2, Ftw2, ukl, ukr, vkl, vkr, wkl,wkr, uml, umr, vml, vmr, wml, wmr, Puf, Pvf, Pwf, Pufd,Pvfd,Pwfd,Fpu,Fpv,Fpw,tux, tvy, twz, Fqu, Fqv, Fqw, Pdu, Pdv, Pdw, FuT, FvT, FwT, PufT, PvfT, PwfT, PufdT, PvfdT, PwfdT, FtuT, FtvT, FtwT, Pud, Pvd, Pwd, Vau, Vav, Vaw, dsrl, elrn, dlf, dfr, Bpe, Deun, Devn, Dewn, value,visu,visv,visw, Fu1, Fv1, Fw1, bppu, bppv, bppw,ump,vmp,wmp, l2rdx, l2rdy, l2rdz, fqr,bi1,bi2,Fn, spc;
+	RealField2D  spuj, spvj, spwj, sjp, ai, biu, biv,biw, sj,sd,sjd;
 	
 
 public:
@@ -71,7 +71,7 @@ public:
 
     Real eig11, eig12, eig13;
     Real eig21, eig22, eig23;
-	Real vnrel,timestep, res_u, res_v, res_w, res_p, maxu, maxv, maxw,c2d,Fn1,Fn2,Fn3, lfdist, rfdist,ppd;  // l2rdx, l2rdy, l2rdz,
+	Real vnrel,timestep, res_u, res_v, res_w, res_p, maxu, maxv, maxw,c2d,Fn1,Fn2,Fn3, lfdist, rfdist,ppd, vis;  // l2rdx, l2rdy, l2rdz,
     Real cl, cr, cm;
 public:
     Real rl, ul, vl, wl, pl, hl, el;

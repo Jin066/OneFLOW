@@ -231,6 +231,8 @@ void UINsInvterm::Initflux()
 	iinv.sjv.resize(ug.nTCell);
 	iinv.sjw.resize(ug.nTCell);
 	iinv.fq.resize(ug.nFace);
+	iinv.spc.resize(ug.nTCell);
+
 	iinv.spu.resize(ug.nTCell);
 	iinv.spv.resize(ug.nTCell);
 	iinv.spw.resize(ug.nTCell);
@@ -238,6 +240,11 @@ void UINsInvterm::Initflux()
 	iinv.spvj.resize(ug.nTCell, ug.nTCell);
 	iinv.spwj.resize(ug.nTCell, ug.nTCell);
 	iinv.sjp.resize(ug.nTCell, ug.nTCell);
+	iinv.ai.resize(2, ug.nFace);
+	iinv.biu.resize(2, ug.nFace);
+	iinv.biv.resize(2, ug.nFace);
+	iinv.biw.resize(2, ug.nFace);
+
 	//iinv.ajp.resize(ug.nFace);
 	//iinv.app.resize(ug.nCell);
 	iinv.spp.resize(ug.nTCell);
@@ -273,6 +280,7 @@ void UINsInvterm::Initflux()
 	iinv.dqqdy.resize(ug.nTCell);
 	iinv.dqqdz.resize(ug.nTCell);
 	iinv.fux.resize(ug.nFace);
+	iinv.Fn.resize(ug.nFace);
 	iinv.Fnu.resize(ug.nFace);
 	iinv.Fnv.resize(ug.nFace);
 	iinv.Fnw.resize(ug.nFace);
@@ -482,62 +490,32 @@ void UINsInvterm::MomPre()
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
 
-			//iinv.bppu[ug.cId] += ((*uinsf.q)[IIDX::IIU][ug.rc]- (*uinsf.q)[IIDX::IIU][ug.lc]) * (*ug.xfn)[ug.fId] * (*ug.farea)[ug.fId];
-			//iinv.bppv[ug.cId] += ((*uinsf.q)[IIDX::IIU][ug.rc] - (*uinsf.q)[IIDX::IIU][ug.lc]) * (*ug.yfn)[ug.fId] * (*ug.farea)[ug.fId];
-			//iinv.bppw[ug.cId] += ((*uinsf.q)[IIDX::IIU][ug.rc] - (*uinsf.q)[IIDX::IIU][ug.lc]) * (*ug.zfn)[ug.fId] * (*ug.farea)[ug.fId];
-
 			if (ug.cId == ug.lc)
 			{
-					iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.rc] * iinv.ump[ug.rc];   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-					iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.rc] * iinv.vmp[ug.rc];
-					iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.rc] * iinv.wmp[ug.rc];
+					iinv.muc[ug.cId] += iinv.sj[ug.cId][iFace] * iinv.ump[ug.rc];   //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+					iinv.mvc[ug.cId] += iinv.sj[ug.cId][iFace] * iinv.vmp[ug.rc];
+					iinv.mwc[ug.cId] += iinv.sj[ug.cId][iFace] * iinv.wmp[ug.rc];
 
 			}
 			else if (ug.cId == ug.rc)
 			{
 
-					iinv.muc[ug.cId] += iinv.spuj[ug.cId][ug.lc] * iinv.ump[ug.lc]; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
-					iinv.mvc[ug.cId] += iinv.spvj[ug.cId][ug.lc] * iinv.vmp[ug.lc];
-					iinv.mwc[ug.cId] += iinv.spwj[ug.cId][ug.lc] * iinv.wmp[ug.lc];
+					iinv.muc[ug.cId] += iinv.sj[ug.cId][iFace] * iinv.ump[ug.lc]; //使用高斯赛德尔迭代时，相邻单元对其的影响，矩阵法不需要
+					iinv.mvc[ug.cId] += iinv.sj[ug.cId][iFace] * iinv.vmp[ug.lc];
+					iinv.mwc[ug.cId] += iinv.sj[ug.cId][iFace] * iinv.wmp[ug.lc];
 
 			}
 		}
 
 
-		iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
-		iinv.ump[ug.cId] = iinv.uc[ug.cId];
-		//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
-		//cout << " uc = " << iinv.uc[ug.cId] << "\n";
-		//cout << " uc = " << iinv.uc[ug.cId]  << showpoint << fixed << setprecision(4) <<  endl;
+		iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spc[ug.cId]);  //下一时刻速度的预测值
 
 
 		iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
-		iinv.vmp[ug.cId] = iinv.vc[ug.cId];
-		//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
 
 		iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
-		iinv.wmp[ug.cId] = iinv.wc[ug.cId];
-		//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
-
-		//iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId] - iinv.bppu[ug.cId]) / (iinv.spu[ug.cId]);  //下一时刻速度的预测值
-		//(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.uc[ug.cId];
-
-		//iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId] - iinv.bppv[ug.cId]) / (iinv.spv[ug.cId]);
-		//(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vc[ug.cId];
-
-		//iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId] - iinv.bppw[ug.cId]) / (iinv.spw[ug.cId]);
-		//(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wc[ug.cId];
 
 	}
-
-	//for (int cId = 0; cId < ug.nCell; ++cId)
-	//{
-	//	ug.cId = cId;
-
-	//	(*uinsf.q)[IIDX::IIU][ug.cId]= iinv.uc[ug.cId];
-	//	(*uinsf.q)[IIDX::IIV][ug.cId]=iinv.vc[ug.cId];
-	//	(*uinsf.q)[IIDX::IIW][ug.cId]=iinv.wc[ug.cId];
-	//}
 
 	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
 	{
@@ -547,17 +525,6 @@ void UINsInvterm::MomPre()
 		iinv.vc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
 		iinv.wc[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
 	}
-	//for (int cId = 4800; cId < 4900; ++cId)
-	//{
-	//	ug.cId = cId;
-	//	iinv.uc[ug.cId] = 0;
-	//}
-
-	//for (int cId = 4900; cId < 5000; ++cId)
-	//{
-	//	ug.cId = cId;
-	//	iinv.uc[ug.cId] = 0.08;
-	//}
 
 	this->CmpINsMomRes();
 }
@@ -701,7 +668,22 @@ void UINsInvterm::CmpCorrectPresscoef()
 		this->CmpINsBcFaceCorrectPresscoef();
 	}
 
-	for (int cId = 0; cId < ug.nCell; ++cId)
+	for (int fId = 0; fId < ug.nFace; ++fId)
+	{
+		ug.fId = fId;
+		iinv.spp[ug.lc] += iinv.ajp[ug.fId];
+		iinv.spp[ug.rc] += iinv.ajp[ug.fId];
+
+		iinv.bp[ug.lc] += -iinv.fq[ug.fId];
+		iinv.bp[ug.rc] += iinv.fq[ug.fId];
+
+		if (ug.fId < ug.nBFace)
+		{
+			iinv.spp[ug.rc] = 1;
+		}
+	}
+
+	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
 
@@ -709,45 +691,33 @@ void UINsInvterm::CmpCorrectPresscoef()
 		//iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spv[ug.cId] - iinv.sjv[ug.cId]);
 		//iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spw[ug.cId] - iinv.sjw[ug.cId]);
 
-		iinv.VdU[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spu[ug.cId]); //用于求单元修正速度量;
-		iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spv[ug.cId]);
-		iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spw[ug.cId]);
+		iinv.VdU[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]); //用于求单元修正速度量;
+		iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]);
+		iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]);
 		
 		//iinv.spp[ug.cId] = (*ug.cvol)[ug.cId] / iinv.timestep;
 
 		//iinv.bp[ug.cId] = iinv.bi1[ug.cId]+ iinv.bi2[ug.cId];
 
 		int fn = (*ug.c2f)[ug.cId].size();
+		iinv.sjp.resize(ug.nTCell, fn);
+		iinv.sjd.resize(ug.nTCell, fn);
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{
 			int fId = (*ug.c2f)[ug.cId][iFace];
 			ug.fId = fId;
-			if (ug.fId < ug.nBFace) continue;
-
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
 
-
-
 			if (ug.cId == ug.lc)
 			{
-				iinv.sjp[ug.cId][ug.rc] = iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
-				iinv.spp[ug.cId] += iinv.ajp[ug.fId];   //压力修正方程的矩阵主对角项
-				iinv.bp[ug.cId] += iinv.fq[ug.fId];  //压力修正方程源项
-
-				cout << " iinv.sjp[ug.cId][rc] = " << iinv.sjp[ug.cId][ug.rc]  << "ug.cId=" << ug.cId << "ug.rc=" << ug.rc <<"\n";
-				//cout <<  iinv.sjp[ug.cId][ug.rc] << "\n";
+				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
+				iinv.sjd[ug.cId][iFace] = ug.rc;
 			}
 			else if(ug.cId==ug.rc)
 			{
-				iinv.sjp[ug.cId][ug.lc] = iinv.ajp[ug.fId];
-				iinv.spp[ug.cId] += iinv.ajp[ug.fId];   //压力修正方程的矩阵主对角项
-				iinv.bp[ug.cId] += -iinv.fq[ug.fId];  //压力修正方程源项
-
-				//cout << " iinv.sjp[ug.cId][lc] = " << iinv.sjp[ug.cId][ug.lc] << "ug.cId=" << ug.cId << "ug.lc=" << ug.lc << "\n";
-				//cout << iinv.sjp[ug.cId][ug.lc]  << "\n";
-
-				//cout << " iinv.spp[ug.cId] = " << iinv.spp[ug.cId] << " ug.cId = " << ug.cId << "\n";
+				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId];
+				iinv.sjd[ug.cId][iFace] = ug.lc;
 			}
 		}
 	}
@@ -792,83 +762,42 @@ void UINsInvterm::CmpCorrectPresscoef()
 		//iinv.bp[24] = -9.992518418319765E-005;
 
 
-	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
-	{
-		ug.cId = cId;
-
-		
-
-		//iinv.VdU[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spu[ug.cId]); //用于求单元修正速度量;
-		//iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spv[ug.cId]);
-		//iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spw[ug.cId]);
-
-
-
-		//int fn = (*ug.c2f)[ug.cId].size();
-		//for (int iFace = 0; iFace < fn; ++iFace)
-		//{
-			//int fId = (*ug.c2f)[ug.cId][iFace];
-			//ug.fId = fId;
-			//ug.lc = (*ug.lcf)[ug.fId];
-			//ug.rc = (*ug.rcf)[ug.fId];
-
-
-			//if (ug.cId == ug.lc)
-			//{
-			//	iinv.sjp[ug.cId][ug.rc] = iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
-			//	iinv.spp[ug.cId] += iinv.ajp[ug.fId];   //压力修正方程的矩阵主对角项
-				//iinv.bp[ug.cId] -= iinv.fq[ug.fId];  //压力修正方程源项
-			//}
-			//else if (ug.cId == ug.rc)
-			//{
-			//	iinv.sjp[ug.cId][ug.lc] = iinv.ajp[ug.fId];
-			//	iinv.spp[ug.cId] += iinv.ajp[ug.fId];   //压力修正方程的矩阵主对角项
-				//iinv.bp[ug.cId] += iinv.fq[ug.fId];  //压力修正方程源项
-			//}
-
-		//}
-
-		iinv.VdU[ug.cId] = 0;
-		iinv.VdV[ug.cId] = 0;
-		iinv.VdV[ug.cId] = 0;
-
-		iinv.bp[ug.cId] = 0;
-		iinv.sjp[ug.cId] = 0;
-		iinv.spp[ug.cId] = 1;
-
-	}
-
-	//for (int cId = 0; cId < ug.nCell; ++cId)
-	//{
-	//	ug.cId = cId;
-
-		//cout << " iinv.spp[ug.cId] = " << iinv.spp[ug.cId] << " ug.cId = " << ug.cId << "\n";
-
-	    //cout << -iinv.bp[ug.cId] <<  "\n";
-	//}
-
 }
 
 void UINsInvterm::CmpNewMomCoe()
 {
+	for (int fId = 0; fId < ug.nFace; ++fId)
+	{
+		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		iinv.spc[ug.lc] += iinv.ai[0][ug.fId] + iinv.Fn[ug.fId];
+		iinv.spc[ug.rc] += iinv.ai[1][ug.fId] + iinv.Fn[ug.fId];
+	}
+
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
-
-		iinv.spu[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.aku1[ug.cId] + iinv.aku2[ug.cId] + iinv.spt[ug.cId]; //矩阵主对角线系数，动量方程单元主系数
-		iinv.spv[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.akv1[ug.cId] + iinv.akv2[ug.cId] + iinv.spt[ug.cId];
-		iinv.spw[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.akw1[ug.cId] + iinv.akw2[ug.cId] + iinv.spt[ug.cId];
+		iinv.spc[ug.cId] += iinv.spt[ug.cId];
 	}
+
+	//for (int cId = 0; cId < ug.nTCell; ++cId)
+	//{
+	//	ug.cId = cId;
+
+	//	iinv.spu[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.aku1[ug.cId] + iinv.aku2[ug.cId] + iinv.spt[ug.cId]; //矩阵主对角线系数，动量方程单元主系数
+	//	iinv.spv[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.akv1[ug.cId] + iinv.akv2[ug.cId] + iinv.spt[ug.cId];
+	//	iinv.spw[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.akw1[ug.cId] + iinv.akw2[ug.cId] + iinv.spt[ug.cId];
+	//}
 
 }
 
 void UINsInvterm::CmpPressCorrectEqu()
 {
 	double rhs_p = 1e-8;
-	//int b = 1;
 	iinv.res_p = 1;
 	while (iinv.res_p >= rhs_p)
-		//while (b <= 50)
 	{
 		iinv.res_p = 0.0;
 
@@ -888,86 +817,20 @@ void UINsInvterm::CmpPressCorrectEqu()
 				ug.rc = (*ug.rcf)[ug.fId];
 				if (ug.cId == ug.lc)
 				{
-					iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp[ug.rc]; //高斯赛戴尔迭代求解时的相邻单元的值，矩阵法不需要
+					iinv.mp[ug.cId] += iinv.sjp[ug.cId][iFace] * iinv.pp[ug.rc]; //高斯赛戴尔迭代求解时的相邻单元的值，矩阵法不需要
 				}
 				else if (ug.cId == ug.rc)
 				{
-					iinv.mp[ug.cId] += iinv.ajp[ug.fId] * iinv.pp[ug.lc];
+					iinv.mp[ug.cId] += iinv.sjp[ug.cId][iFace] * iinv.pp[ug.lc];
 				}
 			}
-			iinv.pp[ug.cId] = (-iinv.bp[ug.cId] + iinv.mp[ug.cId]) / (iinv.spp[ug.cId]); //压力修正值
-			//iinv.pp[ug.cId] = iinv.pp0[ug.cId]; //当前时刻的压力修正值
+			iinv.pp[ug.cId] = (iinv.bp[ug.cId] + iinv.mp[ug.cId]) / (iinv.spp[ug.cId]); //压力修正值
 
 			iinv.res_p = MAX(iinv.res_p, abs(iinv.ppd - iinv.pp[ug.cId]));
 
-
-
-			//iinv.pc[ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId]; //下一时刻的压力值
-
-			//(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId];
-
 		}
 
-		//for (int cId = 0; cId < ug.nCell; ++cId)
-		//{
-		//	ug.cId = cId;
-
-		//	cout << iinv.mp[ug.cId] << "\n";
-		//}
-
-		//for (int fId = 0; fId < ug.nBFace; ++fId)
-		//{
-		//	ug.fId = fId;
-		//	ug.lc = (*ug.lcf)[ug.fId];
-		//	ug.rc = (*ug.rcf)[ug.fId];
-
-		//	iinv.pp[ug.rc] = iinv.pp[ug.lc];
-			//iinv.pc[ug.rc] = (*uinsf.q)[IIDX::IIP][ug.rc] + iinv.pp[ug.rc]; //下一时刻的压力值
-			//if (ug.lc > ug.nCell)
-			//{
-			//	iinv.pp[ug.lc]= iinv.pp[ug.rc];
-			//}
-		//}
-		//for (int fId = 0; fId < ug.nBFace; ++fId)
-		//{
-		//	ug.fId = fId;
-		//	ug.lc = (*ug.lcf)[ug.fId];
-		//	ug.rc = (*ug.rcf)[ug.fId];
-
-		//	iinv.pp[ug.rc] = 0;
-			//iinv.pc[ug.rc] = (*uinsf.q)[IIDX::IIP][ug.rc] + iinv.pp[ug.rc]; //下一时刻的压力值
-		//}
-		//this->CmpINsPreRes();
-		//b++;	}
 	}
-
-	//iinv.pp[0] = 0.4152;
-	//iinv.pp[1] = -0.4198;
-	//iinv.pp[2] = 0.4308;
-	//iinv.pp[3] = -0.4531;
-	//iinv.pp[4] = 0.4986;
-	//iinv.pp[5] = -0.4107;
-	//iinv.pp[6] = 0.4133;
-	//iinv.pp[7] = -0.4194;
-	//iinv.pp[8] = 0.4300;
-	//iinv.pp[9] = -0.4440;
-	//iinv.pp[10] = 0.4035;
-	//iinv.pp[11] = -0.4035;
-	//iinv.pp[12] = 0.4035;
-	//iinv.pp[13] = -0.4035;
-	//iinv.pp[14] = 0.4035;
-	//iinv.pp[15] = -0.3963;
-	//iinv.pp[16] = 0.3936;
-	//iinv.pp[17] = -0.3876;
-	//iinv.pp[18] = 0.3770;
-	//iinv.pp[19] = -0.3629;
-	//iinv.pp[20] = 0.3917;
-	//iinv.pp[21] = -0.3872;
-	//iinv.pp[22] = 0.3762;
-	//iinv.pp[23] = 0.3538;
-	//iinv.pp[24] = 0.3084;
-
-
 
 	for (int fId = 0; fId < ug.nBFace; ++fId)
 	{

@@ -155,13 +155,16 @@ void INsInvterm::CmpINsinvTerm()
 		
 
 
-		iinv.aii1[ug.fId] = -clr;   //左单元
+		iinv.ai[0][ug.fId] = clr;
+		iinv.ai[1][ug.fId] = crl;
 
-		iinv.aii2[ug.fId] = -crl;   //右单元
+		//iinv.aii1[ug.fId] = -clr;   //左单元
 
-		iinv.ai1[ug.lc] += clr;   //左单元质量通量
+		//iinv.aii2[ug.fId] = -crl;   //右单元
 
-		iinv.ai2[ug.rc] += crl;   //右单元质量通量
+		//iinv.ai1[ug.lc] += clr;   //左单元质量通量
+
+		//iinv.ai2[ug.rc] += crl;   //右单元质量通量
 }
 
 void INsInvterm::CmpINsBcinvTerm()
@@ -318,13 +321,12 @@ void INsInvterm::CmpINsFaceflux()
 
 	//iinv.fq[ug.fId] = iinv.rf[ug.fId] * iinv.vnflow[ug.fId] * 0.01;  //下一时刻界面预测通量
 
-	Real cl = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
+	Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
 
-	Real cr = cl - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+	Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
-	iinv.bi1[ug.lc] += cl;   
-
-	iinv.bi2[ug.rc] +=cr;   
+	iinv.ai[0][ug.fId] = clr;
+	iinv.ai[1][ug.fId] = crl;
 
 	//iinv.bi1[ug.lc] += 2*cl- iinv.fq[ug.fId];   //
 
@@ -361,17 +363,20 @@ void INsInvterm::CmpINsBcFaceflux()
 		iinv.fq[ug.fId] = 0;
 	}
 
-	Real cl = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
+	Real clr = MAX(0, iinv.fq[ug.fId]);  //从界面左侧单元流入右侧单元的初始质量流量
 
-	Real cr = cl - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
+	Real crl = clr - iinv.fq[ug.fId];   //从界面右侧单元流入左侧单元的初始质量流量
 
+	iinv.ai[0][ug.fId] = clr;
+	iinv.ai[1][ug.fId] = crl;
+									  
 	//iinv.bi1[ug.lc] += 2*cl- iinv.fq[ug.fId];   //
 
 	//iinv.bi2[ug.rc] += 2*cr + iinv.fq[ug.fId];   //
 
-	iinv.bi1[ug.lc] += cl;   //
+	//iinv.bi1[ug.lc] += cl;   //
 
-	iinv.bi2[ug.rc] += cr;   //
+	//iinv.bi2[ug.rc] += cr;   //
 }
 
 void INsInvterm::CmpINsFaceCorrectPresscoef()
@@ -412,7 +417,6 @@ void INsInvterm::CmpINsFaceCorrectPresscoef()
 	//iinv.ajp[ug.fId] = iinv.rf[ug.fId] * (iinv.Vdvu[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + iinv.Vdvv[ug.fId]  * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Vdvw[ug.fId]  * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId]) * (*ug.farea)[ug.fId] / iinv.dist[ug.fId];
 	
 	iinv.ajp[ug.fId] = iinv.rf[ug.fId] * (iinv.Vdvu[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + iinv.Vdvv[ug.fId] * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Vdvw[ug.fId] * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId]) * (*ug.farea)[ug.fId] ;
-
 	//iinv.ajp[ug.fId] = 9.99001E-004;
 	//if ((*ug.xfn)[ug.fId] == 0)
 	//{

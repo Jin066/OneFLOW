@@ -645,6 +645,11 @@ void UINsVisterm::CmpUnsteadcoff()
 
 void UINsVisterm::CmpINsSrc()
 {
+	iinv.spc = 0;
+	iinv.buc = 0;
+	iinv.bvc = 0;
+	iinv.bwc = 0;
+
 	for (int fId = 0; fId < ug.nFace; ++fId)
 	{
 		ug.fId = fId;

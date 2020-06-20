@@ -186,9 +186,9 @@ void INsInvterm::CmpINsFaceflux()
 	INsExtract(iinv.prim1, iinv.rl, iinv.ul, iinv.vl, iinv.wl, iinv.pl);
 	INsExtract(iinv.prim2, iinv.rr, iinv.ur, iinv.vr, iinv.wr, iinv.pr);
 
-	iinv.Vau[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.xfn)[ug.fId] / (iinv.spu[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.xfn)[ug.fId] / (iinv.spu[ug.rc])); //Df*n，分子
-	iinv.Vav[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.yfn)[ug.fId] / (iinv.spv[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.yfn)[ug.fId] / (iinv.spv[ug.rc]));
-	iinv.Vaw[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.zfn)[ug.fId] / (iinv.spw[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.zfn)[ug.fId] / (iinv.spw[ug.rc]));
+	iinv.Vau[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.xfn)[ug.fId] / (iinv.spc[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.xfn)[ug.fId] / (iinv.spc[ug.rc])); //Df*n，分子
+	iinv.Vav[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.yfn)[ug.fId] / (iinv.spc[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.yfn)[ug.fId] / (iinv.spc[ug.rc]));
+	iinv.Vaw[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.zfn)[ug.fId] / (iinv.spc[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.zfn)[ug.fId] / (iinv.spc[ug.rc]));
 
 	//iinv.Vau[ug.fId] = half * ((*ug.cvol1)[ug.lc] * (*ug.xfn)[ug.fId] / (iinv.spu[ug.lc])) + half * ((*ug.cvol2)[ug.rc] * (*ug.xfn)[ug.fId] / (iinv.spu[ug.rc])); //Df*n，分子
 	//iinv.Vav[ug.fId] = half * ((*ug.cvol1)[ug.lc] * (*ug.yfn)[ug.fId] / (iinv.spv[ug.lc])) + half * ((*ug.cvol2)[ug.rc] * (*ug.yfn)[ug.fId] / (iinv.spv[ug.rc]));
@@ -391,27 +391,27 @@ void INsInvterm::CmpINsFaceCorrectPresscoef()
 	//iinv.Vdvw[ug.fId] = iinv.f1[ug.fId] * ((*ug.cvol1)[ug.lc] * (*ug.zfn)[ug.fId] / (iinv.spw[ug.lc])) + iinv.f2[ug.fId] * ((*ug.cvol2)[ug.rc] * (*ug.zfn)[ug.fId] / (iinv.spw[ug.rc]));
 	if ((*ug.xfn)[ug.fId] >= 0)
 	{
-		iinv.Vdvu[ug.fId] =  ((*ug.farea)[ug.fId] / (iinv.spu[ug.lc]));
+		iinv.Vdvu[ug.fId] =  ((*ug.farea)[ug.fId] / (iinv.spc[ug.lc]));
 	}
 	else
 	{
-		iinv.Vdvu[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spu[ug.rc]));
+		iinv.Vdvu[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spc[ug.rc]));
 	}
 	if ((*ug.yfn)[ug.fId] >= 0)
 	{
-		iinv.Vdvv[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spv[ug.lc]));
+		iinv.Vdvv[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spc[ug.lc]));
 	}
 	else
 	{
-		iinv.Vdvv[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spv[ug.rc]));
+		iinv.Vdvv[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spc[ug.rc]));
 	}
 	if ((*ug.zfn)[ug.fId] >= 0)
 	{
-		iinv.Vdvw[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spw[ug.lc]));
+		iinv.Vdvw[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spc[ug.lc]));
 	}
 	else
 	{
-		iinv.Vdvw[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spw[ug.rc]));
+		iinv.Vdvw[ug.fId] = ((*ug.farea)[ug.fId] / (iinv.spc[ug.rc]));
 	}
 	
 	//iinv.ajp[ug.fId] = iinv.rf[ug.fId] * (iinv.Vdvu[ug.fId] * (*ug.xfn)[ug.fId] * (*ug.xfn)[ug.fId] + iinv.Vdvv[ug.fId]  * (*ug.yfn)[ug.fId] * (*ug.yfn)[ug.fId] + iinv.Vdvw[ug.fId]  * (*ug.zfn)[ug.fId] * (*ug.zfn)[ug.fId]) * (*ug.farea)[ug.fId] / iinv.dist[ug.fId];

@@ -470,6 +470,10 @@ void UINsInvterm::PrepareProFaceValue()
 void UINsInvterm::MomPre()
 {
 
+	iinv.muc = 0;
+	iinv.mvc = 0;
+	iinv.mwc = 0;
+
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
@@ -511,9 +515,9 @@ void UINsInvterm::MomPre()
 		iinv.uc[ug.cId] = (iinv.muc[ug.cId] + iinv.buc[ug.cId]) / (iinv.spc[ug.cId]);  //下一时刻速度的预测值
 
 
-		iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spv[ug.cId]);
+		iinv.vc[ug.cId] = (iinv.mvc[ug.cId] + iinv.bvc[ug.cId]) / (iinv.spc[ug.cId]);
 
-		iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (iinv.spw[ug.cId]);
+		iinv.wc[ug.cId] = (iinv.mwc[ug.cId] + iinv.bwc[ug.cId]) / (iinv.spc[ug.cId]);
 
 	}
 
@@ -668,9 +672,15 @@ void UINsInvterm::CmpCorrectPresscoef()
 		this->CmpINsBcFaceCorrectPresscoef();
 	}
 
+	iinv.spp = 0;
+	iinv.bp = 0;
+
 	for (int fId = 0; fId < ug.nFace; ++fId)
 	{
 		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
 		iinv.spp[ug.lc] += iinv.ajp[ug.fId];
 		iinv.spp[ug.rc] += iinv.ajp[ug.fId];
 
@@ -766,6 +776,8 @@ void UINsInvterm::CmpCorrectPresscoef()
 
 void UINsInvterm::CmpNewMomCoe()
 {
+	iinv.spc = 0;
+
 	for (int fId = 0; fId < ug.nFace; ++fId)
 	{
 		ug.fId = fId;
@@ -797,6 +809,8 @@ void UINsInvterm::CmpPressCorrectEqu()
 {
 	double rhs_p = 1e-8;
 	iinv.res_p = 1;
+	iinv.mp = 0;
+
 	while (iinv.res_p >= rhs_p)
 	{
 		iinv.res_p = 0.0;

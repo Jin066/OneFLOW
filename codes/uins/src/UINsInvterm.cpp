@@ -66,15 +66,10 @@ void UINsInvterm::CmpLimiter()
 
 void UINsInvterm::CmpInvFace()  //单元数据重构
 {
-    //uins_grad.Init();
-    //uins_grad.CmpGrad();
-
 
     this->CmpLimiter();   //不改
 
     this->GetQlQrField();  //不改
-
-    //this->ReconstructFaceValueField();  //不改
 
     this->BoundaryQlQrFixField();  //不改
 }
@@ -236,17 +231,11 @@ void UINsInvterm::Initflux()
 	iinv.spu.resize(ug.nTCell);
 	iinv.spv.resize(ug.nTCell);
 	iinv.spw.resize(ug.nTCell);
-	iinv.spuj.resize(ug.nTCell, ug.nTCell);
-	iinv.spvj.resize(ug.nTCell, ug.nTCell);
-	iinv.spwj.resize(ug.nTCell, ug.nTCell);
-	iinv.sjp.resize(ug.nTCell, ug.nTCell);
 	iinv.ai.resize(2, ug.nFace);
 	iinv.biu.resize(2, ug.nFace);
 	iinv.biv.resize(2, ug.nFace);
 	iinv.biw.resize(2, ug.nFace);
 
-	//iinv.ajp.resize(ug.nFace);
-	//iinv.app.resize(ug.nCell);
 	iinv.spp.resize(ug.nTCell);
 	iinv.pp.resize(ug.nTCell);
 	iinv.pp0.resize(ug.nTCell);
@@ -373,7 +362,6 @@ void UINsInvterm::Initflux()
 	iinv.spv2 = 1;
 	iinv.spw2 = 1;
 
-	//iinv.bm = 0;
 	iinv.buc = 0;
 	iinv.bvc = 0;
 	iinv.bwc = 0;
@@ -388,9 +376,6 @@ void UINsInvterm::Initflux()
 	iinv.bpu = 0;
 	iinv.bpv = 0;
 	iinv.bpw = 0;
-	iinv.bp = 0;
-	iinv.pp = 0;
-	//iinv.pp0 = 0;
 
 	iinv.muc = 0;
 	iinv.mvc = 0;
@@ -414,8 +399,6 @@ void UINsInvterm::CmpInvMassFlux()
 
 			ug.lc = (*ug.lcf)[ug.fId];
 			ug.rc = (*ug.rcf)[ug.fId];
-
-			//this->PrepareFaceValue();
 
 			this->CmpINsinvTerm();
 		}
@@ -586,19 +569,19 @@ void UINsInvterm::CmpINsMomRes()
 	iinv.res_v = 0;
 	iinv.res_w = 0;
 
-	for (int cId = 0; cId < ug.nCell; ++cId)
-	{
-		ug.cId = cId;
+	//for (int cId = 0; cId < ug.nCell; ++cId)
+	//{
+	//	ug.cId = cId;
 
-		iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.ump[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId]  - iinv.ump[ug.cId] * (iinv.spu[ug.cId]));
-		iinv.res_v += (iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]));
-		iinv.res_w += (iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]));
+	//	iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.ump[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId]  - iinv.ump[ug.cId] * (iinv.spu[ug.cId]));
+	//	iinv.res_v += (iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]));
+	//	iinv.res_w += (iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]));
 
-	}
+	//}
 
-	iinv.res_u = sqrt(iinv.res_u);
-	iinv.res_v = sqrt(iinv.res_v);
-	iinv.res_w = sqrt(iinv.res_w);
+	//iinv.res_u = sqrt(iinv.res_u);
+	//iinv.res_v = sqrt(iinv.res_v);
+	//iinv.res_w = sqrt(iinv.res_w);
 	
 }
 
@@ -697,17 +680,13 @@ void UINsInvterm::CmpCorrectPresscoef()
 	{
 		ug.cId = cId;
 
-		//iinv.VdU[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spu[ug.cId] - iinv.sju[ug.cId]); //用于求单元修正速度量;
-		//iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spv[ug.cId] - iinv.sjv[ug.cId]);
-		//iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spw[ug.cId] - iinv.sjw[ug.cId]);
+		//cout << "iinv.spp=" << iinv.spp[ug.cId] << "cId" << ug.cId <<"\n";
+		//cout << "iinv.bp=" << iinv.bp[ug.cId] << "cId" << ug.cId << "\n";
 
 		iinv.VdU[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]); //用于求单元修正速度量;
 		iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]);
 		iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]);
-		
-		//iinv.spp[ug.cId] = (*ug.cvol)[ug.cId] / iinv.timestep;
-
-		//iinv.bp[ug.cId] = iinv.bi1[ug.cId]+ iinv.bi2[ug.cId];
+	
 
 		int fn = (*ug.c2f)[ug.cId].size();
 		iinv.sjp.resize(ug.nTCell, fn);
@@ -723,54 +702,18 @@ void UINsInvterm::CmpCorrectPresscoef()
 			{
 				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
 				iinv.sjd[ug.cId][iFace] = ug.rc;
+
+				//cout << "iinv.sjp=" << iinv.ajp[ug.fId] << "ug.rc" << ug.rc << "\n";
 			}
 			else if(ug.cId==ug.rc)
 			{
 				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId];
 				iinv.sjd[ug.cId][iFace] = ug.lc;
+
+				//cout << "iinv.sjp=" << iinv.ajp[ug.fId] << "ug.lc" << ug.lc << "\n";
 			}
 		}
 	}
-
-	//iinv.spp[0] = 3.996004185733362E-003;
-	//iinv.spp[1] = 3.996004185733362E-003;
-	//iinv.spp[2] = 3.996004185733362E-003;
-	//iinv.spp[3] = 3.996004185733362E-003;
-	//iinv.spp[4] = 3.996004185733362E-003;
-	//iinv.spp[5] = 3.996004185733362E-003; 
-	//iinv.spp[6] = 3.996004185733362E-003;
-	//iinv.spp[7] = 3.996004185733362E-003;
-	//iinv.spp[8] = 3.996004185733362E-003; 
-	//iinv.spp[9] = 3.996004185733362E-003; 
-	//iinv.spp[10] = 3.996004185733362E-003;
-	//iinv.spp[11] = 3.996004185733362E-003;
-	//iinv.spp[12] = 3.996004185733362E-003;
-	//iinv.spp[13] = 3.996004185733362E-003; 
-	//iinv.spp[14] = 3.996004185733362E-003;
-	//iinv.spp[15] = 3.996003562604947E-003; 
-	//	iinv.spp[16] = 3.996004185576957E-003; 
-	//	iinv.spp[17] = 3.996004185733322E-003; 
-	//	iinv.spp[18] = 3.996004185733362E-003; 
-	//	iinv.spp[19] = 3.996004809018999E-003; 
-	//	iinv.spp[20] = 3.993512901138565E-003; 
-	//	iinv.spp[21] = 3.996003562135695E-003; 
-	//	iinv.spp[22] = 3.996004185576840E-003;
-	//	iinv.spp[23] = 3.996004809018960E-003;
-	//	iinv.spp[24] = 3.998507933456209E-003;
-
-		//for (int cId = 0; cId < 20; ++cId)
-		//{
-		//	ug.cId = cId;
-
-		//	iinv.bp[ug.cId] = 0;
-		//}
-
-		//iinv.bp[20] = 9.990010315470651E-005;
-		//iinv.bp[21] = 2.507471755350644E-008;
-		//iinv.bp[22] = 6.309350054906251E-012;
-		//iinv.bp[23] = 1.587575580783794E-015;
-		//iinv.bp[24] = -9.992518418319765E-005;
-
 
 }
 
@@ -794,14 +737,6 @@ void UINsInvterm::CmpNewMomCoe()
 		iinv.spc[ug.cId] += iinv.spt[ug.cId];
 	}
 
-	//for (int cId = 0; cId < ug.nTCell; ++cId)
-	//{
-	//	ug.cId = cId;
-
-	//	iinv.spu[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.aku1[ug.cId] + iinv.aku2[ug.cId] + iinv.spt[ug.cId]; //矩阵主对角线系数，动量方程单元主系数
-	//	iinv.spv[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.akv1[ug.cId] + iinv.akv2[ug.cId] + iinv.spt[ug.cId];
-	//	iinv.spw[ug.cId] = iinv.bi1[ug.cId] + iinv.bi2[ug.cId] + iinv.akw1[ug.cId] + iinv.akw2[ug.cId] + iinv.spt[ug.cId];
-	//}
 
 }
 
@@ -810,6 +745,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	double rhs_p = 1e-8;
 	iinv.res_p = 1;
 	iinv.mp = 0;
+	iinv.pp = 0;
 
 	while (iinv.res_p >= rhs_p)
 	{
@@ -854,6 +790,8 @@ void UINsInvterm::CmpPressCorrectEqu()
 
 		iinv.pp[ug.rc] = iinv.pp[ug.lc];
 	}
+
+
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;

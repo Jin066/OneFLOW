@@ -236,10 +236,10 @@ void UINsInvterm::Initflux()
 	iinv.spu.resize(ug.nTCell);
 	iinv.spv.resize(ug.nTCell);
 	iinv.spw.resize(ug.nTCell);
-	iinv.spuj.resize(ug.nTCell, ug.nTCell);
-	iinv.spvj.resize(ug.nTCell, ug.nTCell);
-	iinv.spwj.resize(ug.nTCell, ug.nTCell);
-	iinv.sjp.resize(ug.nTCell, ug.nTCell);
+	//iinv.spuj.resize(ug.nTCell, ug.nTCell);
+	//iinv.spvj.resize(ug.nTCell, ug.nTCell);
+	//iinv.spwj.resize(ug.nTCell, ug.nTCell);
+	//iinv.sjp.resize(ug.nTCell, ug.nTCell);
 	iinv.ai.resize(2, ug.nFace);
 	iinv.biu.resize(2, ug.nFace);
 	iinv.biv.resize(2, ug.nFace);
@@ -389,7 +389,7 @@ void UINsInvterm::Initflux()
 	iinv.bpv = 0;
 	iinv.bpw = 0;
 	iinv.bp = 0;
-	iinv.pp = 0;
+	//iinv.pp = 0;
 	//iinv.pp0 = 0;
 
 	iinv.muc = 0;
@@ -586,19 +586,19 @@ void UINsInvterm::CmpINsMomRes()
 	iinv.res_v = 0;
 	iinv.res_w = 0;
 
-	for (int cId = 0; cId < ug.nCell; ++cId)
-	{
-		ug.cId = cId;
+	//for (int cId = 0; cId < ug.nCell; ++cId)
+	//{
+	//	ug.cId = cId;
 
-		iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.ump[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId]  - iinv.ump[ug.cId] * (iinv.spu[ug.cId]));
-		iinv.res_v += (iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]));
-		iinv.res_w += (iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]));
+	//	iinv.res_u += (iinv.buc[ug.cId]+iinv.muc[ug.cId] - iinv.ump[ug.cId]* (iinv.spu[ug.cId]))*(iinv.buc[ug.cId]+iinv.muc[ug.cId]  - iinv.ump[ug.cId] * (iinv.spu[ug.cId]));
+	//	iinv.res_v += (iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]))*(iinv.bvc[ug.cId]+iinv.mvc[ug.cId] - iinv.vmp[ug.cId] * (iinv.spv[ug.cId]));
+	//	iinv.res_w += (iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]))*(iinv.bwc[ug.cId]+iinv.mwc[ug.cId] - iinv.wmp[ug.cId] * (iinv.spw[ug.cId]));
 
-	}
+	//}
 
-	iinv.res_u = sqrt(iinv.res_u);
-	iinv.res_v = sqrt(iinv.res_v);
-	iinv.res_w = sqrt(iinv.res_w);
+	//iinv.res_u = sqrt(iinv.res_u);
+	//iinv.res_v = sqrt(iinv.res_v);
+	//iinv.res_w = sqrt(iinv.res_w);
 	
 }
 
@@ -701,6 +701,9 @@ void UINsInvterm::CmpCorrectPresscoef()
 		//iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spv[ug.cId] - iinv.sjv[ug.cId]);
 		//iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / ((1 + 1)*iinv.spw[ug.cId] - iinv.sjw[ug.cId]);
 
+		cout << "iinv.spp=" << iinv.spp[ug.cId] << "cId" << ug.cId <<"\n";
+		cout << "iinv.bp=" << iinv.bp[ug.cId] << "cId" << ug.cId << "\n";
+
 		iinv.VdU[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]); //用于求单元修正速度量;
 		iinv.VdV[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]);
 		iinv.VdW[ug.cId] = -(*ug.cvol)[ug.cId] / (iinv.spc[ug.cId]);
@@ -723,11 +726,15 @@ void UINsInvterm::CmpCorrectPresscoef()
 			{
 				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
 				iinv.sjd[ug.cId][iFace] = ug.rc;
+
+				cout << "iinv.sjp=" << iinv.ajp[ug.fId] << "ug.rc" << ug.rc << "\n";
 			}
 			else if(ug.cId==ug.rc)
 			{
 				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId];
 				iinv.sjd[ug.cId][iFace] = ug.lc;
+
+				cout << "iinv.sjp=" << iinv.ajp[ug.fId] << "ug.lc" << ug.lc << "\n";
 			}
 		}
 	}
@@ -810,6 +817,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	double rhs_p = 1e-8;
 	iinv.res_p = 1;
 	iinv.mp = 0;
+	iinv.pp = 0;
 
 	while (iinv.res_p >= rhs_p)
 	{

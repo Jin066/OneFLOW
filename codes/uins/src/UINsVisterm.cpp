@@ -580,13 +580,13 @@ void UINsVisterm::CmpUnsteadcoff()
 		iinv.spt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId]/ iinv.timestep;  //矩阵对角线元素的非稳态项
 		if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 		{
-			//iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
-			//iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
-			//iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
+			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
 
-			iinv.up[ug.cId] = 0;
-			iinv.vp[ug.cId] = 0;
-			iinv.wp[ug.cId] = 0;
+			//iinv.up[ug.cId] = 0;
+			//iinv.vp[ug.cId] = 0;
+			//iinv.wp[ug.cId] = 0;
 
 			iinv.but[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId]*iinv.up[ug.cId] / iinv.timestep; //源项的非稳态项
 			iinv.bvt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId]*iinv.vp[ug.cId] / iinv.timestep;
@@ -611,13 +611,13 @@ void UINsVisterm::CmpUnsteadcoff()
 		
 		if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 		{
-			//iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
-			//iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
-			//iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
+			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
 
-			iinv.up[ug.cId] = 0;
-			iinv.vp[ug.cId] = 0;
-			iinv.wp[ug.cId] = 0;
+			//iinv.up[ug.cId] = 0;
+			//iinv.vp[ug.cId] = 0;
+			//iinv.wp[ug.cId] = 0;
 
 			iinv.but[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId]*iinv.up[ug.cId] / iinv.timestep; //源项的非稳态项
 			iinv.bvt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId]*iinv.vp[ug.cId] / iinv.timestep;

@@ -22,57 +22,123 @@ License
 
 
 #pragma once
+
 #include "INsInvterm.h"
 
-BeginNameSpace( ONEFLOW )
+#include "systemSolver.h"
+
+#include "poisson.h"
+
+
+
+BeginNameSpace(ONEFLOW)
+
+
 
 class UINsFField;
+
 class Limiter;
+
 class LimField;
 
+class SolveMRhs;
+
+
+
 class UINsInvterm : public INsInvterm
+
 {
+
 public:
-    UINsInvterm();
-    ~UINsInvterm();
+
+	UINsInvterm();
+
+	~UINsInvterm();
+
 public:
-    void Alloc();
-    void DeAlloc();
+
+	void Alloc();
+
+	void DeAlloc();
+
 	void CmpINsTimestep();
+
 	void CmpINsPreflux();
+
 	void INsPreflux();
+
 	void Initflux();
-    void CmpInvcoff();
-    void CmpInvMassFlux();
-    void CmpInvFace();
-    void CmpLimiter();
+
+	void CmpInvcoff();
+
+	void CmpInvMassFlux();
+
+	void CmpInvFace();
+
+	void CmpLimiter();
+
 	void CmpFaceflux();
+
 	void CmpINsMomRes();
+
 	void CmpINsPreRes();
+
 	void CmpCorrectPresscoef();
+
 	void CmpNewMomCoe();
+
 	void CmpPressCorrectEqu();
+
 	void UpdateFaceflux();
+
 	void CmpUpdateINsFaceflux();
+
 	void CmpUpdateINsBcFaceflux();
+
 	void UpdateSpeed();
-    void AddFlux();
-    void PrepareFaceValue();
+
+	void AddFlux();
+
+	void PrepareFaceValue();
+
 	void PrepareProFaceValue();
+
 	void CmpPreGrad();
+
 	//void CmpINsinvTerm();
-    //void UpdateFaceInvFlux();
-    void ReadTmp();
+
+	//void UpdateFaceInvFlux();
+
+	void ReadTmp();
+
 public:
-    void GetQlQrField();
-    void ReconstructFaceValueField();
-    void BoundaryQlQrFixField();
+
+	void GetQlQrField();
+
+	void ReconstructFaceValueField();
+
+	void BoundaryQlQrFixField();
+
+	void Init();
+
 	void MomPre();
+
 public:
-    Limiter * limiter;
-    LimField * limf;
-    MRField * iinvflux;
+
+	Limiter * limiter;
+
+	LimField * limf;
+
+	MRField * iinvflux;
+
+public:
+
+	Real Number;
+
 };
+
 //void PrimToQ(RealField & prim, Real gama, RealField & q);
+
+extern UINsInvterm NonZero;
 
 EndNameSpace

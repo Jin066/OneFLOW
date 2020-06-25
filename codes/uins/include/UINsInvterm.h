@@ -23,12 +23,16 @@ License
 
 #pragma once
 #include "INsInvterm.h"
+#include "systemSolver.h"
+#include "poisson.h"
 
-BeginNameSpace( ONEFLOW )
+BeginNameSpace(ONEFLOW)
 
 class UINsFField;
 class Limiter;
 class LimField;
+class SolveMRhs;
+
 
 class UINsInvterm : public INsInvterm
 {
@@ -67,12 +71,15 @@ public:
     void GetQlQrField();
     void ReconstructFaceValueField();
     void BoundaryQlQrFixField();
-	void MomPre();
+    void Init();
+    void MomPre();
 public:
-    Limiter * limiter;
-    LimField * limf;
-    MRField * iinvflux;
+    Limiter* limiter;
+    LimField* limf;
+    MRField* iinvflux;
+public:
+    Real Number;
 };
 //void PrimToQ(RealField & prim, Real gama, RealField & q);
-
+extern UINsInvterm NonZero;
 EndNameSpace

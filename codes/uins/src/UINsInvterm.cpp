@@ -540,9 +540,8 @@ void UINsInvterm::MomPre()
 	//BGMRES求解
 	NonZero.Number = 0;
 	for (int cId = 0; cId < ug.nTCell; ++cId)
-	{
-		ug.cId = cId;                                                  // 主单元编号
-		int fn = (*ug.c2f)[ug.cId].size();                             //相邻单元的个数                                    
+	{                                          
+		int fn = (*ug.c2f)[cId].size();                             //相邻单元的个数                                    
 		NonZero.Number += fn;                                          //非对角线上非零元的个数
 	}
 	NonZero.Number = NonZero.Number + ug.nTCell;                     //非零元的总个数         
@@ -555,27 +554,25 @@ void UINsInvterm::MomPre()
 	{
 		Rank.TempIA[0] = 0;
 		int n = Rank.TempIA[cId];
-		ug.cId = cId;
-		int fn = (*ug.c2f)[ug.cId].size();
+		int fn = (*ug.c2f)[cId].size();
 		Rank.TempIA[cId + 1] = Rank.TempIA[cId] + fn + 1;                                                  // 前n+1行非零元素的个数
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{
-			int fId = (*ug.c2f)[ug.cId][iFace];                                                            // 相邻面的编号
-			ug.fId = fId;
-			ug.lc = (*ug.lcf)[ug.fId];                                                                     // 面左侧单元
-			ug.rc = (*ug.rcf)[ug.fId];                                                                     // 面右侧单元
+			int fId = (*ug.c2f)[cId][iFace];                                                            // 相邻面的编号
+			ug.lc = (*ug.lcf)[fId];                                                                     // 面左侧单元
+			ug.rc = (*ug.rcf)[fId];                                                                     // 面右侧单元
 			if (cId == ug.lc)
 			{
-				Rank.TempA[n + iFace] = iinv.ai[0][ug.fId];
+				Rank.TempA[n + iFace] = iinv.ai[0][fId];
 				Rank.TempJA[n + iFace] = ug.rc;
 			}
 			else if (cId == ug.rc)
 			{
-				Rank.TempA[n + iFace] = iinv.ai[1][ug.fId];
+				Rank.TempA[n + iFace] = iinv.ai[1][fId];
 				Rank.TempJA[n + iFace] = ug.lc;
 			}
 		}
-		Rank.TempA[n + fn] = iinv.spc[ug.cId];                          //主对角线元素值
+		Rank.TempA[n + fn] = iinv.spc[cId];                          //主对角线元素值
 		Rank.TempJA[n + fn] = cId;                                      //主对角线纵坐标
 
 	}
@@ -605,7 +602,7 @@ void UINsInvterm::MomPre()
 
 	for (int cId = 0; cId < ug.nTCell; cId++)
 	{
-		Rank.TempB[cId][0] = iinv.bwc[ug.cId];
+		Rank.TempB[cId][0] = iinv.bwc[cId];
 	}
 	bgx.BGMRES();
 	for (int cId = 0; cId < ug.nTCell; cId++)
@@ -996,9 +993,8 @@ void UINsInvterm::CmpPressCorrectEqu()
 		//BGMRES求解
 	NonZero.Number = 0;
 	for (int cId = 0; cId < ug.nTCell; ++cId)
-	{
-		ug.cId = cId;                                                                                      // 主单元编号
-		int fn = (*ug.c2f)[ug.cId].size();                                                                 // 单元相邻面的个数
+	{                                                                                // 主单元编号
+		int fn = (*ug.c2f)[cId].size();                                                                 // 单元相邻面的个数
 		NonZero.Number += fn;
 	}
 	NonZero.Number = NonZero.Number + ug.nTCell;                                                        // 非零元素的计数
@@ -1008,38 +1004,37 @@ void UINsInvterm::CmpPressCorrectEqu()
 	Rank.Init();
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
-		iinv.ppd = iinv.pp[ug.cId];
+		iinv.ppd = iinv.pp[cId];
 		Rank.TempIA[0] = 0;
 		int n = Rank.TempIA[cId];
-		ug.cId = cId;
-		int fn = (*ug.c2f)[ug.cId].size();
+		int fn = (*ug.c2f)[cId].size();
 		Rank.TempIA[cId + 1] = Rank.TempIA[cId] + fn + 1;                  // 前n+1行非零元素的个数
 		for (int iFace = 0; iFace < fn; ++iFace)
 		{
-			int fId = (*ug.c2f)[ug.cId][iFace];                           // 相邻面的编号
+			int fId = (*ug.c2f)[cId][iFace];                           // 相邻面的编号
 			ug.fId = fId;
-			ug.lc = (*ug.lcf)[ug.fId];                                    // 面左侧单元
-			ug.rc = (*ug.rcf)[ug.fId];                                    // 面右侧单元
+			ug.lc = (*ug.lcf)[fId];                                    // 面左侧单元
+			ug.rc = (*ug.rcf)[fId];                                    // 面右侧单元
 			if (cId == ug.lc)
 			{
-				Rank.TempA[n + iFace] = iinv.sjp[ug.cId][iFace];          //非对角线元素值
+				Rank.TempA[n + iFace] = iinv.sjp[cId][iFace];          //非对角线元素值
 				Rank.TempJA[n + iFace] = ug.rc;                           //非对角线元素纵坐标
 			}
 			else if (cId == ug.rc)
 			{
-				Rank.TempA[n + iFace] = iinv.sjp[ug.cId][iFace];          //非对角线元素值
+				Rank.TempA[n + iFace] = iinv.sjp[cId][iFace];          //非对角线元素值
 				Rank.TempJA[n + iFace] = ug.lc;                           //非对角线元素纵坐标
 			}
 		}
-		Rank.TempA[n + fn] = iinv.spp[ug.cId];                            //主对角线元素
+		Rank.TempA[n + fn] = iinv.spp[cId];                            //主对角线元素
 		Rank.TempJA[n + fn] = cId;                                        //主对角线纵坐标
 
-		Rank.TempB[cId][0] = iinv.bp[ug.cId];                             //右端项
+		Rank.TempB[cId][0] = iinv.bp[cId];                             //右端项
 	}
 	bgx.BGMRES();
 	for (int cId = 0; cId < ug.nTCell; cId++)
 	{
-		iinv.pp[ug.cId] = Rank.TempX[ug.cId][0]; //当前时刻的压力修正值
+		iinv.pp[cId] = Rank.TempX[cId][0]; //当前时刻的压力修正值
 	}
 	iinv.res_p = 0;
 	iinv.res_p = MAX(iinv.res_p, abs(iinv.ppd - iinv.pp[ug.cId]));

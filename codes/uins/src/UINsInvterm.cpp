@@ -481,7 +481,7 @@ void UINsInvterm::MomPre()
 	iinv.mvc = 0;
 	iinv.mwc = 0;
 
-	for (int cId = 0; cId < ug.nTCell; ++cId)
+	/* for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
 
@@ -535,7 +535,7 @@ void UINsInvterm::MomPre()
 	//	iinv.uc[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
 	//	iinv.vc[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
 	//	iinv.wc[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
-	//}
+	//} */
 
 	//BGMRES求解
 	NonZero.Number = 0;
@@ -615,12 +615,12 @@ void UINsInvterm::MomPre()
 	residual_w = Rank.residual;
 	cout << "residual_w:" << residual_w << endl;
 
-	for (int cId = 0; cId < ug.nTCell; cId++)
-	{
-		inscom.prim[IIDX::IIU] = iinv.uc[cId];                      // 解的输出
-		inscom.prim[IIDX::IIV] = iinv.vc[cId];                      // iinv.vc 为线性方程组求得的解
-		inscom.prim[IIDX::IIW] = iinv.wc[cId];                      // 速度压力前面乘的系数，需修改
-	}
+	//for (int cId = 0; cId < ug.nTCell; cId++)
+	//{
+	//	inscom.prim[IIDX::IIU] = iinv.uc[cId];                      // 解的输出
+	//	inscom.prim[IIDX::IIV] = iinv.vc[cId];                      // iinv.vc 为线性方程组求得的解
+	//	inscom.prim[IIDX::IIW] = iinv.wc[cId];                      // 速度压力前面乘的系数，需修改
+	//}
 }
 
 void UINsInvterm::CmpFaceflux()
@@ -958,6 +958,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	iinv.res_p = 1;
 	iinv.mp = 0;
 
+	iinv.pp = 0.5;
 	//while (iinv.res_p >= rhs_p)
 	//{
 	//	iinv.res_p = 0.0;
@@ -1061,10 +1062,10 @@ void UINsInvterm::CmpPressCorrectEqu()
 
 
 
-	for (int cId = 0; cId < ug.nTCell; cId++)
-	{
-		iinv.pc[ug.cId] = inscom.prim[IIDX::IIP] + iinv.pp[ug.cId]; //下一时刻的压力值
-	}
+	//for (int cId = 0; cId < ug.nTCell; cId++)
+	//{
+	//	iinv.pc[ug.cId] = inscom.prim[IIDX::IIP] + iinv.pp[ug.cId]; //下一时刻的压力值
+	//}
 }
 
 

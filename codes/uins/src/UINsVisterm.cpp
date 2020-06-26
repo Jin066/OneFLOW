@@ -680,6 +680,8 @@ void UINsVisterm::CmpINsSrc()
 		iinv.bvc[ug.cId] += iinv.bvt[ug.cId];
 		iinv.bwc[ug.cId] += iinv.bwt[ug.cId];
 
+		cout << "iinv.buc=" << iinv.buc[ug.cId] <<"cId="<< ug.cId<< "\n";
+
 		int fn = (*ug.c2f)[ug.cId].size();
 		iinv.sj.resize(ug.nTCell, fn);
 		iinv.sd.resize(ug.nTCell, fn);

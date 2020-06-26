@@ -372,19 +372,19 @@ int GMRES
 
 			// We have exceeded the number of iterations. Update the
 			// approximation and start over.
-			totalRestarts += 1;
-			Update(H,rhs,solution,s,&V,iteration);
-			(*residual) = precond->solve((*linearization)*(*solution) - (*rhs));      //第三个precond
-			rho = residual->norm();
-			cout <<  "totalRestarts:" << totalRestarts << endl;
+			// totalRestarts += 1;
+			// Update(H,rhs,solution,s,&V,iteration);
+			// (*residual) = precond->solve((*linearization)*(*solution) - (*rhs));      //第三个precond
+			// rho = residual->norm();
+			// cout <<  "totalRestarts:" << totalRestarts << endl;
 		} // while(numberRestarts,rho)
 
 
-	ArrayUtils<double>::deltwotensor(givens);
-	ArrayUtils<double>::deltwotensor(H);
-	ArrayUtils<double>::deltwotensor(s);
-	ArrayUtils<double>::deltwotensor(S);
-	ArrayUtils<double>::deltwotensor(R);
+	// ArrayUtils<double>::deltwotensor(givens);
+	// ArrayUtils<double>::deltwotensor(H);
+	// ArrayUtils<double>::deltwotensor(s);
+	// ArrayUtils<double>::deltwotensor(S);
+	// ArrayUtils<double>::deltwotensor(R);
 	//delete [] V;
 	//tolerance = rho/normRHS;
 

@@ -1040,12 +1040,12 @@ void UINsInvterm::CmpPressCorrectEqu()
 			ug.rc = (*ug.rcf)[fId];                                    // 面右侧单元
 			if (cId == ug.lc)
 			{
-				Rank.TempA[n + iFace] = -iinv.sjp[cId][iFace];          //非对角线元素值
+				Rank.TempA[n + iFace] = iinv.sjp[cId][iFace];          //非对角线元素值
 				Rank.TempJA[n + iFace] = ug.rc;                           //非对角线元素纵坐标
 			}
 			else if (cId == ug.rc)
 			{
-				Rank.TempA[n + iFace] = -iinv.sjp[cId][iFace];          //非对角线元素值
+				Rank.TempA[n + iFace] = iinv.sjp[cId][iFace];          //非对角线元素值
 				Rank.TempJA[n + iFace] = ug.lc;                           //非对角线元素纵坐标
 			}
 		}

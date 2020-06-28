@@ -680,7 +680,7 @@ void UINsVisterm::CmpINsSrc()
 		iinv.bvc[ug.cId] += iinv.bvt[ug.cId];
 		iinv.bwc[ug.cId] += iinv.bwt[ug.cId];
 
-		cout << "iinv.buc=" << iinv.buc[ug.cId] <<"cId="<< ug.cId<< "\n";
+		//cout << "iinv.buc=" << iinv.buc[ug.cId] <<"cId="<< ug.cId<< "\n";
 
 		int fn = (*ug.c2f)[ug.cId].size();
 		iinv.sj.resize(ug.nTCell, fn);
@@ -694,12 +694,12 @@ void UINsVisterm::CmpINsSrc()
 
 			if (ug.cId == ug.lc)
 			{
-				iinv.sj[ug.cId][iFace] = iinv.ai[0][ug.fId];  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
+				iinv.sj[ug.cId][iFace] = -iinv.ai[0][ug.fId];  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
 				iinv.sd[ug.cId][iFace] = ug.rc;
 			}
 			else if (ug.cId == ug.rc)
 			{
-				iinv.sj[ug.cId][iFace] = iinv.ai[1][ug.fId];  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
+				iinv.sj[ug.cId][iFace] = -iinv.ai[1][ug.fId];  //矩阵非零系数，动量方程中与主单元相邻的单元面通量
 				iinv.sd[ug.cId][iFace] = ug.lc;
 			}
 

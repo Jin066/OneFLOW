@@ -563,12 +563,12 @@ void UINsInvterm::MomPre()
 			ug.rc = (*ug.rcf)[fId];                                                                     // 面右侧单元
 			if (cId == ug.lc)
 			{
-				Rank.TempA[n + iFace] = iinv.ai[0][fId];
+				Rank.TempA[n + iFace] = -iinv.ai[0][fId];
 				Rank.TempJA[n + iFace] = ug.rc;
 			}
 			else if (cId == ug.rc)
 			{
-				Rank.TempA[n + iFace] = iinv.ai[1][fId];
+				Rank.TempA[n + iFace] = -iinv.ai[1][fId];
 				Rank.TempJA[n + iFace] = ug.lc;
 			}
 		}
@@ -586,6 +586,7 @@ void UINsInvterm::MomPre()
 		iinv.uc[cId] = Rank.TempX[cId][0];                       // 解的输出
 	}
 	residual_u = Rank.residual;
+	iinv.res_u = residual_u;
 	cout << "residual_u:" << residual_u << endl;
 
 	for (int cId = 0; cId < ug.nTCell; cId++)
@@ -598,6 +599,7 @@ void UINsInvterm::MomPre()
 		iinv.vc[cId] = Rank.TempX[cId][0];
 	}
 	residual_v = Rank.residual;
+	iinv.res_v = residual_v;
 	cout << "residual_v:" << residual_v << endl;
 
 	for (int cId = 0; cId < ug.nTCell; cId++)
@@ -610,6 +612,7 @@ void UINsInvterm::MomPre()
 		iinv.wc[cId] = Rank.TempX[cId][0];
 	}
 	residual_w = Rank.residual;
+	iinv.res_w = residual_w;
 	cout << "residual_w:" << residual_w << endl;
 
 	//for (int cId = 0; cId < ug.nTCell; cId++)
@@ -833,7 +836,7 @@ void UINsInvterm::CmpCorrectPresscoef()
 
 		if (ug.fId < ug.nBFace)
 		{
-			iinv.spp[ug.rc] = 1;
+			iinv.spp[ug.rc] = 0.001;
 		}
 	}
 
@@ -865,16 +868,34 @@ void UINsInvterm::CmpCorrectPresscoef()
 
 			if (ug.cId == ug.lc)
 			{
-				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
+				iinv.sjp[ug.cId][iFace] = -iinv.ajp[ug.fId]; //求解压力修正方程的非零系数
 				iinv.sjd[ug.cId][iFace] = ug.rc;
+
+				//cout << "iinv.sjp=" << iinv.sjp[ug.cId][iFace] << "iinv.sjd=" << ug.rc << "\n";
 			}
 			else if (ug.cId == ug.rc)
 			{
-				iinv.sjp[ug.cId][iFace] = iinv.ajp[ug.fId];
+				iinv.sjp[ug.cId][iFace] = -iinv.ajp[ug.fId];
 				iinv.sjd[ug.cId][iFace] = ug.lc;
+
+				//cout << "iinv.sjp=" << iinv.sjp[ug.cId][iFace] << "iinv.sjd=" << ug.lc << "\n";
 			}
 		}
 	}
+
+	/*for (int cId = 0; cId < ug.nTCell; ++cId)
+	{
+		ug.cId = cId;
+
+		cout << "iinv.bp=" << iinv.buc[ug.cId] << "\n";
+	}
+
+	for (int cId = 0; cId < ug.nTCell; ++cId)
+	{
+		ug.cId = cId;
+
+		cout << "iinv.spp=" << iinv.spp[ug.cId] << "\n";
+	}*/
 
 	//iinv.spp[0] = 3.996004185733362E-003;
 	//iinv.spp[1] = 3.996004185733362E-003;
@@ -994,7 +1015,8 @@ void UINsInvterm::CmpPressCorrectEqu()
 		//BGMRES求解
 	NonZero.Number = 0;
 	for (int cId = 0; cId < ug.nTCell; ++cId)
-	{                                                                                // 主单元编号
+	{   
+		//ug.cId = cId;                                                                  // 主单元编号
 		int fn = (*ug.c2f)[cId].size();                                                                 // 单元相邻面的个数
 		NonZero.Number += fn;
 	}
@@ -1018,12 +1040,12 @@ void UINsInvterm::CmpPressCorrectEqu()
 			ug.rc = (*ug.rcf)[fId];                                    // 面右侧单元
 			if (cId == ug.lc)
 			{
-				Rank.TempA[n + iFace] = iinv.sjp[cId][iFace];          //非对角线元素值
+				Rank.TempA[n + iFace] = -iinv.sjp[cId][iFace];          //非对角线元素值
 				Rank.TempJA[n + iFace] = ug.rc;                           //非对角线元素纵坐标
 			}
 			else if (cId == ug.rc)
 			{
-				Rank.TempA[n + iFace] = iinv.sjp[cId][iFace];          //非对角线元素值
+				Rank.TempA[n + iFace] = -iinv.sjp[cId][iFace];          //非对角线元素值
 				Rank.TempJA[n + iFace] = ug.lc;                           //非对角线元素纵坐标
 			}
 		}
@@ -1035,6 +1057,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	bgx.BGMRES();
 	for (int cId = 0; cId < ug.nTCell; cId++)
 	{
+		//ug.cId = cId;
 		iinv.pp[cId] = Rank.TempX[cId][0]; //当前时刻的压力修正值
 	}
 	iinv.res_p = 0;
@@ -1052,7 +1075,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
-		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + iinv.pp[ug.cId];
+		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + 0.8*iinv.pp[ug.cId];
 	}
 
 

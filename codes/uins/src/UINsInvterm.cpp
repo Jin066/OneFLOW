@@ -836,7 +836,8 @@ void UINsInvterm::CmpCorrectPresscoef()
 
 		if (ug.fId < ug.nBFace)
 		{
-			iinv.spp[ug.rc] = 0.001;
+			//iinv.spp[ug.rc] = 0.001;
+			iinv.spp[ug.rc] = 1;
 		}
 	}
 
@@ -972,11 +973,10 @@ void UINsInvterm::CmpNewMomCoe()
 
 void UINsInvterm::CmpPressCorrectEqu()
 {
-	double rhs_p = 1e-8;
-	iinv.res_p = 1;
-	iinv.mp = 0;
-
-	iinv.pp = 0.5;
+	//double rhs_p = 1e-8;
+	//iinv.res_p = 1;
+	//iinv.mp = 0;
+    //iinv.pp = 0.5;
 	//while (iinv.res_p >= rhs_p)
 	//{
 	//	iinv.res_p = 0.0;
@@ -1060,8 +1060,9 @@ void UINsInvterm::CmpPressCorrectEqu()
 		//ug.cId = cId;
 		iinv.pp[cId] = Rank.TempX[cId][0]; //当前时刻的压力修正值
 	}
-	iinv.res_p = 0;
-	iinv.res_p = MAX(iinv.res_p, abs(iinv.ppd - iinv.pp[ug.cId]));
+
+	//iinv.res_p = 0;
+	//iinv.res_p = MAX(iinv.res_p, abs(iinv.ppd - iinv.pp[ug.cId]));
 
 	//边界单元
 	/*for (int fId = 0; fId < ug.nBFace; ++fId)
@@ -1072,10 +1073,16 @@ void UINsInvterm::CmpPressCorrectEqu()
 
 		iinv.pp[ug.rc] = iinv.pp[ug.lc];
 	}*/
+
+	/*if (Iteration::outerSteps != 1)
+	{
+		iinv.pp = 0;
+	}*/
+
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
-		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] + 0.8*iinv.pp[ug.cId];
+		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] +1*iinv.pp[ug.cId];
 	}
 
 
@@ -1195,9 +1202,9 @@ void UINsInvterm::UpdateSpeed()
 	{
 		ug.cId = cId;
 
-		iinv.uu[ug.cId] = iinv.VdU[ug.cId] * iinv.dqqdx[ug.cId]; //速度修正量
-		iinv.vv[ug.cId] = iinv.VdV[ug.cId] * iinv.dqqdy[ug.cId];
-		iinv.ww[ug.cId] = iinv.VdW[ug.cId] * iinv.dqqdz[ug.cId];
+		iinv.uu[ug.cId] = iinv.VdU[ug.cId] * iinv.dqqdx[ug.cId]*1; //速度修正量
+		iinv.vv[ug.cId] = iinv.VdV[ug.cId] * iinv.dqqdy[ug.cId]*1;
+		iinv.ww[ug.cId] = iinv.VdW[ug.cId] * iinv.dqqdz[ug.cId]*1;
 
 		iinv.up[ug.cId] = iinv.uc[cId] + iinv.uu[ug.cId];  //下一时刻的速度值
 		iinv.vp[ug.cId] = iinv.vc[cId] + iinv.vv[ug.cId];

@@ -47,6 +47,7 @@ void Cavity::Run()
 {
     int ni = 101;
     int nj = 51;
+
     int nNode = ni * nj;
 
     RealField2D x;

@@ -21,6 +21,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "INsBcSolver.h"
+#include "INsInvterm.h"
 #include "BcData.h"
 #include "INsCom.h"
 #include "UCom.h"
@@ -326,6 +327,7 @@ void INsBcSolver::IsothermalVisWallBc()
 
 void INsBcSolver::VelocityBc()
 {
+	
     if ( inscom.bcdtkey == 0 )
     {
         inscom.primt1[ IIDX::IIU ] = - inscom.primt1[ IIDX::IIU ] + two * gcom.vfx;
@@ -350,6 +352,7 @@ void INsBcSolver::VelocityBc()
 
 void INsBcSolver::AdiabaticVisWallBc()
 {
+
     for ( int iEqu = 0; iEqu < inscom.nTEqu; ++ iEqu )
     {
         inscom.primt1[ iEqu ] = inscom.prims1[ iEqu ];

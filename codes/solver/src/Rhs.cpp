@@ -220,6 +220,8 @@ void INsCmpRHS()
 
 		INsMomPre(); //求解动量方程
 
+		//INsCmpinsBc();
+
 		INsCmpFaceflux(); //计算界面流量
 
 		INsCorrectPresscoef(); //计算压力修正方程系数

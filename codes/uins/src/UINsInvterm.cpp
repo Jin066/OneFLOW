@@ -24,6 +24,7 @@ License
 #include "INsInvterm.h"
 #include "UINsVisterm.h"
 #include "UINsGrad.h"
+#include "BcData.h"
 #include "Zone.h"
 #include "Atmosphere.h"
 #include "UnsGrid.h"
@@ -615,12 +616,42 @@ void UINsInvterm::MomPre()
 	iinv.res_w = residual_w;
 	cout << "residual_w:" << residual_w << endl;
 
-	//for (int cId = 0; cId < ug.nTCell; cId++)
-	//{
-	//	inscom.prim[IIDX::IIU] = iinv.uc[cId];                      // 解的输出
-	//	inscom.prim[IIDX::IIV] = iinv.vc[cId];                      // iinv.vc 为线性方程组求得的解
-	//	inscom.prim[IIDX::IIW] = iinv.wc[cId];                      // 速度压力前面乘的系数，需修改
-	//}
+	for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+		ug.fId = fId;
+
+		BcInfo * bcInfo = ug.bcRecord->bcInfo;
+
+		ug.fId = bcInfo->bcFace[ug.ir][fId];
+		ug.bcr = bcInfo->bcRegion[ug.ir][fId];
+
+		ug.bcdtkey = bcInfo->bcdtkey[ug.ir][fId];
+
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		inscom.bcdtkey = 0;
+		if (ug.bcr == -1) return; //interface
+		int dd = bcdata.r2d[ug.bcr];
+		if (dd != -1)
+		{
+			inscom.bcdtkey = 1;
+			inscom.bcflow = &bcdata.dataList[dd];
+		}
+
+		if (inscom.bcdtkey == 0)
+			{
+				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + two * gcom.vfx;
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + two * gcom.vfy;
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + two * gcom.vfz;
+			}
+		else
+			{
+			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + two * (*inscom.bcflow)[IIDX::IIU];
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + two * (*inscom.bcflow)[IIDX::IIV];
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + two * (*inscom.bcflow)[IIDX::IIW];
+			}
+	}
 }
 
 void UINsInvterm::CmpFaceflux()
@@ -1065,14 +1096,14 @@ void UINsInvterm::CmpPressCorrectEqu()
 	//iinv.res_p = MAX(iinv.res_p, abs(iinv.ppd - iinv.pp[ug.cId]));
 
 	//边界单元
-	/*for (int fId = 0; fId < ug.nBFace; ++fId)
+	for (int fId = 0; fId < ug.nBFace; ++fId)
 	{
 		ug.fId = fId;
 		ug.lc = (*ug.lcf)[ug.fId];
 		ug.rc = (*ug.rcf)[ug.fId];
 
 		iinv.pp[ug.rc] = iinv.pp[ug.lc];
-	}*/
+	}
 
 	/*if (Iteration::outerSteps != 1)
 	{
@@ -1216,7 +1247,49 @@ void UINsInvterm::UpdateSpeed()
 
 	}
 
-	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
+	for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+		ug.fId = fId;
+
+		BcInfo * bcInfo = ug.bcRecord->bcInfo;
+
+		ug.fId = bcInfo->bcFace[ug.ir][fId];
+		ug.bcr = bcInfo->bcRegion[ug.ir][fId];
+
+		ug.bcdtkey = bcInfo->bcdtkey[ug.ir][fId];
+
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		inscom.bcdtkey = 0;
+		if (ug.bcr == -1) return; //interface
+		int dd = bcdata.r2d[ug.bcr];
+		if (dd != -1)
+		{
+			inscom.bcdtkey = 1;
+			inscom.bcflow = &bcdata.dataList[dd];
+		}
+
+		if (inscom.bcdtkey == 0)
+		{
+			iinv.up[ug.rc] = -iinv.up[ug.lc] + two * gcom.vfx;
+			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + two * gcom.vfy;
+			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + two * gcom.vfz;
+		}
+		else
+		{
+			iinv.up[ug.rc] = -iinv.up[ug.lc] + two * (*inscom.bcflow)[IIDX::IIU];
+			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + two * (*inscom.bcflow)[IIDX::IIV];
+			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + two * (*inscom.bcflow)[IIDX::IIW];
+		}
+
+		(*uinsf.q)[IIDX::IIU][ug.rc] = iinv.up[ug.rc];
+		(*uinsf.q)[IIDX::IIV][ug.rc] = iinv.vp[ug.rc];
+		(*uinsf.q)[IIDX::IIW][ug.rc] = iinv.wp[ug.rc];
+
+	}
+
+	/*for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
 
@@ -1231,7 +1304,7 @@ void UINsInvterm::UpdateSpeed()
 		(*uinsf.q)[IIDX::IIU][ug.cId] = iinv.up[ug.cId];
 		(*uinsf.q)[IIDX::IIV][ug.cId] = iinv.vp[ug.cId];
 		(*uinsf.q)[IIDX::IIW][ug.cId] = iinv.wp[ug.cId];
-	}
+	}*/
 }
 
 void UINsInvterm::CmpPreGrad()

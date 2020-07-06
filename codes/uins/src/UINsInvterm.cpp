@@ -641,15 +641,15 @@ void UINsInvterm::MomPre()
 
 		if (inscom.bcdtkey == 0)
 			{
-				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + two * gcom.vfx;
-				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + two * gcom.vfy;
-				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + two * gcom.vfz;
+				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + 2*gcom.vfx;
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + 2*gcom.vfy;
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*gcom.vfz;
 			}
 		else
 			{
-			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + two * (*inscom.bcflow)[IIDX::IIU];
-				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + two * (*inscom.bcflow)[IIDX::IIV];
-				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + two * (*inscom.bcflow)[IIDX::IIW];
+			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIU];
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIV];
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIW];
 			}
 	}
 }
@@ -1272,15 +1272,15 @@ void UINsInvterm::UpdateSpeed()
 
 		if (inscom.bcdtkey == 0)
 		{
-			iinv.up[ug.rc] = -iinv.up[ug.lc] + two * gcom.vfx;
-			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + two * gcom.vfy;
-			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + two * gcom.vfz;
+			iinv.up[ug.rc] = -iinv.up[ug.lc] +  2*gcom.vfx;
+			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + 2*gcom.vfy;
+			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + 2*gcom.vfz;
 		}
 		else
 		{
-			iinv.up[ug.rc] = -iinv.up[ug.lc] + two * (*inscom.bcflow)[IIDX::IIU];
-			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + two * (*inscom.bcflow)[IIDX::IIV];
-			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + two * (*inscom.bcflow)[IIDX::IIW];
+			iinv.up[ug.rc] = -iinv.up[ug.lc] +  2*(*inscom.bcflow)[IIDX::IIU];
+			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIV];
+			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIW];
 		}
 
 		(*uinsf.q)[IIDX::IIU][ug.rc] = iinv.up[ug.rc];

@@ -4,7 +4,6 @@
 #include "poisson.h"
 #include "util.h"
 
-
 class Solution
 {
 
@@ -88,12 +87,6 @@ public:
 	{
 		return(solution[row][col]);
 	}
-
-	/** */
-	//inline void setentry(double value,int row, int col) const
-	//{
-	//	solution[row][col] = value;
-	//}
 
 protected:
 

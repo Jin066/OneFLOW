@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <UCom.h>
 #include "UINsInvterm.h"
+#include "INsInvterm.h"
+
 
 
 Poisson::Poisson(int number, int ranknumber)

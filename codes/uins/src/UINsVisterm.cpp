@@ -611,9 +611,9 @@ void UINsVisterm::CmpUnsteadcoff()
 		
 		if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 		{
-			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
-			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
-			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
+			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId]*0.5;
+			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId]*0.5;
+			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId]*0.5;
 
 			//iinv.up[ug.cId] = 0;
 			//iinv.vp[ug.cId] = 0;

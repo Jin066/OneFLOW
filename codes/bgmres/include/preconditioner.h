@@ -1,7 +1,9 @@
 #ifndef PRECONDITIONERCLASS
 #define PRECONDITIONERCLASS
 #include "systemSolver.h"
+#include "UCom.h"
 class Solution;
+class UCom;
 
 class Preconditioner
 {

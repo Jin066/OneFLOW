@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -18,8 +17,7 @@ Solution::Solution(int size)
 	// approximation.
 	setN(size);
 	solution = ArrayUtils<double>::twotensor(size,Rank.COLNUMBER);  // allocate the space. 
-	// Note that the onetensor routine sets everything to zero so it
-	// does not have to be initialized.
+
 }
 
 /** ************************************************************************

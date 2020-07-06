@@ -1,7 +1,6 @@
 #pragma once
 
 class UINsInvterm;
-
 class SolveMRhs 
 {
 public:

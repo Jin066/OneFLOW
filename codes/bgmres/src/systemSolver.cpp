@@ -33,7 +33,7 @@ void SolveMRhs::Init()
 }
 void SolveMRhs::BGMRES()
 {
-	clock_t start,finish;
+	clock_t start, finish;
 	double time;
 	start = clock();
 	Poisson* A = new Poisson;   // The operator to invert.
@@ -44,25 +44,10 @@ void SolveMRhs::BGMRES()
 		new Preconditioner(Rank.RANKNUMBER);      // The preconditioner for the system.
 
 	int restart = 0;                    // Number of restarts to allow
-	int maxIt = 220;                      // Dimension of the Krylov subspace
+	int maxIt = 500;                      // Dimension of the Krylov subspace
 	double tol = 1.0E-8;                 // How close to make the approximation.
 
-	
-	/*
-	   give the initial solution
-	*/
-	//int i, j;
-	//for (i = 0; i < Rank.RANKNUMBER; i++)
-	//{
-	//	for (j = 0; j < Rank.COLNUMBER; j++)
-	//	{
-	//		{
-	//			(*x)(i, j) = 2;
-	//		}
-	//	}
-	//}
-
-    /**
+	/**
 	   produce the right-hand sides
 	*/
 	int i, j;
@@ -81,30 +66,29 @@ void SolveMRhs::BGMRES()
 	// Output the solution
 	for (int lupe = 0; lupe < Rank.COLNUMBER; lupe++)
 	{
-        for (int innerlupe = 0; innerlupe < Rank.RANKNUMBER; innerlupe++)
-	    {
-		    Rank.TempX[innerlupe][lupe] = (*x)(innerlupe, lupe);
-	    }
+		for (int innerlupe = 0; innerlupe < Rank.RANKNUMBER; innerlupe++)
+		{
+			Rank.TempX[innerlupe][lupe] = (*x)(innerlupe, lupe);
+		}
 	}
-
 
 	std::cout << "Iterations: " << result << " residual: " << tol << std::endl;
 	finish = clock();
-	time = (double)(finish-start);    //计算运行时间
-	#define SOLUTION
-	#ifdef SOLUTION
-		ofstream file("solution.txt", ios::app);
-		int lupe;
-		int innerlupe;
-		for(lupe=0;lupe<Rank.RANKNUMBER;++lupe)
-			{
-				for(innerlupe = 0; innerlupe < Rank.COLNUMBER; ++innerlupe)
-				{
-	                file << lupe << "," << (*x)(lupe,innerlupe) 
-						 << endl;
-				}
-			}
-	    file << time << endl;
-		file.close();
-	#endif
+	time = (double)(finish - start);    //计算运行时间
+#define SOLUTION
+#ifdef SOLUTION
+	ofstream file("solution.txt", ios::app);
+	int lupe;
+	int innerlupe;
+	for (lupe = 0; lupe < Rank.RANKNUMBER; ++lupe)
+	{
+		for (innerlupe = 0; innerlupe < Rank.COLNUMBER; ++innerlupe)
+		{
+			file << lupe << "," << (*x)(lupe, innerlupe)
+				<< endl;
+		}
+	}
+	file << time << endl;
+	file.close();
+#endif
 }

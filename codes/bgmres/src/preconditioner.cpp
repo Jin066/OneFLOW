@@ -2,9 +2,8 @@
 #include "preconditioner.h"
 #include "solution.h"
 #include "util.h"
-
+#include "UCom.h"
 #include <cmath>
-
 
 /** ************************************************************************
  * Base constructor  for the Preconditioner class. 
@@ -15,10 +14,6 @@
 Preconditioner::Preconditioner(int number)
 {
 	setN(number);
-	// allocate the vector with the lower diagonal matrix entries for
-	// the Cholesky decomposition of the second order finite
-	// difference operator for the same equation.
-	vector = ArrayUtils<double>::twotensor(number,2);	
 }
 
 /** ************************************************************************
@@ -29,17 +24,6 @@ Preconditioner::Preconditioner(int number)
 Preconditioner::Preconditioner(const Preconditioner& oldCopy)
 {
 	setN(oldCopy.getN());
-	// Allocate the vector for the preconditioner, and copy it over.
-	vector = ArrayUtils<double>::twotensor(getN(), Rank.COLNUMBER);
-	int lupe;
-	for(lupe=getN()-1;lupe>=0;lupe--)
-		{
-			for(int innerlupe= Rank.COLNUMBER-1; innerlupe>=0; innerlupe--)
-			{
-                vector[lupe][innerlupe] = oldCopy.getValue(lupe,innerlupe);
-			}
-			
-		}
 }
 
 /** ************************************************************************
@@ -47,7 +31,8 @@ Preconditioner::Preconditioner(const Preconditioner& oldCopy)
  *  ************************************************************************ */
 Preconditioner::~Preconditioner()
 {
-	ArrayUtils<double>::deltwotensor(vector);
+	;
+	//ArrayUtils<double>::deltwotensor(vector);
 }
 
 /** ************************************************************************
@@ -65,13 +50,44 @@ Preconditioner::~Preconditioner()
 Solution Preconditioner::solve(const Solution &current)
 {
 	Solution multiplied(current);
-	int lupe;
+	int cId, iFace, lc, rc, offdiag, offdiag2;
 	int innerlupe;
-	for(lupe=0; lupe<getN(); lupe++)
+	int fId, fn1, n1, n2;
+	int fn2 = 0;
+	for (cId = 0; cId < getN(); cId++)
 	{
-		for(innerlupe=0; innerlupe<Rank.COLNUMBER; innerlupe++)
+		for (innerlupe = 0; innerlupe < Rank.COLNUMBER; innerlupe++)
 		{
-            multiplied(lupe,innerlupe) = current.getEntry(lupe,innerlupe);
+			multiplied(cId, innerlupe) = current.getEntry(cId, innerlupe);
+		}
+	}
+
+	for (cId = 0; cId < getN(); cId++)
+	{
+		for (innerlupe = 0; innerlupe < Rank.COLNUMBER; innerlupe++)
+		{
+			fn1 = (*ONEFLOW::ug.c2f)[cId].size();
+			n1 = Rank.TempIA[cId];
+			for (iFace = 0; iFace < fn1; iFace++)
+			{
+				//fId = (*ONEFLOW::ug.c2f)[cId][iFace];
+				//lc = (*ONEFLOW::ug.lcf)[fId];                                                                     // 面左侧单元
+				//rc = (*ONEFLOW::ug.rcf)[fId];                                                                     // 面右侧单元
+				offdiag = Rank.TempJA[n1 + iFace];
+				if (offdiag > cId && fn2 > 1.0E-16)
+				{
+					fn2 = (*ONEFLOW::ug.c2f)[offdiag].size();
+					n2 = Rank.TempIA[offdiag];
+					for (iFace = 0; iFace < fn2; iFace++)
+					{
+						offdiag2 = Rank.TempJA[n2 + iFace];
+						if (offdiag2 == cId)
+						{
+							multiplied(offdiag, innerlupe) += Rank.TempA[n2 + iFace] * multiplied(offdiag2, innerlupe) / Rank.TempA[n2 + fn2];
+						}
+					}
+				}
+			}
 		}
 	}
 	return(multiplied);

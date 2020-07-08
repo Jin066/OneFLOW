@@ -42,7 +42,6 @@ void SolveMRhs::BGMRES()
 	Solution* residual = new Solution(Rank.RANKNUMBER);
 	Preconditioner* pre =
 		new Preconditioner(Rank.RANKNUMBER);      // The preconditioner for the system.
-
 	int restart = 0;                    // Number of restarts to allow
 	int maxIt = 500;                      // Dimension of the Krylov subspace
 	double tol = 1.0E-8;                 // How close to make the approximation.

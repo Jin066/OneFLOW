@@ -604,7 +604,7 @@ void UINsVisterm::CmpFaceVisterm()
 
 	iinv.dist[ug.fId] = (*ug.xfn)[ug.fId] * ((*ug.xfc)[ug.fId] - (*ug.xcc)[ug.lc]) + (*ug.yfn)[ug.fId] * ((*ug.yfc)[ug.fId] - (*ug.ycc)[ug.lc]) + (*ug.zfn)[ug.fId] * ((*ug.zfc)[ug.fId] - (*ug.zcc)[ug.lc]);
 
-	iinv.Fn[ug.fId] = iinv.vis * (*ug.farea)[ug.fId] / iinv.dist[ug.fId];
+	iinv.Fn[ug.fId] = iinv.vis * (*ug.farea)[ug.fId] / 2*iinv.dist[ug.fId];
 
 
 	iinv.Puf[ug.fId] = ((*uinsf.dqdx)[IIDX::IIU][ug.lc])*(*ug.xfn)[ug.fId] +
@@ -672,7 +672,7 @@ void UINsVisterm::CmpFaceVisterm()
 	iinv.FtwT[ug.fId] = iinv.PwfT[ug.fId] * (*ug.farea)[ug.fId] * iinv.visw[ug.fId];
 
 	iinv.ai[0][ug.fId] += iinv.Fn[ug.fId];
-	iinv.ai[1][ug.fId] += 0;
+	iinv.ai[1][ug.fId] += iinv.Fn[ug.fId];
 
 	iinv.biu[0][ug.fId] = iinv.Ftu1[ug.fId] + iinv.Ftu2[ug.fId];
 	iinv.biu[1][ug.fId] = -iinv.Ftu1[ug.fId] - iinv.Ftu2[ug.fId];
@@ -717,6 +717,37 @@ void UINsVisterm::CmpUnsteadcoff()
 			iinv.bwt[ug.cId] = (*ug.cvol)[ug.cId] * (*uinsf.q)[IIDX::IIR][ug.cId] * iinv.wp[ug.cId] / iinv.timestep;
 		}
 	}
+
+	/*for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		iinv.spt[ug.rc] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] / iinv.timestep;
+
+		if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
+		{
+			iinv.up[ug.rc] = ((*uinsf.q)[IIDX::IIU][ug.rc]+ (*uinsf.q)[IIDX::IIU][ug.rc])/2;
+			iinv.vp[ug.rc] = ((*uinsf.q)[IIDX::IIV][ug.rc]+ (*uinsf.q)[IIDX::IIU][ug.rc])/2;
+			iinv.wp[ug.rc] = ((*uinsf.q)[IIDX::IIW][ug.rc]+ (*uinsf.q)[IIDX::IIU][ug.rc])/2;
+
+
+			iinv.but[ug.rc] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] * iinv.up[ug.rc] / iinv.timestep; //源项的非稳态项
+			iinv.bvt[ug.rc] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] * iinv.vp[ug.rc] / iinv.timestep;
+			iinv.bwt[ug.rc] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] * iinv.wp[ug.rc] / iinv.timestep;
+
+		}
+		else
+		{
+			iinv.but[ug.cId] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] * iinv.up[ug.rc] / iinv.timestep; //源项的非稳态项
+			iinv.bvt[ug.cId] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] * iinv.vp[ug.rc] / iinv.timestep;
+			iinv.bwt[ug.cId] = (*ug.farea)[ug.fId] * (*uinsf.q)[IIDX::IIR][ug.rc] * iinv.wp[ug.rc] / iinv.timestep;
+		}
+
+	}*/
+
+
 	for (int cId = ug.nCell; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;
@@ -725,9 +756,9 @@ void UINsVisterm::CmpUnsteadcoff()
 		
 		if (ctrl.currTime == 0.001 && Iteration::innerSteps == 1)
 		{
-			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId]*0.5;
-			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId]*0.5;
-			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId]*0.5;
+			iinv.up[ug.cId] = (*uinsf.q)[IIDX::IIU][ug.cId];
+			iinv.vp[ug.cId] = (*uinsf.q)[IIDX::IIV][ug.cId];
+			iinv.wp[ug.cId] = (*uinsf.q)[IIDX::IIW][ug.cId];
 
 			//iinv.up[ug.cId] = 0;
 			//iinv.vp[ug.cId] = 0;
@@ -783,6 +814,7 @@ void UINsVisterm::CmpINsSrc()
 		iinv.bwc[ug.rc] += iinv.biw[1][ug.fId];
 
 	}
+
 
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{

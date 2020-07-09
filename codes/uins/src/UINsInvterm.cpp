@@ -211,6 +211,15 @@ void UINsInvterm::Initflux()
 	iinv.bwc.resize(ug.nTCell);
 	//iinv.bc.resize(ug.nCell);
 	//iinv.sp.resize(ug.nFace);
+	iinv.uf1.resize(ug.nFace);
+	iinv.uf2.resize(ug.nFace);
+	iinv.vf1.resize(ug.nFace);
+	iinv.vf2.resize(ug.nFace);
+	iinv.wf1.resize(ug.nFace);
+	iinv.wf2.resize(ug.nFace);
+	iinv.fq1.resize(ug.nFace);
+	iinv.fq2.resize(ug.nFace);
+
 	iinv.sp1.resize(ug.nFace);
 	iinv.sp2.resize(ug.nFace);
 	//iinv.spj.resize(ug.nFace);
@@ -245,7 +254,8 @@ void UINsInvterm::Initflux()
 	iinv.biu.resize(2, ug.nFace);
 	iinv.biv.resize(2, ug.nFace);
 	iinv.biw.resize(2, ug.nFace);
-
+	iinv.Bpe1.resize(ug.nFace);
+	iinv.Bpe2.resize(ug.nFace);
 	//iinv.ajp.resize(ug.nFace);
 	//iinv.app.resize(ug.nCell);
 	iinv.spp.resize(ug.nTCell);
@@ -641,15 +651,15 @@ void UINsInvterm::MomPre()
 
 		if (inscom.bcdtkey == 0)
 			{
-				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + gcom.vfx;
-				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + gcom.vfy;
-				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + gcom.vfz;
+				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + 2*gcom.vfx;
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + 2*gcom.vfy;
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*gcom.vfz;
 			}
 		else
 			{
-			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + (*inscom.bcflow)[IIDX::IIU];
-				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + (*inscom.bcflow)[IIDX::IIV];
-				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + (*inscom.bcflow)[IIDX::IIW];
+			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIU];
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIV];
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIW];
 			}
 	}
 }
@@ -819,7 +829,7 @@ void UINsInvterm::AddFlux()
 
 void UINsInvterm::CmpCorrectPresscoef()
 {
-	//this->CmpNewMomCoe();
+	this->CmpNewMomCoe();
 	for (int fId = ug.nBFace; fId < ug.nFace; ++fId)
 	{
 		ug.fId = fId;
@@ -1116,6 +1126,14 @@ void UINsInvterm::CmpPressCorrectEqu()
 		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] +iinv.pp[ug.cId];
 	}
 
+	/*for (int fId = 0; fId < ug.nBFace; ++fId)
+	{
+		ug.fId = fId;
+		ug.lc = (*ug.lcf)[ug.fId];
+		ug.rc = (*ug.rcf)[ug.fId];
+
+		(*uinsf.q)[IIDX::IIP][ug.rc] = (*uinsf.q)[IIDX::IIP][ug.lc];
+	}*/
 
 
 	//for (int cId = 0; cId < ug.nTCell; cId++)
@@ -1272,15 +1290,15 @@ void UINsInvterm::UpdateSpeed()
 
 		if (inscom.bcdtkey == 0)
 		{
-			iinv.up[ug.rc] = -iinv.up[ug.lc] +  gcom.vfx;
-			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + gcom.vfy;
-			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + gcom.vfz;
+			iinv.up[ug.rc] = -iinv.up[ug.lc] +  2*gcom.vfx;
+			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + 2*gcom.vfy;
+			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + 2*gcom.vfz;
 		}
 		else
 		{
-			iinv.up[ug.rc] = -iinv.up[ug.lc] + (*inscom.bcflow)[IIDX::IIU];
-			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + (*inscom.bcflow)[IIDX::IIV];
-			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + (*inscom.bcflow)[IIDX::IIW];
+			iinv.up[ug.rc] = -iinv.up[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIU];
+			iinv.vp[ug.rc] = -iinv.vp[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIV];
+			iinv.wp[ug.rc] = -iinv.wp[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIW];
 		}
 
 		(*uinsf.q)[IIDX::IIU][ug.rc] = iinv.up[ug.rc];

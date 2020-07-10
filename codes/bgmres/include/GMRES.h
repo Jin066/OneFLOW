@@ -111,6 +111,8 @@ int GMRES
 	normr1 = sqrt(temp);
 	Double normRHS = rhs->norm();
 	Double rho = residual->norm();
+	Rank.residual = rho;
+
 	// variable for keeping track of how many restarts had to be used.
 	int totalRestarts = 0;
 
@@ -347,6 +349,8 @@ int GMRES
 			{
 				// We are close enough! Update the approximation.
 				Update(H, solution, s, &V, iteration);
+				(*residual) = precond->solve2((*linearization) * (*solution) - (*rhs));      
+				Rank.residual = residual->norm();
 				ArrayUtils<double>::deltwotensor(givens);
 				ArrayUtils<double>::deltwotensor(H);
 				ArrayUtils<double>::deltwotensor(s);
@@ -364,7 +368,7 @@ int GMRES
 		totalRestarts += 1;
 		Update(H, solution, s, &V, iteration - 1);
 		(*residual) = precond->solve((*linearization) * (*solution) - (*rhs));      //µÚÈý¸öprecond
-		rho = residual->norm();
+		Rank.residual = residual->norm();
 
 		cout << "totalRestarts:" << totalRestarts << endl;
 	} // while(numberRestarts,rho)

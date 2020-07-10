@@ -94,3 +94,17 @@ Solution Preconditioner::solve(const Solution &current)
 }
 
 
+Solution Preconditioner::solve2(const Solution& current)
+{
+	Solution multiplied(current);
+	int cId;
+	int innerlupe;
+	for (cId = 0; cId < getN(); cId++)
+	{
+		for (innerlupe = 0; innerlupe < Rank.COLNUMBER; innerlupe++)
+		{
+			multiplied(cId, innerlupe) = current.getEntry(cId, innerlupe);
+		}
+	}
+	return(multiplied);
+}

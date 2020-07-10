@@ -815,7 +815,6 @@ void UINsVisterm::CmpINsSrc()
 
 	}
 
-
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		ug.cId = cId;

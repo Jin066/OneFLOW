@@ -600,6 +600,7 @@ void UINsInvterm::MomPre()
 	iinv.res_u = residual_u;
 	cout << "residual_u:" << residual_u << endl;
 
+
 	for (int cId = 0; cId < ug.nTCell; cId++)
 	{
 		Rank.TempB[cId][0] = iinv.bvc[cId];
@@ -651,15 +652,15 @@ void UINsInvterm::MomPre()
 
 		if (inscom.bcdtkey == 0)
 			{
-				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + 2*gcom.vfx;
-				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + 2*gcom.vfy;
-				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*gcom.vfz;
+				iinv.uc[ug.rc] = -iinv.uc[ug.lc] + gcom.vfx;
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + gcom.vfy;
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + gcom.vfz;
 			}
 		else
 			{
-			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIU];
-				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIV];
-				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIW];
+			    iinv.uc[ug.rc] = -iinv.uc[ug.lc] + (*inscom.bcflow)[IIDX::IIU];
+				iinv.vc[ug.rc] = -iinv.vc[ug.lc] + (*inscom.bcflow)[IIDX::IIV];
+				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + (*inscom.bcflow)[IIDX::IIW];
 			}
 	}
 }
@@ -1120,20 +1121,20 @@ void UINsInvterm::CmpPressCorrectEqu()
 		iinv.pp = 0;
 	}*/
 
-	for (int cId = 0; cId < ug.nTCell; ++cId)
+	for (int cId = 0; cId < ug.nCell; ++cId)
 	{
 		ug.cId = cId;
 		(*uinsf.q)[IIDX::IIP][ug.cId] = (*uinsf.q)[IIDX::IIP][ug.cId] +iinv.pp[ug.cId];
 	}
 
-	/*for (int fId = 0; fId < ug.nBFace; ++fId)
+	for (int fId = 0; fId < ug.nBFace; ++fId)
 	{
 		ug.fId = fId;
 		ug.lc = (*ug.lcf)[ug.fId];
 		ug.rc = (*ug.rcf)[ug.fId];
 
 		(*uinsf.q)[IIDX::IIP][ug.rc] = (*uinsf.q)[IIDX::IIP][ug.lc];
-	}*/
+	}
 
 
 	//for (int cId = 0; cId < ug.nTCell; cId++)

@@ -14,7 +14,7 @@ public:
 	~Preconditioner();                              //< Destructor for the class
 
 	Solution solve(const Solution &vector);    //< Method to solve the
-																						 //< system associated with
+	Solution solve2(const Solution &vector);																					 //< system associated with
 																						 //< the preconditioner.
 
 	

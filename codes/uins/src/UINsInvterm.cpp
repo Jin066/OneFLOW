@@ -587,7 +587,7 @@ void UINsInvterm::MomPre()
 		iinv.uc[cId] = Rank.TempX[cId][0];                       // 解的输出
 	}
 	residual_u = Rank.residual;
-	iinv.res_u = residual_u;
+	/*iinv.res_u = residual_u;*/
 	cout << "residual_u:" << residual_u << endl;
 
 	for (int cId = 0; cId < ug.nTCell; cId++)
@@ -600,7 +600,7 @@ void UINsInvterm::MomPre()
 		iinv.vc[cId] = Rank.TempX[cId][0];
 	}
 	residual_v = Rank.residual;
-	iinv.res_v = residual_v;
+	/*iinv.res_v = residual_v;*/
 	cout << "residual_v:" << residual_v << endl;
 
 	for (int cId = 0; cId < ug.nTCell; cId++)
@@ -613,7 +613,7 @@ void UINsInvterm::MomPre()
 		iinv.wc[cId] = Rank.TempX[cId][0];
 	}
 	residual_w = Rank.residual;
-	iinv.res_w = residual_w;
+	/*iinv.res_w = residual_w;*/
 	cout << "residual_w:" << residual_w << endl;
 
 	for (int fId = 0; fId < ug.nBFace; ++fId)
@@ -1056,6 +1056,7 @@ void UINsInvterm::CmpPressCorrectEqu()
 	Rank.COLNUMBER = 1;
 	Rank.NUMBER = NonZero.Number;                                                                      // 矩阵非零元素个数
 	Rank.Init();
+	double residual_p;
 	for (int cId = 0; cId < ug.nTCell; ++cId)
 	{
 		iinv.ppd = iinv.pp[cId];
@@ -1086,6 +1087,8 @@ void UINsInvterm::CmpPressCorrectEqu()
 		Rank.TempB[cId][0] = iinv.bp[cId];                             //右端项
 	}
 	bgx.BGMRES();
+	residual_p = Rank.residual;
+	cout << "residual_p:" << residual_p << endl;
 	for (int cId = 0; cId < ug.nTCell; cId++)
 	{
 		//ug.cId = cId;

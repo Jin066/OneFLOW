@@ -44,6 +44,7 @@ public:
     
 	void CmpVisterm();
 	void CmpFaceVisterm();
+	void CmpBcFaceVisterm();
 
     void Alloc();
     void DeAlloc();

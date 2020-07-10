@@ -652,6 +652,19 @@ void UINsInvterm::MomPre()
 				iinv.wc[ug.rc] = -iinv.wc[ug.lc] + 2*(*inscom.bcflow)[IIDX::IIW];
 			}
 	}
+
+	/*将残差输出到txt文件中*/
+	ofstream fileres_u("residual_u.txt", ios::app);
+	fileres_u << "residual_u:" << residual_u << endl;
+	fileres_u.close();
+
+	ofstream fileres_v("residual_v.txt", ios::app);
+	fileres_v << "residual_v:" << residual_v << endl;
+	fileres_v.close();
+
+	ofstream fileres_w("residual_w.txt", ios::app);
+	fileres_w << "residual_w:" << residual_w << endl;
+	fileres_w.close();
 }
 
 void UINsInvterm::CmpFaceflux()
@@ -1125,6 +1138,9 @@ void UINsInvterm::CmpPressCorrectEqu()
 	//{
 	//	iinv.pc[ug.cId] = inscom.prim[IIDX::IIP] + iinv.pp[ug.cId]; //下一时刻的压力值
 	//}
+	ofstream fileres_p("residual_p.txt", ios::app);
+	fileres_p << "residual_p:" <<residual_p << endl;
+	fileres_p.close();
 }
 
 
